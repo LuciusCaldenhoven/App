@@ -4,6 +4,7 @@ import {createStyles} from '@/styles/input.styles';
 import { COLORS, } from "@/constants/theme";
 import assets from '../../assets';
 import {IInputProps} from './input.props';
+import { scale } from '@/constants/scale';
 
 const InputComponent = ({
   onChangeText,
@@ -13,13 +14,17 @@ const InputComponent = ({
   onSecurePress,
   keyboardType,
   containerStyle,
+  leftAction,
 }: IInputProps) => {
   const styles = createStyles();
   const {eye} = assets;
 
   return (
     <View style={[styles.container, containerStyle]}>
+      {leftAction && <View style={{ marginLeft: scale(10) }}>{leftAction}</View>}
+
       <TextInput
+      
         placeholder={placeholder}
         style={styles.input}
         placeholderTextColor={COLORS.placeholder}
