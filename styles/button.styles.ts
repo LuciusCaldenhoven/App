@@ -5,7 +5,7 @@ import {scale} from '@/constants/scale';
 export const createStyles = () =>
   StyleSheet.create({
     container: {
-      backgroundColor: COLORS.button,
+      backgroundColor: COLORS.black,
       borderRadius: scale(30),
       alignItems: 'center',
       justifyContent: 'center',

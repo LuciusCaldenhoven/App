@@ -27,10 +27,33 @@ export const createStyles = () =>
         bookTitle: {
             fontFamily: "SemiBold",
             color: COLORS.black,
-          },
-          bookText: {
+        },
+        bookText: {
             color: COLORS.placeholder,
-          },
-          
+        },
 
+        tabContainerStyle: {
+            borderWidth: 0,
+
+        },
+        tabStyle: {
+            borderWidth: 1,
+            borderColor: COLORS.btnBorder,
+            flexDirection : 'row',
+            columnGap : scale(4),
+            paddingRight : scale(16),
+            paddingLeft : scale(12),
+        },
+        ph : {
+            paddingRight : scale(18),
+            paddingLeft : scale(18),
+        },
+        tabTextStyle: {
+            color: COLORS.placeholder,
+            fontFamily: "Regular",
+            fontSize: FontSize.FONT_12Px,
+        },
+        buttonStyles :{
+            marginHorizontal : scale(18),
+        }
     });

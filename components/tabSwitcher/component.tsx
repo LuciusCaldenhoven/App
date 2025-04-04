@@ -2,8 +2,10 @@ import { View, Text, Pressable, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import { styles } from '@/styles/tab.styles';
 import { ITab, ITabProps } from './iTab.props';
+import { COLORS } from '@/constants/theme';
 
-const TabSwitcher = ({ title, data, onPress, tabStyle,tabContainerStyle,tabTextStyle }: ITabProps) => {
+
+const TabSwitcher = ({ title, data, onPress, tabStyle, tabContainerStyle, tabTextStyle }: ITabProps) => {
   const [active, setActive] = useState<ITab>(data[0]);
 
   return (
@@ -11,27 +13,40 @@ const TabSwitcher = ({ title, data, onPress, tabStyle,tabContainerStyle,tabTextS
       {title && <Text style={styles.text}>{title}</Text>}
 
       <View style={[styles.tabContainer, tabContainerStyle]}>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.contentContainerStyle}
-          data={data}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                onPress(item);
-                setActive(item);
-              }}
+        {data.map((item) => (
+          <Pressable
+            key={item.id}
+            onPress={() => {
+              onPress(item);
+              setActive(item);
+            }}
+            style={[
+              styles.tab,
+              tabStyle,
+              item.id === active.id && styles.activeTab,
+            ]}>
+            {item?.component && React.isValidElement(item?.component)
+              ? React.cloneElement(item.component as React.ReactElement<any>, {
+                  style: {
+                    color:
+                      item.id === active.id
+                        ? COLORS.white
+                        : COLORS.gray,
+                  },
+                })
+              : item?.component}
+
+            <Text
               style={[
-                styles.tab,
-                tabStyle,
-                item.id === active.id && styles.activeTab
+                styles.tabText,
+                tabTextStyle,
+                item.id === active.id && styles.tabTextActive,
               ]}
             >
-              <Text style={[styles.tabText,tabTextStyle, item.id === active.id && styles.tabTextActive]}>{item.label}</Text>
-            </Pressable>
-          )}
-        />
+              {item.label}
+            </Text>
+          </Pressable>
+        ))}
       </View>
     </View>
   );

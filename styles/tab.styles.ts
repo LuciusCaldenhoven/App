@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
     text: {
       fontFamily: "Bold",
       fontSize: SIZES.medium + 4,
-      color : COLORS.primary,
+      color : COLORS.black,
     },
     contentContainerStyle: {
       justifyContent: 'space-between',
