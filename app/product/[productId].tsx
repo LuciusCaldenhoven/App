@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity, FlatList, Dimensions, ScrollView, Pressable } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Dimensions, ScrollView, Pressable, StatusBar, Share } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES } from "@/constants/theme";
 import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
@@ -10,8 +10,7 @@ import { Image } from "expo-image";
 import { Loader } from "@/components/Loader";
 import { useState, useRef } from "react";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
-import { scale } from '@/constants/scale';
-import Button from "@/components/button/component";
+import { scale } from "@/constants/scale";
 const { width } = Dimensions.get("window");
 
 export default function ProductDetail() {
@@ -40,23 +39,42 @@ export default function ProductDetail() {
         const index = Math.round(event.nativeEvent.contentOffset.x / width);
         setActiveIndex(index);
     };
+    const shareListing = async () => {
+        try {
+            await Share.share({
+                title: post.title,
+                url: `https://revende.com/post/${post._id}`,
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     return (
         <View style={styles.container}>
-            <View style={styles.upperRow}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="chevron-back-circle" size={30} />
+
+            <View style={styles.headerButtonsContainer}>
+                {/* Botón Back a la izquierda */}
+                <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
+                    <Ionicons name="chevron-back" size={20} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleBookmark}>
-                    <Ionicons
-                        name={post.isBookmarked ? "heart" : "heart-outline"}
-                        size={30}
-                        color={COLORS.primary}
-                    />
-                </TouchableOpacity>
+
+                {/* Share + Bookmark a la derecha */}
+                <View style={styles.rightButtons}>
+                    <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
+                        <Feather name="share" size={20} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.roundButton} onPress={handleBookmark}>
+                        <FontAwesome
+                            name={post.isBookmarked ? "heart" : "heart-o"}
+                            size={20}
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                 {/* 🏆 Carrusel de imágenes */}
                 <View style={{ position: "relative" }}>
                     <FlatList
@@ -69,7 +87,7 @@ export default function ProductDetail() {
                         renderItem={({ item }) => (
                             <Image
                                 source={{ uri: item }}
-                                style={{ width, height: 400 }}
+                                style={styles.image}
                                 contentFit="cover"
                                 transition={200}
                                 cachePolicy="memory-disk"
@@ -84,9 +102,6 @@ export default function ProductDetail() {
                 <View style={styles.details}>
                     <View style={styles.titleRow}>
                         <Text style={styles.title}>{post.title}</Text>
-                        <View style={styles.priceWrapper}>
-                            <Text style={styles.price}>${post.price}</Text>
-                        </View>
                     </View>
 
                     <View style={styles.ratingRow}>
@@ -124,7 +139,7 @@ export default function ProductDetail() {
                     {renderBorderBottom(2)}
                     {renderMarginTop(18)}
                     <View style={styles.profile}>
-                        <View style = {styles.cg14}>
+                        <View style={styles.cg14}>
                             <Image
                                 source={{ uri: author?.image }}
                                 style={styles.person}
@@ -133,20 +148,29 @@ export default function ProductDetail() {
                                 cachePolicy="memory-disk"
                             />
                             <Text style={styles.ownerName}>{author?.fullname}</Text>
-                            
+
                         </View>
-                        {/* <View style = {styles.cg14}>
-                            <Pressable style={styles.iconBorder}>
-                                <AntDesign name="message1" size={(scale(22))} color={COLORS.gray} />
-                            </Pressable>
-                            
-                        </View> */}
+                        
 
                     </View>
                 </View>
-                
+
             </ScrollView>
-            <Button text="Mensajea" buttonStyles={styles.btn}/>
+            <View style={styles.footer} >
+                <View
+                    style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <TouchableOpacity style={styles.footerText}>
+                        <View style={styles.priceWrapper}>
+                            <Text style={styles.price}>${post.price}</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]}>
+                        <Text style={styles.btnText}>Mandale un mensaje!</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            {/* <Button text="Mensajea" buttonStyles={styles.btn}/> */}
             {renderBorderBottom(6)}
         </View>
     );

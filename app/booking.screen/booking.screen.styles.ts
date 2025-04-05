@@ -20,7 +20,7 @@ export const createStyles = () =>
             paddingHorizontal: scale(12),
             paddingVertical: scale(12),
             borderRadius: scale(10),
-            elevation: 10,
+            
             overflow: 'hidden',
             backgroundColor: COLORS.white,
         },

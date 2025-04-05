@@ -1,7 +1,7 @@
 export const COLORS = {
   primary: "#2A4D50",
   secondary: "#DDF0FF",
-  background: "#fcf8f3",
+  background: "white", 
   surface: "#1A1A1A",
   surfaceLight: "#2A2A2A",
   white: "#FFFFFF",
@@ -20,7 +20,7 @@ export const COLORS = {
   button: '#21292B',
   star: '#FF8F3A',
 } as const;
-
+// #fcf8f3
 export const SIZES = {
   xSmall: 10,
   small: 12,

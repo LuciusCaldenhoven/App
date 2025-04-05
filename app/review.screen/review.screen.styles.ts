@@ -20,7 +20,7 @@ export const createStyles = () =>
       gap: scale(12),
     },
     reviewCard: {
-      width: '100%',
+      width: '94%',
       backgroundColor: COLORS.white,
       borderRadius: scale(10),
       padding: scale(12),
@@ -30,6 +30,7 @@ export const createStyles = () =>
       shadowRadius: 3,
       elevation: 2,
       marginTop: scale(14),
+
     },
       
   });

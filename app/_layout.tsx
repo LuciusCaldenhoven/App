@@ -50,7 +50,7 @@ export default function RootLayout() {
           }} />
         </SafeAreaView>
       </SafeAreaProvider>
-      <StatusBar style="light" />
+    
     </ClerkAndConvexProvider>
   );
 }

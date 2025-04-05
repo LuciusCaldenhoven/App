@@ -22,7 +22,6 @@ export default function Profile() {
 
   const [editedProfile, setEditedProfile] = useState({
     fullname: currentUser?.fullname || "",
-
   });
 
 

@@ -1,8 +1,9 @@
 import { COLORS, FontSize, SIZES, } from "@/constants/theme";
 import { Dimensions, Platform, StyleSheet } from "react-native";
-import {scale} from '@/constants/scale';
+import { scale } from '@/constants/scale';
 
 const { width } = Dimensions.get("window");
+
 
 export const styles = StyleSheet.create({
     productImage: {
@@ -24,8 +25,8 @@ export const styles = StyleSheet.create({
         color: COLORS.primary,
         marginVertical: 8,
     },
-   
- 
+
+
     bookmarkButton: {
         position: "absolute",
         bottom: 10,
@@ -64,44 +65,59 @@ export const styles = StyleSheet.create({
         color: COLORS.primary,
     },
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: COLORS.white,
     },
 
-    upperRow: {
-        marginHorizontal: 20,
+    headerButtonsContainer: {
+        position: "absolute",
+        top: SIZES.large,
+        left: 0,
+        right: 0,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        position: "absolute",
-        top: SIZES.xLarge,
-        width: width - 44,
-        zIndex: 999
+        paddingHorizontal: 20,
+        zIndex: 999,
     },
 
+    rightButtons: {
+        flexDirection: "row",
+        gap: 12,
+    },
     image: {
-        aspectRatio: 1,
-        resizeMode: "cover"
+        width,
+        height: 330,
     },
+    roundButton: {
+        width: 37,
+        height: 37,
+        borderRadius: 50,
+        backgroundColor: 'rgba(179, 178, 178, 0.9)',
+        alignItems: 'center',
+        justifyContent: 'center',
 
+    },
     details: {
         marginTop: -SIZES.large,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.white,
         width: width,
-        borderTopLeftRadius: SIZES.medium,
-        borderTopRightRadius: SIZES.medium
+        borderTopLeftRadius: SIZES.medium + 5,
+        borderTopRightRadius: SIZES.medium + 5,
+
     },
     titleRow: {
-        marginHorizontal: 20,
+
         paddingBottom: SIZES.small,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: width - 44,
         top: 20,
+        alignSelf: 'center',
     },
     title: {
-        fontFamily: "Bold",
-        fontSize: SIZES.large,
+        fontFamily: "SemiBold",
+        fontSize: SIZES.xLarge + 5,
     },
 
     price: {
@@ -172,7 +188,7 @@ export const styles = StyleSheet.create({
         width: scale(42),
         borderRadius: scale(21),
         marginLeft: scale(12), // separa la imagen del borde izquierdo
-      },
+    },
 
     ownerName: {
         fontSize: SIZES.medium,
@@ -185,22 +201,75 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         columnGap: scale(12),
     },
-    iconBorder:{
-        borderWidth : 1,
-        borderColor : COLORS.btnBorder,
+    iconBorder: {
+        borderWidth: 1,
+        borderColor: COLORS.btnBorder,
         borderRadius: scale(100),
-        height : scale(40),
-        width : scale(40),
-        alignItems : 'center',
-        justifyContent : 'center',
+        height: scale(40),
+        width: scale(40),
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    cg14:{
-        flexDirection:'row',
-        alignItems:'center',
-        columnGap:scale(14),
+    cg14: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        columnGap: scale(14),
     },
-    btn : {
-        marginHorizontal:scale(18),
-    }
+    btn: {
+        marginHorizontal: scale(18),
+    },
+    footer: {
+        position: 'absolute',
+        height: 100,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: '#fff',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderTopColor: COLORS.grey,
+        borderTopWidth: StyleSheet.hairlineWidth,
+    },
+    footerText: {
+        height: '100%',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    footerPrice: {
+        fontSize: 18,
+        fontFamily: 'Regular',
+    },
+    btnText: {
+        color: 'black',
+        fontSize: 16,
+        fontFamily: 'Regular',
+    },
+    btnn: {
+        backgroundColor: COLORS.secondary,
+        height: 50,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    hostView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    host: {
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        backgroundColor: COLORS.grey,
+    },
+    divider: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: COLORS.grey,
+        marginVertical: 16,
+    },
+
+    
 
 });

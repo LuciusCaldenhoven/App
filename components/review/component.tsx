@@ -33,30 +33,32 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
     return (
         <>
             {reviews.map((item) => (
-                <Pressable key={item._id} style={[styles.card, containerStyle]}>
-                    <View style={styles.frsb}>
-                        <View style={styles.frcg}>
-                            <Image source={{ uri: item.user.image }} style={styles.person} />
-                            <Text
-                                style={styles.reviewTitle}
-                                numberOfLines={1}
-                                ellipsizeMode="tail"
-                            >
-                                {item.user.fullname}
-                            </Text>
+                <View style={styles.container}>
+                    <Pressable key={item._id} style={[styles.card, containerStyle]}>
+                        <View style={styles.frsb}>
+                            <View style={styles.frcg}>
+                                <Image source={{ uri: item.user.image }} style={styles.person} />
+                                <Text
+                                    style={styles.reviewTitle}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                >
+                                    {item.user.fullname}
+                                </Text>
+                            </View>
+                            <View style={styles.frcg}>
+                                <Text style={styles.textBold}>{item.rating}</Text>
+                                <FontAwesome
+                                    name="star"
+                                    size={scale(18)}
+                                    color={COLORS.star}
+                                />
+                            </View>
                         </View>
-                        <View style={styles.frcg}>
-                            <Text style={styles.textBold}>{item.rating}</Text>
-                            <FontAwesome
-                                name="star"
-                                size={scale(18)}
-                                color={COLORS.star}
-                            />
-                        </View>
-                    </View>
-                    {renderPaddingBottom(5)}
-                    <Text style={styles.text}>{item.comment}</Text>
-                </Pressable>
+                        {renderPaddingBottom(5)}
+                        <Text style={styles.text}>{item.comment}</Text>
+                    </Pressable>
+                </View>
             ))}
         </>
     );
