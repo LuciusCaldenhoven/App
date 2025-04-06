@@ -1,83 +1,112 @@
-import { View, Text, TouchableOpacity, FlatList, Dimensions, ScrollView, Pressable, StatusBar, Share } from "react-native";
+import { View, Text, TouchableOpacity, StatusBar, Dimensions, Share } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { COLORS, SIZES } from "@/constants/theme";
 import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
 import { Loader } from "@/components/Loader";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
-import { scale } from "@/constants/scale";
+import Animated, {
+    interpolate,
+    useAnimatedRef,
+    useAnimatedStyle,
+    useScrollViewOffset,
+} from 'react-native-reanimated';
+
 const { width } = Dimensions.get("window");
+const IMG_HEIGHT = 300;
 
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
+
+  
+    const scrollRef = useAnimatedRef<Animated.ScrollView>();
+    const scrollOffset = useScrollViewOffset(scrollRef);
+
+    const imageAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    translateY: interpolate(
+                        scrollOffset.value,
+                        [-IMG_HEIGHT, 0, IMG_HEIGHT, IMG_HEIGHT],
+                        [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+                    ),
+                },
+                {
+                    scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+                },
+            ],
+        };
+    });
+
+
     const post = useQuery(
         api.posts.getBookmarkedPostById,
         productId ? { postId: productId as Id<"posts"> } : "skip"
     );
 
+
     const author = useQuery(
         api.users.getUserProfile,
-        post ? { id: post.userId } : "skip"
+        post?.userId ? { id: post.userId } : "skip"
     );
 
-    const [activeIndex, setActiveIndex] = useState(0);
-    const flatListRef = useRef<FlatList>(null);
-
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
-    if (!post) return <Loader />;
-
     const handleBookmark = async () => {
-        await toggleBookmark({ postId: post._id });
+        await toggleBookmark({ postId: post!._id });
     };
 
-    const handleScroll = (event: any) => {
-        const index = Math.round(event.nativeEvent.contentOffset.x / width);
-        setActiveIndex(index);
-    };
     const shareListing = async () => {
         try {
             await Share.share({
-                title: post.title,
-                url: `https://revende.com/post/${post._id}`,
+                title: post?.title || "Mira este producto",
+                url: `https://revende.com/post/${post?._id}`,
             });
         } catch (err) {
             console.log(err);
         }
     };
 
+    const flatListRef = useRef(null);
+
+    const loadingPost = !post;
+    const loadingAuthor = post && !author;
+
 
     return (
-        <View style={styles.container}>
 
-            <View style={styles.headerButtonsContainer}>
-                {/* Botón Back a la izquierda */}
+        <View style={styles.container}>
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
+            <Animated.View style={styles.headerButtonsContainer}>
                 <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
                     <Ionicons name="chevron-back" size={20} />
                 </TouchableOpacity>
-
-                {/* Share + Bookmark a la derecha */}
                 <View style={styles.rightButtons}>
                     <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
                         <Feather name="share" size={20} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.roundButton} onPress={handleBookmark}>
-                        <FontAwesome
-                            name={post.isBookmarked ? "heart" : "heart-o"}
-                            size={20}
-                        />
+                        <FontAwesome name={post?.isBookmarked ? "heart" : "heart-o"} size={20} />
                     </TouchableOpacity>
                 </View>
-            </View>
+            </Animated.View>
 
-            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-                {/* 🏆 Carrusel de imágenes */}
-                <View style={{ position: "relative" }}>
-                    <FlatList
+            <Animated.ScrollView
+                contentContainerStyle={{ paddingBottom: 100 }}
+                ref={scrollRef}
+                scrollEventThrottle={16}
+            >
+                {/* Carrusel */}
+                {post?.imageUrls && (
+                    <Animated.FlatList
                         ref={flatListRef}
                         data={post.imageUrls}
                         horizontal
@@ -85,92 +114,71 @@ export default function ProductDetail() {
                         showsHorizontalScrollIndicator={false}
                         keyExtractor={(_, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <Image
-                                source={{ uri: item }}
-                                style={styles.image}
-                                contentFit="cover"
-                                transition={200}
-                                cachePolicy="memory-disk"
-                            />
+                            <Animated.View style={[styles.image, imageAnimatedStyle]}>
+                                <Image source={{ uri: item }} style={styles.image} contentFit="cover" transition={200} cachePolicy="memory-disk" />
+                            </Animated.View>
                         )}
-                        onScroll={handleScroll}
-                        scrollEventThrottle={16}
                     />
-                </View>
-
-                {/* ℹ️ Información del producto */}
-                <View style={styles.details}>
-                    <View style={styles.titleRow}>
-                        <Text style={styles.title}>{post.title}</Text>
-                    </View>
-
-                    <View style={styles.ratingRow}>
-                        <View style={styles.rating}>
-                            {[1, 2, 3, 4, 5].map((index) => (
-                                <Ionicons key={index} name="star" size={24} color="gold" />
-                            ))}
-                            <Text style={styles.ratingText}>(2.9)</Text>
+                )}
+                {loadingPost ? (
+                    <Loader />
+                ) : (
+                    <View style={styles.details}>
+                        <View style={styles.titleRow}>
+                            <Text style={styles.title}>{post.title}</Text>
                         </View>
-                    </View>
 
-                    <View style={styles.descriptionWrapper}>
-                        <Text style={styles.description}>Descripción</Text>
-                        <Text style={styles.descText}>{post.caption}</Text>
-                    </View>
+                        <View style={styles.descriptionWrapper}>
+                            <Text style={styles.description}>Descripción</Text>
+                            <Text style={styles.descText}>{post.caption}</Text>
+                        </View>
 
-                    <View style={{ marginBottom: SIZES.small }}>
-                        <View style={styles.info}>
-                            <View style={{ flexDirection: "row" }}>
-                                <Ionicons name="location-outline" size={20} />
-                                <Text>{post.location}</Text>
+                        {renderMarginBottom(12)}
+                        {renderBorderBottom(2)}
+                        {renderMarginTop(18)}
+
+                        {/* Perfil del autor */}
+                        <View style={styles.profile}>
+                            <View style={styles.cg14}>
+                                {loadingAuthor ? (
+                                    <Loader />
+                                ) : author ? (
+                                    <>
+                                        <Image
+                                            source={{ uri: author.image }}
+                                            style={styles.person}
+                                            contentFit="cover"
+                                            transition={200}
+                                            cachePolicy="memory-disk"
+                                        />
+                                        <Text style={styles.ownerName}>{author.fullname}</Text>
+                                    </>
+                                ) : (
+                                    <Loader />
+                                )}
                             </View>
                         </View>
-                        <View style={styles.info}>
-                            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <Ionicons name="cube-outline" size={20} />
-                                <Text>
-                                    {post.condition === "new" ? "Nuevo" : "Usado"}
-                                </Text>
+                    </View>
+                )}
+            </Animated.ScrollView>
+
+            {/* Footer */}
+            {post && (
+                <View style={styles.footer}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <TouchableOpacity style={styles.footerText}>
+                            <View style={styles.priceWrapper}>
+                                <Text style={styles.price}>${post.price}</Text>
                             </View>
-                        </View>
-                    </View>
+                        </TouchableOpacity>
 
-                    {renderMarginBottom(12)}
-                    {renderBorderBottom(2)}
-                    {renderMarginTop(18)}
-                    <View style={styles.profile}>
-                        <View style={styles.cg14}>
-                            <Image
-                                source={{ uri: author?.image }}
-                                style={styles.person}
-                                contentFit="cover"
-                                transition={200}
-                                cachePolicy="memory-disk"
-                            />
-                            <Text style={styles.ownerName}>{author?.fullname}</Text>
-
-                        </View>
-                        
-
+                        <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]}>
+                            <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
+            )}
 
-            </ScrollView>
-            <View style={styles.footer} >
-                <View
-                    style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <TouchableOpacity style={styles.footerText}>
-                        <View style={styles.priceWrapper}>
-                            <Text style={styles.price}>${post.price}</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]}>
-                        <Text style={styles.btnText}>Mandale un mensaje!</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            {/* <Button text="Mensajea" buttonStyles={styles.btn}/> */}
             {renderBorderBottom(6)}
         </View>
     );

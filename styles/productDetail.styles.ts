@@ -270,6 +270,24 @@ export const styles = StyleSheet.create({
         marginVertical: 16,
     },
 
+    overlay: {
+        flex: 1,
+        justifyContent: 'flex-end', // Asegura que el modal esté alineado desde abajo
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semi-transparente
+      },
+      modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        width: '100%',
+        alignItems: 'center',
+      },
+      closeButton: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
+      },
     
 
 });

@@ -36,9 +36,9 @@ export default function RootLayout() {
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }} onLayout={onLayoutRootView}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
           <InitialLayout />
-
+            
           {/* Capa negra solo en la parte inferior */}
           <View style={{
             position: "absolute",

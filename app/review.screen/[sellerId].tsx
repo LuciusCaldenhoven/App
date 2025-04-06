@@ -39,13 +39,11 @@ export default function SellerReviewsScreen() {
         />
       </View>
 
-      <FlatList
-        data={[1]}
-        renderItem={() => (
-          <ReviewComponent sellerId={sellerId as Id<"users">} containerStyle={styles.reviewCard} />
-        )}
-        showsVerticalScrollIndicator={false}
-      />
+      
+      <ReviewComponent sellerId={sellerId as Id<"users">} containerStyle={styles.reviewCard} />
+        
+        
+    
     </View>
   );
 }

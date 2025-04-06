@@ -22,8 +22,9 @@ import { renderBorderBottom, renderPaddingBottom } from '@/constants/ui-utils';
 interface Props {
     sellerId: Id<"users">;
     containerStyle?: ViewStyle;
+    horizontal?: boolean;
 }
-const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
+const ReviewComponent = ({ sellerId, containerStyle, horizontal = false }: Props) => {
     const reviews = useQuery(api.reviews.getReviewsByUser, {
         userId: sellerId,
     });
@@ -31,10 +32,12 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
     if (!reviews) return <Text>Cargando reseñas...</Text>;
 
     return (
-        <>
-            {reviews.map((item) => (
+        <FlatList
+            data={reviews}
+            keyExtractor={(item) => item._id} // Usamos el _id como clave única
+            renderItem={({ item }) => (
                 <View style={styles.container}>
-                    <Pressable key={item._id} style={[styles.card, containerStyle]}>
+                    <Pressable style={[styles.card, containerStyle]}>
                         <View style={styles.frsb}>
                             <View style={styles.frcg}>
                                 <Image source={{ uri: item.user.image }} style={styles.person} />
@@ -59,8 +62,11 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
                         <Text style={styles.text}>{item.comment}</Text>
                     </Pressable>
                 </View>
-            ))}
-        </>
+            )}
+            horizontal={horizontal} // Se aplica el estilo horizontal si es necesario
+            showsHorizontalScrollIndicator={false} // Oculta el indicador de scroll horizontal
+            showsVerticalScrollIndicator={false} // Oculta el indicador de scroll vertical
+        />
     );
 };
 

@@ -69,14 +69,9 @@ export default function Profile() {
               style={styles.text}>See All</Text>
           </View>
           {renderMarginTop(12)}
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={[1]} // no importa, renderizamos 1 solo bloque
-            renderItem={() => (
-              <ReviewComponent sellerId={currentUser._id} />
-            )}
-          />
+          
+          <ReviewComponent sellerId={currentUser._id} horizontal={true}  />
+          
 
           <TouchableOpacity
             style={styles.button}

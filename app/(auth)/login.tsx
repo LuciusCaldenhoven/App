@@ -4,26 +4,37 @@ import { useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { View, Text, Image, TouchableOpacity } from "react-native";
- 
 
 export default function Login() { 
+  const { startSSOFlow } = useSSO();
+  const router = useRouter();
 
-    const { startSSOFlow } = useSSO();
-    const router = useRouter();
-    
-    const handleGoogleSignIn = async () => {
-      try {
-        const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_google" });
-    
-        if (setActive && createdSessionId) {
-          setActive({ session: createdSessionId });
-          router.replace("/(tabs)");
-        }
-      } catch (error) {
-        console.error("OAuth error:", error);
+  const handleGoogleSignIn = async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_google" });
+
+      if (setActive && createdSessionId) {
+        setActive({ session: createdSessionId });
+        router.replace("/(tabs)");
       }
-    };
-    
+    } catch (error) {
+      console.error("OAuth error:", error);
+    }
+  };
+
+  const handleFacebookSignIn = async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_facebook" });
+
+      if (setActive && createdSessionId) {
+        setActive({ session: createdSessionId });
+        router.replace("/(tabs)");
+      }
+    } catch (error) {
+      console.error("OAuth Facebook error:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.brandSection}>
@@ -43,6 +54,7 @@ export default function Login() {
       </View>
 
       <View style={styles.loginSection}>
+        {/* Google SignIn */}
         <TouchableOpacity
           style={styles.googleButton}
           onPress={handleGoogleSignIn} 
@@ -52,6 +64,18 @@ export default function Login() {
             <Ionicons name="logo-google" size={20} color={COLORS.surface} />
           </View>
           <Text style={styles.googleButtonText}>Continue with Google</Text>
+        </TouchableOpacity>
+
+        {/* Facebook SignIn */}
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={handleFacebookSignIn} 
+          activeOpacity={0.9}
+        >
+          <View style={styles.googleIconContainer}>
+            <Ionicons name="logo-facebook" size={20} color={COLORS.surface} />
+          </View>
+          <Text style={styles.googleButtonText}>Continue with Facebook</Text>
         </TouchableOpacity>
 
         <Text style={styles.termsText}>
