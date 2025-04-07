@@ -19,12 +19,17 @@ export const COLORS = {
   placeholder: '#7F7F7F',
   button: '#21292B',
   star: '#FF8F3A',
+  outlineButtonBg: '#EDEDED',
+  divider: '#D9D9D9',
+  checkBoxBg: '#454545',
+
   visaCard: {
-    primary: "#2A4D50",
-    secondary: "#DDF0FF",
-    gray: "#B0BEC5",
-    gray2: "#CFD8DC",
+    primary: '#000000',
+    secondary: '#1c1c1c',
+    gray: '#2e2e2e',
+    gray2: '#3a3a3a',
   },
+
 } as const;
 // #fcf8f3
 export const SIZES = {

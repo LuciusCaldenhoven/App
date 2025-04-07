@@ -37,7 +37,7 @@ export const createStyles = () =>
         alignSelf: 'flex-end',
       },
       cardNumber: {
-        color: COLORS.black,
+        color: COLORS.white,
         fontSize: FontSize.FONT_18Px,
         letterSpacing: 2,
         marginBottom: scale(4),
@@ -48,10 +48,10 @@ export const createStyles = () =>
       },
       label: {
         fontSize: FontSize.FONT_12Px,
-        color: COLORS.black,
+        color: COLORS.white,
       },
       info: {
-        color: COLORS.black,
+        color: COLORS.white,
         fontSize: FontSize.FONT_16Px,
         fontFamily: "Regular",
       },
@@ -61,4 +61,5 @@ export const createStyles = () =>
         alignItems: 'center',
         marginBottom: scale(20), // Espacio entre la parte superior y el número de tarjeta
       },
+      
     });
