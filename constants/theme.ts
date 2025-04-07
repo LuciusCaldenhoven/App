@@ -19,6 +19,12 @@ export const COLORS = {
   placeholder: '#7F7F7F',
   button: '#21292B',
   star: '#FF8F3A',
+  visaCard: {
+    primary: "#2A4D50",
+    secondary: "#DDF0FF",
+    gray: "#B0BEC5",
+    gray2: "#CFD8DC",
+  },
 } as const;
 // #fcf8f3
 export const SIZES = {

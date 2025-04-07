@@ -75,7 +75,7 @@ export default function Profile() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => router.push(`/booking.screen/booking`)}
+            onPress={() => router.push(`/booking.screen/booking/booking`)}
           >
             <Text style={styles.buttonText}>Publicita</Text>
           </TouchableOpacity>

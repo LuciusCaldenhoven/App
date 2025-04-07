@@ -1,7 +1,7 @@
 import { View, Text, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { GestureHandlerRootView, Switch } from 'react-native-gesture-handler'
-import { createStyles } from "../booking.screen/booking.screen.styles";
+import { createStyles } from "../booking/booking.screen.styles";
 import StepperComponent from "@/components/stepper/component";
 import { COLORS } from "@/constants/theme";
 import { renderMarginBottom } from "@/constants/ui-utils";
@@ -9,8 +9,9 @@ import InputComponent from "@/components/input/component";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { scale } from "@/constants/scale";
 import TabSwitcher from "@/components/tabSwitcher/component";
-import { Planes , Renta} from "../search/filter.data";
+import { Planes , Renta} from "@/app/search/filter.data";
 import Button from "@/components/button/component";
+import { router } from "expo-router";
 
 const BookingScreen = () => {
     const styles = createStyles();
@@ -76,7 +77,11 @@ const BookingScreen = () => {
                         {renderMarginBottom(12)}
                     </ScrollView>
 
-                    <Button text="Continuar" buttonStyles={styles.buttonStyles} /> 
+                    <Button 
+                       onPress={() => router.push(`/booking.screen/payment/payment.screen`)}
+                        text="Continuar" 
+                        buttonStyles={styles.buttonStyles} 
+                    /> 
                 </View>
 
             </View>
