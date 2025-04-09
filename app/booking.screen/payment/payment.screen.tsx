@@ -13,6 +13,7 @@ import { BottomSheet } from '@/components/bottomSheet/BottomSheet';
 import CountryComponent from '@/components/countrypicker/component';
 import CheckBoxComponent from '@/components/checkbox/component';
 import { COLORS } from '@/constants/theme';
+import { router } from 'expo-router';
 
 const BookingPaymentScreen = () => {
   const styles = createStyles();
@@ -102,7 +103,7 @@ const BookingPaymentScreen = () => {
           />
           {renderMarginBottom(24)}
           <Button
-            // onPress={() => navigate('BookingPaymentScreen')}
+            onPress={() => router.push(`/booking.screen/confirmation/confirmation.screen`)}
             text="Pay Now"
           />
         </View>

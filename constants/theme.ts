@@ -8,7 +8,7 @@ export const COLORS = {
   grey: "#9CA3AF",
   tertiary: "#FF7754",
   border: '#dee2e6',
-  gray: "#83829A",
+  gray: '#767676',
   gray2: "#C1C0C8",
   btnBorder: '#D7D7D7',
   offwhite: "#F3F4F8",
