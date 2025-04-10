@@ -19,10 +19,12 @@ import Animated, {
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 300;
 
+
+
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
 
-  
+    
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useScrollViewOffset(scrollRef);
 
@@ -80,11 +82,7 @@ export default function ProductDetail() {
     return (
 
         <View style={styles.container}>
-            <StatusBar
-                barStyle="light-content"
-                translucent
-                backgroundColor="transparent"
-            />
+            <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
             <Animated.View style={styles.headerButtonsContainer}>
                 <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
                     <Ionicons name="chevron-back" size={20} />

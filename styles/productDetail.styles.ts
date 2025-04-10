@@ -88,6 +88,8 @@ export const styles = StyleSheet.create({
     image: {
         width,
         height: 330,
+        
+    
     },
     roundButton: {
         width: 37,

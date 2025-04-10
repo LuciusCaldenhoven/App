@@ -43,9 +43,10 @@ type PostProps = {
 
 
 export default function Post({ post }: PostProps) {
-    
+
     const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
     const [showComments, setShowComments] = useState(false);
+    const [showDetail, setShowDetail] = useState(false);
 
     const { user } = useUser();
     const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
@@ -55,7 +56,7 @@ export default function Post({ post }: PostProps) {
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
     const deletePost = useMutation(api.posts.deletePost)
 
-    
+
 
 
     const handleBookmark = async () => {
@@ -75,6 +76,7 @@ export default function Post({ post }: PostProps) {
 
     return (
         <TouchableOpacity onPress={() => router.push(`/product/${post._id}`)}>
+            
             <View style={styles.container}>
                 {/* Contenedor de la imagen */}
                 <View style={styles.imageContainer}>

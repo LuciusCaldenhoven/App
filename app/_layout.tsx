@@ -27,30 +27,21 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === "android") {
-      Navigation.setBackgroundColorAsync("#000000");
+      Navigation.setBackgroundColorAsync("transparent");
       Navigation.setButtonStyleAsync("light");
     }
   }, []);
 
-
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
+        {/* Barra de estado transparente */}
+        <StatusBar backgroundColor="white" style="dark" />
+        <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
           <InitialLayout />
-            
-          {/* Capa negra solo en la parte inferior */}
-          <View style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 34, // Altura típica del área segura en iOS
-            backgroundColor: "white",
-          }} />
         </SafeAreaView>
       </SafeAreaProvider>
-    
     </ClerkAndConvexProvider>
   );
 }
+

@@ -9,10 +9,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import { scale } from '@/constants/scale';
 import { COLORS } from '@/constants/theme';
 import { router } from 'expo-router';
+import assets from '@/assets';
 
 const BookingConfirmationScreen = () => {
   const styles = createStyles();
-
+  const { flash } = assets;
     
 
   return (
@@ -21,7 +22,7 @@ const BookingConfirmationScreen = () => {
         <StepperComponent active={3} />
        
         <Image
-           source={require("@/assets/images/flash.png")}
+           source={flash}
            resizeMode="cover"
            style={styles.image}
         />

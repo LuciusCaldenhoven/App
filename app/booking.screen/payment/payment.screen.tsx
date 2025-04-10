@@ -15,9 +15,11 @@ import CheckBoxComponent from '@/components/checkbox/component';
 import { COLORS } from '@/constants/theme';
 import { router } from 'expo-router';
 
+
 const BookingPaymentScreen = () => {
   const styles = createStyles();
   const [showPayment, setShowPayment] = useState(false);
+  
   return (
     <View style={styles.container}>
       <ScrollView style={styles.main}>
@@ -26,11 +28,11 @@ const BookingPaymentScreen = () => {
         <VisaCard />
         {renderMarginBottom(6)}
         <View style={styles.inputContainer}>
-          <Text style={styles.lableText}>select payment method</Text>
+          <Text style={styles.lableText}>Seleccion metodo de pago</Text>
           <Pressable style={styles.selectPayment}>
             <View style={styles.rg}>
               <FontAwesome name="money" size={scale(18)} color={COLORS.gray} />
-              <Text style={styles.selectPaymentText}>Credit Card</Text>
+              <Text style={styles.selectPaymentText}>Tarjeta de credito</Text>
             </View>
             <Button
               text="DEFAULT"
@@ -40,7 +42,7 @@ const BookingPaymentScreen = () => {
             />
           </Pressable>
           {renderMarginBottom(22)}
-          <Text style={styles.lableText}>Card information</Text>
+          <Text style={styles.lableText}>Informacion de tarjet</Text>
           <InputComponent
             onChangeText={e => console.log(e)}
             placeholder="Nombre en la tarjeta"
