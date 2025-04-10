@@ -52,7 +52,7 @@ export default function Post({ post }: PostProps) {
     const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
 
-    const toggleLike = useMutation(api.posts.toggleLike);
+    
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
     const deletePost = useMutation(api.posts.deletePost)
 

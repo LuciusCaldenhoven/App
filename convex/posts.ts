@@ -73,12 +73,7 @@ export const getFeedPosts = query({
             posts.map(async (post) => {
                 const postAuthor = (await ctx.db.get(post.userId))!;
 
-                const like = await ctx.db
-                    .query("likes")
-                    .withIndex("by_user_and_post", (q) =>
-                        q.eq("userId", currentUser._id).eq("postId", post._id)
-                    )
-                    .first();
+                
 
                 const bookmark = await ctx.db
                     .query("bookmarks")
@@ -93,7 +88,7 @@ export const getFeedPosts = query({
                         username: postAuthor?.username,
                         image: postAuthor?.image
                     },
-                    isLiked: !!like,
+                    
                     isBookmarked: !!bookmark
                 };
             })
@@ -105,49 +100,7 @@ export const getFeedPosts = query({
 });
 
 
-export const toggleLike = mutation({
-    args: { postId: v.id("posts") },
-    handler: async (ctx, args) => {
-        const currentUser = await getAuthenticatedUser(ctx);
 
-        const existing = await ctx.db
-            .query("likes")
-            .withIndex("by_user_and_post", (q) =>
-                q.eq("userId", currentUser._id).eq("postId", args.postId)
-            )
-            .first();
-        const post = await ctx.db.get(args.postId);
-        if (!post) throw new Error("Post not found");
-
-        if (existing) {
-            // remove like
-            await ctx.db.delete(existing._id);
-            await ctx.db.patch(args.postId, { likes: post.likes - 1 });
-            return false; // unliked
-        } else {
-            // add like
-            await ctx.db.insert("likes", {
-                userId: currentUser._id,
-                postId: args.postId,
-            });
-
-            await ctx.db.patch(args.postId, { likes: post.likes + 1 });
-
-            // if it's not my post create a notification
-            if (currentUser._id !== post.userId) {
-                await ctx.db.insert("notifications", {
-                    receiverId: post.userId,
-                    senderId: currentUser._id,
-                    type: "like",
-                    postId: args.postId,
-                });
-            }
-            return true;
-
-        }
-
-    },
-});
 
 export const deletePost = mutation({
     args: { postId: v.id("posts") },
@@ -160,15 +113,8 @@ export const deletePost = mutation({
         // verify ownership
         if (post.userId !== currentUser._id) throw new Error("Not authorized to delete this post");
 
-        // delete associated likes
-        const likes = await ctx.db
-            .query("likes")
-            .withIndex("by_post", (q) => q.eq("postId", args.postId))
-            .collect();
-
-        for (const like of likes) {
-            await ctx.db.delete(like._id);
-        }
+       
+        
 
         // delete associated comments
         const bookmarks = await ctx.db

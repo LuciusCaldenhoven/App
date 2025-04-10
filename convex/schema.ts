@@ -33,12 +33,7 @@ export default defineSchema({
     .index("by_category", ["category"])
     .index("by_price", ["price"]),
 
-    likes: defineTable({
-        userId: v.id("users"),
-        postId: v.id("posts"),
-    })
-    .index("by_post", ["postId"])
-    .index("by_user_and_post", ["userId", "postId"]),
+    
 
 
     notifications: defineTable({
@@ -71,6 +66,7 @@ export default defineSchema({
         sellerId: v.id("users"),
         postId: v.id("posts"),
         createdAt: v.number(),
+        lastMessage: v.optional(v.string()),
     })
     .index("by_buyer", ["buyerId"])
     .index("by_seller", ["sellerId"])
