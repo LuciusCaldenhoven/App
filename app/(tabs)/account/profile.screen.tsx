@@ -52,9 +52,12 @@ export default function Profile() {
               <Text style={styles.email}>{currentUser.email}</Text>
             </View>
           </View>
-          <View style={styles.aic}>
+          <TouchableOpacity
+            style={styles.aic}
+            onPress={() => router.push({ pathname: "/editProfile/editProfile", params: { currentUser: JSON.stringify(currentUser) } })}
+          >
             <MaterialCommunityIcons name="chevron-right" color={COLORS.gray} size={scale(24)} />
-          </View>
+          </TouchableOpacity>
         </View>
 
         {renderMarginBottom(12)}
@@ -110,7 +113,7 @@ export default function Profile() {
         <Button
           onPress={() => signOut()}
           text="chau"
-          
+
         />
       </ScrollView>
     </View>

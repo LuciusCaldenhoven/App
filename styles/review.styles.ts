@@ -37,6 +37,7 @@ export const createStyles = () =>
         person: {
             width: scale(32),
             height: scale(32),
+            borderRadius: scale(16),
         },
         reviewTitle: {
             fontSize: FontSize.FONT_14Px,

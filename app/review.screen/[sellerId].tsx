@@ -7,7 +7,7 @@ import { scale } from "@/constants/scale";
 import { COLORS, FontSize } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
 import InputComponent from "@/components/input/component";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { createStyles } from "../review.screen/review.screen.styles";
 import ReviewComponent from "@/components/review/component";
 
@@ -23,7 +23,7 @@ export default function SellerReviewsScreen() {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => router.back()}>
-        <Ionicons name="chevron-back-circle" size={30} />
+        <AntDesign name="arrowleft" size={30} />
       </TouchableOpacity>
       <View style={styles.header}>
         <InputComponent

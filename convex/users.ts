@@ -66,14 +66,15 @@ export async function getAuthenticatedUser(ctx: QueryCtx | MutationCtx) {
 export const updateProfile = mutation({
     args: {
         fullname: v.string(),
-        bio: v.optional(v.string()),
+        image: v.optional(v.string()), // Agregamos la imagen como argumento opcional
     },
     handler: async (ctx, args) => {
         const currentUser = await getAuthenticatedUser(ctx);
 
+        // Actualizamos el perfil del usuario en la base de datos
         await ctx.db.patch(currentUser._id, {
             fullname: args.fullname,
-
+            ...(args.image && { image: args.image }), // Solo actualiza la imagen si se proporciona
         });
     },
 });
