@@ -3,7 +3,7 @@ import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { styles } from "../account/profile.styles";
 import { useAuth } from "@clerk/clerk-expo";
-import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
@@ -13,6 +13,7 @@ import { renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import { router } from "expo-router";
 import { scale } from "@/constants/scale";
 import SingleList from "@/components/singleList/component";
+import Button from "@/components/button/component";
 
 
 
@@ -41,7 +42,8 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.main}>
+      <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 100 }}>
+        <Text style={styles.title_first}>Perfil</Text>
         <View style={styles.profileContainer}>
           <View style={styles.frcg}>
             <Image source={currentUser.image} style={styles.profileImage} />
@@ -51,95 +53,64 @@ export default function Profile() {
             </View>
           </View>
           <View style={styles.aic}>
-            <Feather name="edit-3" size={scale(18)} color={COLORS.gray} />
-            <Text style={styles.editProfile}>Edit Profile</Text>
+            <MaterialCommunityIcons name="chevron-right" color={COLORS.gray} size={scale(24)} />
           </View>
         </View>
+
         {renderMarginBottom(12)}
+
+        <View style={styles.rowBetween}>
+          <Text style={styles.title}>Review ({currentUser.reviewCount})</Text>
+          <Text
+            onPress={() => router.push(`/review.screen/${currentUser._id}`)}
+            style={styles.text}
+          >
+            See All
+          </Text>
+        </View>
+
+        {renderMarginTop(8)}
+        <ReviewComponent sellerId={currentUser._id} horizontal={true} />
+
+        {renderMarginBottom(8)}
         <Text style={styles.title}>General</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Favourite Cars"
+          component={<AntDesign name="user" size={scale(24)} color={COLORS.gray} />}
+          text="Informacion Personal" />
+        <SingleList
+          component={<AntDesign name="inbox" size={scale(24)} color={COLORS.gray} />}
+          text="Mis Productos"
+          onPress={() => router.push("/My_products/myproducts")}
         />
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Previous Rent"
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          text="Publicitar"
+          onPress={() => router.push("/booking.screen/booking/booking")}
         />
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Notification"
-        />
-        <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Partnership"
-        />
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          text="Mas" />
         {renderMarginBottom(12)}
-        <Text style={styles.title}>Support</Text>
+        <Text style={styles.title}>Ayuda</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Settings"
-        />
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          text="Mas" />
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Languages"
-        />
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          text="Mas" />
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Invite Friends"
-        />
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          text="Mas" />
         <SingleList
-          component={
-            <MaterialCommunityIcons
-              name="cards-heart-outline"
-              size={scale(24)}
-              color={COLORS.gray}
-            />
-          }
-          text="Privacy Policy"
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          text="Mas" />
+
+        <Button
+          onPress={() => signOut()}
+          text="chau"
+          
         />
       </ScrollView>
     </View>
@@ -148,49 +119,6 @@ export default function Profile() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-//   return (
-//     <View style={styles.container}>
-//       {/* HEADER */}
-//       <View style={styles.header}>
-//         <View style={styles.headerRight}>
-          
-//         </View>
-//       </View>
-//       <ScrollView showsVerticalScrollIndicator={false}>
-//         <View style={styles.profileInfo}>
-//           {/* AVATAR & STATS */}
-//           <View style={styles.avatarAndStats}>
-//             <View style={styles.avatarContainer}>
-//               <Image
-//                 source={currentUser.image}
-//                 style={styles.avatar}
-//                 contentFit="cover"
-//                 transition={200}
-//               />
-//             </View>
-//           </View>
-      
-
-//         </View>
-//         {posts.length === 0 && <NoPostsFound />}
-//       </ScrollView>
-
-
-//     </View>
-//   );
-
-// }
 
 function NoPostsFound() {
   return (

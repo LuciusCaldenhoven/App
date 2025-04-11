@@ -4,12 +4,16 @@ import { useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useState } from "react";
 
 export default function Login() { 
   const { startSSOFlow } = useSSO();
   const router = useRouter();
+  const [isDisabled, setIsDisabled] = useState(false); 
 
   const handleGoogleSignIn = async () => {
+    if (isDisabled) return; 
+    setIsDisabled(true); 
     try {
       const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_google" });
 
@@ -19,10 +23,14 @@ export default function Login() {
       }
     } catch (error) {
       console.error("OAuth error:", error);
+    } finally {
+      setIsDisabled(false); 
     }
   };
 
   const handleFacebookSignIn = async () => {
+    if (isDisabled) return; 
+    setIsDisabled(true); 
     try {
       const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_facebook" });
 
@@ -32,6 +40,8 @@ export default function Login() {
       }
     } catch (error) {
       console.error("OAuth Facebook error:", error);
+    } finally {
+      setIsDisabled(false); 
     }
   };
 
@@ -57,8 +67,9 @@ export default function Login() {
         {/* Google SignIn */}
         <TouchableOpacity
           style={styles.googleButton}
-          onPress={handleGoogleSignIn} 
+          onPress={handleGoogleSignIn}
           activeOpacity={0.9}
+          disabled={isDisabled} 
         >
           <View style={styles.googleIconContainer}>
             <Ionicons name="logo-google" size={20} color={COLORS.surface} />
@@ -69,8 +80,9 @@ export default function Login() {
         {/* Facebook SignIn */}
         <TouchableOpacity
           style={styles.googleButton}
-          onPress={handleFacebookSignIn} 
+          onPress={handleFacebookSignIn}
           activeOpacity={0.9}
+          disabled={isDisabled} 
         >
           <View style={styles.googleIconContainer}>
             <Ionicons name="logo-facebook" size={20} color={COLORS.surface} />

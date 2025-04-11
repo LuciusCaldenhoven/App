@@ -1,8 +1,6 @@
-import { StyleSheet, Dimensions } from "react-native";
-import { COLORS } from "@/constants/theme";
-
-const { width } = Dimensions.get("window");
-const ITEM_WIDTH = width / 2 - 12; // 🔥 Para 2 columnas con espacio
+import { StyleSheet } from "react-native";
+import { COLORS, FontSize } from "@/constants/theme";
+import { scale } from "@/constants/scale";
 
 export const styles = StyleSheet.create({
     container: {
@@ -28,5 +26,15 @@ export const styles = StyleSheet.create({
     listContainer: {
         paddingVertical: 10,
     },
-    
+    noProductsContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.background,
+    },
+    noProductsText: {
+        fontSize: FontSize.FONT_18Px,
+        color: COLORS.placeholder,
+        textAlign: "center",
+    },
 });

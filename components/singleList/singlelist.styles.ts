@@ -15,18 +15,10 @@ export const createStyles = () =>
       alignItems: 'center',
       columnGap: scale(12),
     },
-    iconContainer: {
-      height: scale(40),
-      width: scale(40),
-      borderRadius: scale(100),
-      borderWidth: 1,
-      borderColor: COLORS.btnBorder,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+    
     text: {
       fontSize: FontSize.FONT_14Px,
-      color: COLORS.primary,
+      color: COLORS.black,
       fontFamily: "Regular",
     },
   });
