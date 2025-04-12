@@ -35,7 +35,6 @@ export default function RootLayout() {
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        {/* Barra de estado transparente */}
         <StatusBar backgroundColor="white" style="dark" />
         <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
           <InitialLayout />
