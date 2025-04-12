@@ -77,5 +77,4 @@ export const Planes = [
         value: 'VendeYa',
         component: <FontAwesome6 name ="fire" size={scale(18)}/>,
     },
-
 ]
