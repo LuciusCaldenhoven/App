@@ -11,6 +11,9 @@ import Slider from '@react-native-community/slider';
 import InputComponent from "@/components/input/component";
 import { data, condicionData } from "./filter.data";
 import Button from "@/components/button/component";
+
+
+
 type FilterProps = {
   visible: boolean;
   onClose: () => void;

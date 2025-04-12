@@ -45,20 +45,19 @@ export default function Profile() {
       <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 100 }}>
         <Text style={styles.title_first}>Perfil</Text>
         <View style={styles.profileContainer}>
-          <View style={styles.frcg}>
+          <TouchableOpacity
+            style={styles.frcg}
+            onPress={() => router.push({ pathname: "/editProfile/editProfile", params: { currentUser: JSON.stringify(currentUser) } })}>
             <Image source={currentUser.image} style={styles.profileImage} />
             <View>
               <Text style={styles.title}>{currentUser.fullname}</Text>
               <Text style={styles.email}>{currentUser.email}</Text>
             </View>
-          </View>
-          <TouchableOpacity
-            style={styles.aic}
-            onPress={() => router.push({ pathname: "/editProfile/editProfile", params: { currentUser: JSON.stringify(currentUser) } })}
-          >
-            <MaterialCommunityIcons name="chevron-right" color={COLORS.gray} size={scale(24)} />
+            <MaterialCommunityIcons name="chevron-right" color={COLORS.gray} size={scale(24)}  style={{ marginLeft: 60 }}/>
           </TouchableOpacity>
         </View>
+
+
 
         {renderMarginBottom(12)}
 

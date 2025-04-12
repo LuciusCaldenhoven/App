@@ -18,6 +18,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: scale(12),
+    
   },
   profileImage: {
     height: scale(55),
@@ -28,9 +29,12 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: scale(12),
+    
   },
   aic: {
-    alignItems: 'center',
+    marginRight: 10,
+    
+    
   },
   title_first:{
     fontSize: FontSize.FONT_24Px,

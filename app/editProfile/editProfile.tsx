@@ -12,7 +12,7 @@ import { renderBorderBottom } from '@/constants/ui-utils';
 import * as ImagePicker from "expo-image-picker";
 
 const EditProfile = () => {
-    const { currentUser } = useLocalSearchParams(); // Recibe el currentUser desde los parámetros de navegación
+    const { currentUser } = useLocalSearchParams(); 
 
     const parsedUser = typeof currentUser === 'string' ? JSON.parse(currentUser) : currentUser;
 
@@ -94,16 +94,3 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
-
-
-
-// <TextInput
-//     placeholder="Full Name"
-//     value={editedProfile.fullname}
-//     onChangeText={(text) => setEditedProfile({ ...editedProfile, fullname: text })}
-//     style={styles.inputField}
-// />
-
-// <TouchableOpacity onPress={handleSaveProfile} style={styles.saveButton}>
-//     <Text style={{ color: COLORS.white }}>Save</Text>
-// </TouchableOpacity>

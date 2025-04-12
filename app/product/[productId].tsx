@@ -82,7 +82,6 @@ export default function ProductDetail() {
     return (
 
         <View style={styles.container}>
-            <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
             <Animated.View style={styles.headerButtonsContainer}>
                 <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
                     <Ionicons name="chevron-back" size={20} />
@@ -136,7 +135,7 @@ export default function ProductDetail() {
                         {renderMarginTop(18)}
 
                         {/* Perfil del autor */}
-                        <View style={styles.profile}>
+                        <TouchableOpacity style={styles.profile}>
                             <View style={styles.cg14}>
                                 {loadingAuthor ? (
                                     <Loader />
@@ -155,7 +154,7 @@ export default function ProductDetail() {
                                     <Loader />
                                 )}
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 )}
             </Animated.ScrollView>
