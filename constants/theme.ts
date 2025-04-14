@@ -1,7 +1,7 @@
 export const COLORS = {
   primary: "#2A4D50",
   secondary: "#DDF0FF",
-  background: "white", 
+  background: "#FFFFFF", 
   surface: "#1A1A1A",
   surfaceLight: "#2A2A2A",
   white: "#FFFFFF",

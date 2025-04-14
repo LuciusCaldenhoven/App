@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {Dimensions, Platform, StatusBar, StyleSheet} from 'react-native';
 import { COLORS, FontSize } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 const {width} = Dimensions.get('window');
@@ -8,6 +8,7 @@ export const createStyles = () =>
     container: {
       flex: 1,
       backgroundColor: COLORS.background,
+      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
     },
     main: {
       flex: 1,

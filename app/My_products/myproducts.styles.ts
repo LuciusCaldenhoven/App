@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StatusBar, StyleSheet } from "react-native";
 import { COLORS, FontSize } from "@/constants/theme";
 import { scale } from "@/constants/scale";
 
@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
         backgroundColor: COLORS.background,
         paddingHorizontal: 8,
         marginBottom: 12,
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
     },
     header: {
         flexDirection: "row",

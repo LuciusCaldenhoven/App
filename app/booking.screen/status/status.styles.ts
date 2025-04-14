@@ -1,6 +1,6 @@
 import { scale } from '@/constants/scale';
 import { COLORS, FontSize } from '@/constants/theme';
-import { StyleSheet } from 'react-native';
+import { Platform, StatusBar, StyleSheet } from 'react-native';
 
 
 export const createStyles = () =>
@@ -8,6 +8,7 @@ export const createStyles = () =>
         container: {
             flex: 1,
             backgroundColor: COLORS.background,
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
         },
         main: {
             flex: 1,

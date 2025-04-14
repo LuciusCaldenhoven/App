@@ -12,6 +12,7 @@ export default function Search() {
   };
 
   return (
+    
     <View style={styles.searchContainer}>
       <View style={styles.searchWrapper}>
         <TextInput

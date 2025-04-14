@@ -42,7 +42,7 @@ const BookingPaymentScreen = () => {
             />
           </Pressable>
           {renderMarginBottom(22)}
-          <Text style={styles.lableText}>Informacion de tarjet</Text>
+          <Text style={styles.lableText}>Informacion de tarjeta</Text>
           <InputComponent
             onChangeText={e => console.log(e)}
             placeholder="Nombre en la tarjeta"

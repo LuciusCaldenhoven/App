@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1, // Permite que el contenido crezca dentro del contenedor principal
+    
   },
   header: {
     flexDirection: "row", // Alinea los elementos en fila

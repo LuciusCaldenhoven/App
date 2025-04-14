@@ -3,7 +3,7 @@ import InitialLayout from "@/components/InitialLayout";
 import ClerkAndConvexProvider from "@/providers/ClerkAndConvexProvider";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
-import { SplashScreen } from "expo-router";
+import { SplashScreen, useRouter } from "expo-router";
 import * as Navigation from "expo-navigation-bar";
 import { Platform, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -31,14 +31,18 @@ export default function RootLayout() {
       Navigation.setButtonStyleAsync("light");
     }
   }, []);
+  
+  
 
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        <StatusBar backgroundColor="white" style="dark" />
-        <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        {/* Configura el fondo blanco detrás del StatusBar */}
+        <View style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
+          {/* Configura el StatusBar global */}
+          <StatusBar style="dark" backgroundColor="white" />
           <InitialLayout />
-        </SafeAreaView>
+        </View>
       </SafeAreaProvider>
     </ClerkAndConvexProvider>
   );

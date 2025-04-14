@@ -1,5 +1,5 @@
 import { COLORS, SIZES } from "@/constants/theme";
-import { Dimensions, Platform, StyleSheet } from "react-native";
+import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16; // 🔹 Ajusta el ancho de los posts en una vista de dos columnas
@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignContent: "center",
-
+        
         backgroundColor: COLORS.secondary,
         borderRadius: SIZES.medium,
         marginVertical: SIZES.medium,
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
-        
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40 
     },
     searchImage: {
         width: 200,

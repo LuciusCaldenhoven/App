@@ -3,7 +3,7 @@ import { Dimensions, Platform, StyleSheet } from "react-native";
 import { scale } from '@/constants/scale';
 
 const { width } = Dimensions.get("window");
-
+const IMG_HEIGHT = 300;
 
 export const styles = StyleSheet.create({
     productImage: {
@@ -67,11 +67,12 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.white,
+
     },
 
     headerButtonsContainer: {
         position: "absolute",
-        top: SIZES.large,
+        top: SIZES.xxLarge,
         left: 0,
         right: 0,
         flexDirection: "row",
@@ -87,9 +88,9 @@ export const styles = StyleSheet.create({
     },
     image: {
         width,
-        height: 330,
-        
-    
+        height: 380,
+        position: "relative",
+
     },
     roundButton: {
         width: 37,
@@ -108,6 +109,7 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: SIZES.medium + 5,
 
     },
+
     titleRow: {
 
         paddingBottom: SIZES.small,
@@ -276,20 +278,87 @@ export const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end', // Asegura que el modal esté alineado desde abajo
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semi-transparente
-      },
-      modalContent: {
+    },
+    modalContent: {
         backgroundColor: 'white',
         padding: 20,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         width: '100%',
         alignItems: 'center',
-      },
-      closeButton: {
+    },
+    closeButton: {
         position: 'absolute',
         top: 20,
         right: 20,
-      },
-    
+    },
+    imageIndicator: {
+        position: "absolute",
+        top: 310,
+        right: 15,
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semitransparente
+        borderRadius: 5,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        zIndex: 10,
+    },
+    imageIndicatorText: {
+        color: "white",
+        fontSize: 14,
+        fontWeight: "bold",
+        fontFamily: "Regular",
+    },
+    imageContainer: {
+        width: width,
+        height: 380,
+        position: "relative",
+    },
+    bottomContainer: {
+        flex: 0.9,
+        backgroundColor: COLORS.white,
+        borderTopLeftRadius: scale(30),
+        borderTopRightRadius: scale(30),
+        paddingHorizontal: scale(12),
+        paddingVertical: scale(12),
+    },
+    card: {
+        backgroundColor: '#fff',
+        padding: 24,
+        borderRadius: 16,
+        marginHorizontal: 20,
+        marginTop: 24,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        alignItems: 'center',
+        gap: 14,
+        marginBottom: 20,
+    },
+    avatarContainer: {
+        position: "relative", 
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 20,
+        marginRight: 120,
+        marginTop: 10,
+    },
+    avatar: {
+        width: 110,
+        height: 110,
+        borderRadius: 70,
+        backgroundColor: COLORS.grey,
+    },
+    textReview:{
+        fontFamily: "SemiBold",
+        fontSize: 20,
+        color: COLORS.black,
+        marginTop: 10,
+        marginLeft:10
+    }
 
 });

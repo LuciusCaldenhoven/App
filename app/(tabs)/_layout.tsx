@@ -14,7 +14,7 @@ export default function TabLayout() {
           right: 0,
           left: 0,
           elevation: 0,
-          height: 50,
+          height: 90,
       }
 
       }}
@@ -41,7 +41,7 @@ export default function TabLayout() {
         name="publicar"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle" size={size} color={COLORS.primary} />
+            <Ionicons name="add-circle" size={size} color={color} />
           ),
         }}
       />

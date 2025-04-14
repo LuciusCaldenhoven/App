@@ -1,5 +1,6 @@
+import { scale } from "@/constants/scale";
 import { COLORS, SIZES} from "@/constants/theme";
-import { Dimensions, Platform, StyleSheet } from "react-native";
+import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16; // 🔹 Ajusta el ancho de los posts en una vista de dos columnas
@@ -8,7 +9,8 @@ export const styles = StyleSheet.create({
   // 🔹 Contenedor principal de la app
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.white,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
   },
 
   // 🔹 Estilos para el encabezado de la app (donde aparece "ReVende")
