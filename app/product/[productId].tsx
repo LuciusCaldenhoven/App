@@ -12,43 +12,43 @@ import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/const
 import Animated, { interpolate, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { BottomSheet } from "@/components/bottomSheet/BottomSheet";
-import { ScrollView } from "react-native-gesture-handler";
-import ReviewComponent from "@/components/review/component";
+import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
 
 export default function ProductDetail() {
+    // Parámetros y estados
     const { productId } = useLocalSearchParams();
-    const [currentIndex, setCurrentIndex] = useState(0); // Estado para rastrear el índice actual
-
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [showBottomSheet, setShowBottomSheet] = useState(false);
+
+    // Referencias y animaciones
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useScrollViewOffset(scrollRef);
 
-    const imageAnimatedStyle = useAnimatedStyle(() => {
+    const imageAnimatedStyle = useAnimatedStyle(() => ({
+        transform: [
+            {
+                translateY: interpolate(
+                    scrollOffset.value,
+                    [-IMG_HEIGHT, 0, IMG_HEIGHT, IMG_HEIGHT],
+                    [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+                ),
+            },
+            {
+                scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+            },
+        ],
+    }));
+
+    const headerAnimatedStyle = useAnimatedStyle(() => {
         return {
-            transform: [
-                {
-                    translateY: interpolate(
-                        scrollOffset.value,
-                        [-IMG_HEIGHT, 0, IMG_HEIGHT, IMG_HEIGHT],
-                        [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-                    ),
-                },
-                {
-                    scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
-                },
-            ],
+            opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]),
         };
-    });
+    }, []);
 
-    const handleScroll = (event: any) => {
-        const contentOffsetX = event.nativeEvent.contentOffset.x;
-        const index = Math.round(contentOffsetX / width);
-        setCurrentIndex(index);
-    };
-
+    // Consultas y mutaciones
     const post = useQuery(
         api.posts.getBookmarkedPostById,
         productId ? { postId: productId as Id<"posts"> } : "skip"
@@ -59,7 +59,14 @@ export default function ProductDetail() {
         post?.userId ? { id: post.userId } : "skip"
     );
 
+    const posts = useQuery(
+        api.posts.getPostsByUser,
+        author?._id ? { userId: author._id } : "skip"
+    );
+
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+
+    // Funciones
     const handleBookmark = async () => {
         await toggleBookmark({ postId: post!._id });
     };
@@ -75,16 +82,27 @@ export default function ProductDetail() {
         }
     };
 
-    const flatListRef = useRef(null);
+    const handleScroll = (event: any) => {
+        const contentOffsetX = event.nativeEvent.contentOffset.x;
+        const index = Math.round(contentOffsetX / width);
+        setCurrentIndex(index);
+    };
 
+    // Estados de carga
     const loadingPost = !post;
     const loadingAuthor = post && !author;
-
+    const flatListRef = useRef(null);
+    // Renderizado
     return (
         <>
             <StatusBar style="light" backgroundColor="white" />
             <View style={styles.container}>
-                <Animated.View style={styles.headerButtonsContainer}>
+                {/* Header */}
+                <Animated.View style={[styles.header, headerAnimatedStyle]}>
+                </Animated.View>
+
+                {/* Botones (Siempre visibles) */}
+                <View style={styles.headerButtonsContainer}>
                     <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
                         <Ionicons name="chevron-back" size={20} />
                     </TouchableOpacity>
@@ -96,10 +114,11 @@ export default function ProductDetail() {
                             <FontAwesome name={post?.isBookmarked ? "heart" : "heart-o"} size={20} />
                         </TouchableOpacity>
                     </View>
-                </Animated.View>
+                </View>
 
-                <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} ref={scrollRef} scrollEventThrottle={16}>
-                    {/* Carrusel */}
+                {/* Contenido principal */}
+                <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} ref={scrollRef} scrollEventThrottle={16} >
+                    {/* Carrusel de imágenes */}
                     {post?.imageUrls && (
                         <Animated.FlatList
                             ref={flatListRef}
@@ -108,44 +127,31 @@ export default function ProductDetail() {
                             pagingEnabled
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(_, index) => index.toString()}
-                            onScroll={handleScroll} // Maneja el evento de scroll
+                            onScroll={handleScroll}
                             renderItem={({ item }) => (
                                 <View style={styles.imageContainer}>
                                     <Animated.View style={[styles.image, imageAnimatedStyle]}>
-                                        <Image
-                                            source={{ uri: item }}
-                                            style={styles.image}
-                                            contentFit="cover"
-                                            transition={200}
-                                            cachePolicy="memory-disk"
-                                        />
+                                        <Image source={{ uri: item }} style={styles.image} contentFit="cover" transition={200} cachePolicy="memory-disk" />
                                     </Animated.View>
                                 </View>
-
                             )}
-
                         />
                     )}
                     {post?.imageUrls && (
                         <View style={styles.imageIndicator}>
-                            <Text style={styles.imageIndicatorText}>
-                                {currentIndex + 1} / {post.imageUrls.length}
-                            </Text>
-                        </View>
-                    )}
-                    {loadingPost ? (
-                        <Loader />
-                    ) : (
+                            <Text style={styles.imageIndicatorText}> {currentIndex + 1} / {post.imageUrls.length} </Text>
+                        </View>)}
+
+                    {/* Detalles del producto */}
+                    {loadingPost ? (<Loader />) : (
                         <View style={styles.details}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.title}>{post.title}</Text>
                             </View>
-
                             <View style={styles.descriptionWrapper}>
                                 <Text style={styles.description}>Descripción</Text>
                                 <Text style={styles.descText}>{post.caption}</Text>
                             </View>
-
                             {renderMarginBottom(12)}
                             {renderBorderBottom(2)}
                             {renderMarginTop(18)}
@@ -153,22 +159,12 @@ export default function ProductDetail() {
                             {/* Perfil del autor */}
                             <TouchableOpacity style={styles.profile} onPress={() => setShowBottomSheet(true)}>
                                 <View style={styles.cg14}>
-                                    {loadingAuthor ? (
-                                        <Loader />
-                                    ) : author ? (
+                                    {loadingAuthor ? (<Loader />) : author ? (
                                         <>
-                                            <Image
-                                                source={{ uri: author.image }}
-                                                style={styles.person}
-                                                contentFit="cover"
-                                                transition={200}
-                                                cachePolicy="memory-disk"
-                                            />
+                                            <Image source={{ uri: author.image }} style={styles.person} contentFit="cover" transition={200} cachePolicy="memory-disk" />
                                             <Text style={styles.ownerName}>{author.fullname}</Text>
                                         </>
-                                    ) : (
-                                        <Loader />
-                                    )}
+                                    ) : (<Loader />)}
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -178,13 +174,12 @@ export default function ProductDetail() {
                 {/* Footer */}
                 {post && (
                     <View style={styles.footer}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                             <TouchableOpacity style={styles.footerText}>
                                 <View style={styles.priceWrapper}>
                                     <Text style={styles.price}>${post.price}</Text>
                                 </View>
                             </TouchableOpacity>
-
                             <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]}>
                                 <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
                             </TouchableOpacity>
@@ -194,21 +189,16 @@ export default function ProductDetail() {
 
                 {renderBorderBottom(6)}
 
+                {/* BottomSheet */}
                 <BottomSheet visible={showBottomSheet} setVisible={setShowBottomSheet}>
-                    <View style={styles.bottomContainer}>
-                        <View style={styles.card}>
-                            <View style={styles.avatarContainer}>
-                                {author && <Image source={{ uri: author.image }} style={styles.avatar} />}
-                            </View>
-                        </View>
-                        <Text style={styles.textReview}> {author && author.fullname} Reviews</Text>
-                        {renderMarginTop(8)}
-                        {author && <ReviewComponent sellerId={author._id} horizontal={true} />}
-                        
-                    </View>
+                    <SellerBottomSheet
+                        author={author}
+                        posts={posts || []}
+                        setShowBottomSheet={setShowBottomSheet}
+                    />
                 </BottomSheet>
 
-            </View >
+            </View>
         </>
     );
 }

@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { COLORS } from "@/constants/theme";
 
 const { width } = Dimensions.get("window");
@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1, // Permite que el contenido crezca dentro del contenedor principal
-    
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
   },
   header: {
     flexDirection: "row", // Alinea los elementos en fila

@@ -1,14 +1,11 @@
 import { styles } from "@/styles/ProductCard.styles";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Image } from "expo-image"
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@clerk/clerk-expo";
 
 
@@ -19,13 +16,13 @@ type PostProps = {
         _id: Id<"posts">;
         userId: Id<"users">;
         imageUrl: string;
-        imageUrls: string[]; // ✅ Varias imágenes
+        imageUrls: string[];
         caption?: string;
-        title: string; // ✅ Título
-        price: number; // ✅ Precio
-        category: string; // ✅ Categoría
-        location: string; // ✅ Ubicación
-        condition: "new" | "used"; // ✅ Condición del producto
+        title: string; 
+        price: number; 
+        category: string; 
+        location: string; 
+        condition: "new" | "used"; 
         likes: number;
         comments: number;
         _creationTime: number;
@@ -44,41 +41,14 @@ type PostProps = {
 
 export default function Post({ post }: PostProps) {
 
-    const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
-    const [showComments, setShowComments] = useState(false);
-    const [showDetail, setShowDetail] = useState(false);
 
     const { user } = useUser();
     const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
-
-
-    
-    const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
-    const deletePost = useMutation(api.posts.deletePost)
-
-
-
-
-    const handleBookmark = async () => {
-        const newIsBookmarked = await toggleBookmark({ postId: post._id });
-        setIsBookmarked(newIsBookmarked);
-    };
-
-    const handleDelete = async () => {
-        try {
-            await deletePost({ postId: post._id });
-        } catch (error) {
-            console.error("Error deleting post:", error);
-        }
-    };
-
-
 
     return (
         <TouchableOpacity onPress={() => router.push(`/product/${post._id}`)}>
             
             <View style={styles.container}>
-                {/* Contenedor de la imagen */}
                 <View style={styles.imageContainer}>
                     <Image
                         source={{ uri: post.imageUrl }}

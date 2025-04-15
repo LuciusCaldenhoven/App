@@ -10,14 +10,13 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignContent: "center",
-        
         backgroundColor: COLORS.secondary,
         borderRadius: SIZES.medium,
         marginVertical: SIZES.medium,
         height: 50,
         width: 330,
         paddingHorizontal: 0, // 🔥 Evita espacios extra
-        marginHorizontal: SIZES.medium,
+        marginHorizontal: SIZES.small,
         
         
     },
