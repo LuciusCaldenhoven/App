@@ -9,8 +9,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
 import { Loader } from "@/components/Loader";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
-import Animated, { interpolate, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
-import { StatusBar } from "expo-status-bar";
+import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
+import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { BottomSheet } from "@/components/bottomSheet/BottomSheet";
 import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
 
@@ -43,8 +43,16 @@ export default function ProductDetail() {
     }));
 
     const headerAnimatedStyle = useAnimatedStyle(() => {
+        const opacity = interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]);
+
+        if (opacity >= 1) {
+            runOnJS(setStatusBarStyle)("dark");
+        } else {
+            runOnJS(setStatusBarStyle)("light"); 
+        }
+
         return {
-            opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]),
+            opacity,
         };
     }, []);
 
@@ -121,21 +129,32 @@ export default function ProductDetail() {
                     {/* Carrusel de imágenes */}
                     {post?.imageUrls && (
                         <Animated.FlatList
-                            ref={flatListRef}
-                            data={post.imageUrls}
-                            horizontal
-                            pagingEnabled
-                            showsHorizontalScrollIndicator={false}
-                            keyExtractor={(_, index) => index.toString()}
-                            onScroll={handleScroll}
-                            renderItem={({ item }) => (
-                                <View style={styles.imageContainer}>
-                                    <Animated.View style={[styles.image, imageAnimatedStyle]}>
-                                        <Image source={{ uri: item }} style={styles.image} contentFit="cover" transition={200} cachePolicy="memory-disk" />
-                                    </Animated.View>
-                                </View>
-                            )}
-                        />
+                        ref={flatListRef}
+                        data={post.imageUrls}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(_, index) => index.toString()}
+                        onScroll={handleScroll}
+                        renderItem={({ item, index }) => (
+                          <View style={styles.imageContainer}>
+                            <Animated.View
+                              style={[
+                                styles.image,
+                                index === currentIndex ? imageAnimatedStyle : null, // Aplica la animación solo a la imagen visible
+                              ]}
+                            >
+                              <Image
+                                source={{ uri: item }}
+                                style={styles.image}
+                                contentFit="cover"
+                                transition={200}
+                                cachePolicy="memory-disk"
+                              />
+                            </Animated.View>
+                          </View>
+                        )}
+                      />
                     )}
                     {post?.imageUrls && (
                         <View style={styles.imageIndicator}>

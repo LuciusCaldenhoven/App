@@ -1,49 +1,53 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 import { COLORS, SIZES } from "@/constants/theme";
+import { scale } from "@/constants/scale";
 
 export const styles = StyleSheet.create({
   container: {
-    width: 182,
-    height: 240,
-    marginEnd:10,
+    width: 200,
+    height: 300,
     borderRadius: SIZES.medium,
-    backgroundColor: COLORS.secondary,
     marginBottom: 12,
+    marginHorizontal: 5,
+    backgroundColor: COLORS.red, // Cambié a blanco para un fondo más neutral
+    overflow: "hidden", // Asegura que los bordes redondeados afecten a todo el contenido
   },
 
   imageContainer: {
-    flex: 1,
-    width: 170,
-    marginLeft: SIZES.small / 2,
+    flex: 0.9,
+    width: "100%", 
     marginTop: SIZES.small / 2,
-    borderRadius: SIZES.small,
-    overflow: "hidden",
+    borderRadius: scale(15),
+    overflow: "hidden", 
   },
 
   image: {
-    aspectRatio: 1,
-    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover", 
   },
 
   details: {
-    padding: SIZES.small,
+    padding: SIZES.small, // Agrega un padding para separar el contenido
   },
-  
+
   title: {
     fontFamily: "bold",
     fontSize: SIZES.large,
-    marginBottom: 1,
+    marginBottom: 4, // Ajusta el margen inferior para mejor separación
+    color: COLORS.black, // Asegura que el texto sea legible
   },
-  
+
   supplier: {
     fontFamily: "regular",
     fontSize: SIZES.small,
     color: COLORS.gray,
+    marginBottom: 4, // Espaciado entre el proveedor y el precio
   },
-  
+
   price: {
     fontFamily: "bold",
     fontSize: SIZES.medium,
-  }
-  
+    color: COLORS.primary, // Usa el color primario para destacar el precio
+  },
 });
