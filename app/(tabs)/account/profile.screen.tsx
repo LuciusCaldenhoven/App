@@ -14,6 +14,7 @@ import { router } from "expo-router";
 import { scale } from "@/constants/scale";
 import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
+import LoaderPosts from "@/components/loaders/loaderPosts";
 
 
 
@@ -38,7 +39,16 @@ export default function Profile() {
   };
 
 
-  if (!currentUser || posts === undefined) return <Loader />;
+  if (!currentUser || posts === undefined) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <View style={{ transform: [{ scale: 1.5 }] }}>
+          <LoaderPosts />
+        </View>
+      </View>
+    );
+  }
+  
 
   return (
     <View style={styles.container}>

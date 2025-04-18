@@ -14,7 +14,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as bookmarks from "../bookmarks.js";
+import type * as chats from "../chats.js";
 import type * as http from "../http.js";
+import type * as mensajes from "../mensajes.js";
 import type * as notifications from "../notifications.js";
 import type * as posts from "../posts.js";
 import type * as reviews from "../reviews.js";
@@ -30,7 +32,9 @@ import type * as users from "../users.js";
  */
 declare const fullApi: ApiFromModules<{
   bookmarks: typeof bookmarks;
+  chats: typeof chats;
   http: typeof http;
+  mensajes: typeof mensajes;
   notifications: typeof notifications;
   posts: typeof posts;
   reviews: typeof reviews;

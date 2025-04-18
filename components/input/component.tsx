@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, Pressable, TextInput, View} from 'react-native';
-import {createStyles} from '@/styles/input.styles';
+import {createStyles} from '@/components/input/input.styles';
 import { COLORS, } from "@/constants/theme";
 import assets from '../../assets';
 import {IInputProps} from './input.props';
@@ -24,7 +24,6 @@ const InputComponent = ({
       {leftAction && <View style={{ marginLeft: scale(10) }}>{leftAction}</View>}
 
       <TextInput
-      
         placeholder={placeholder}
         style={styles.input}
         placeholderTextColor={COLORS.placeholder}

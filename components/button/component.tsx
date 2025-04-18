@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Pressable, Text } from 'react-native';
-import { createStyles } from '@/styles/button.styles';
+import { createStyles } from '@/components/button/button.styles';
 import { IButtonProps } from './IButton.props';
 
 const Button = ({ text, textStyles, buttonStyles, onPress, component }: IButtonProps) => {

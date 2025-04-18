@@ -9,6 +9,7 @@ import PostBig from "@/components/postBig/postBig";
 import { router } from "expo-router";
 import { renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import Animated, { useAnimatedStyle, interpolate, useSharedValue } from "react-native-reanimated";
+import LoaderPosts from "../loaders/loaderPosts";
 
 type SellerBottomSheetProps = {
   author: any;
@@ -22,6 +23,8 @@ export default function SellerBottomSheet({
   setShowBottomSheet,
 }: SellerBottomSheetProps) {
   const scrollOffset = useSharedValue(0);
+
+  if (!author || !posts) <LoaderPosts/>; // Manejo de errores
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {

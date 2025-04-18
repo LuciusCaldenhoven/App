@@ -4,12 +4,10 @@ import { scale } from "@/constants/scale";
 
 export const styles = StyleSheet.create({
   container: {
-    width: 200,
-    height: 300,
+    width: 185,
+    height: 280,
     borderRadius: SIZES.medium,
-    marginBottom: 12,
     marginHorizontal: 5,
-    backgroundColor: COLORS.red, // Cambié a blanco para un fondo más neutral
     overflow: "hidden", // Asegura que los bordes redondeados afecten a todo el contenido
   },
 
@@ -28,14 +26,15 @@ export const styles = StyleSheet.create({
   },
 
   details: {
-    padding: SIZES.small, // Agrega un padding para separar el contenido
+    padding: SIZES.small - 3,
+    marginLeft: -2,
   },
 
   title: {
-    fontFamily: "bold",
-    fontSize: SIZES.large,
-    marginBottom: 4, // Ajusta el margen inferior para mejor separación
-    color: COLORS.black, // Asegura que el texto sea legible
+    fontFamily: "Regular",
+    fontSize: scale(15),
+    marginBottom: 4,
+    color: COLORS.black, 
   },
 
   supplier: {
@@ -46,8 +45,8 @@ export const styles = StyleSheet.create({
   },
 
   price: {
-    fontFamily: "bold",
+    fontFamily: "SemiBold",
     fontSize: SIZES.medium,
-    color: COLORS.primary, // Usa el color primario para destacar el precio
+    color: COLORS.black, 
   },
 });

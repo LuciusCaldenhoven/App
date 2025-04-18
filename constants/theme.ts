@@ -22,6 +22,7 @@ export const COLORS = {
   outlineButtonBg: '#EDEDED',
   divider: '#D9D9D9',
   checkBoxBg: '#454545',
+  badgeBg: '#3B82F6',
 
   visaCard: {
     primary: '#000000',

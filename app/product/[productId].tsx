@@ -13,6 +13,7 @@ import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useSc
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { BottomSheet } from "@/components/bottomSheet/BottomSheet";
 import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
+import LoaderPosts from "@/components/loaders/loaderPosts";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -26,7 +27,7 @@ export default function ProductDetail() {
     // Referencias y animaciones
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useScrollViewOffset(scrollRef);
-
+    const flatListRef = useRef(null);
     const imageAnimatedStyle = useAnimatedStyle(() => ({
         transform: [
             {
@@ -99,7 +100,6 @@ export default function ProductDetail() {
     // Estados de carga
     const loadingPost = !post;
     const loadingAuthor = post && !author;
-    const flatListRef = useRef(null);
     // Renderizado
     return (
         <>
@@ -162,7 +162,7 @@ export default function ProductDetail() {
                         </View>)}
 
                     {/* Detalles del producto */}
-                    {loadingPost ? (<Loader />) : (
+                    {loadingPost ? (<LoaderPosts/>) : (
                         <View style={styles.details}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.title}>{post.title}</Text>
@@ -178,12 +178,12 @@ export default function ProductDetail() {
                             {/* Perfil del autor */}
                             <TouchableOpacity style={styles.profile} onPress={() => setShowBottomSheet(true)}>
                                 <View style={styles.cg14}>
-                                    {loadingAuthor ? (<Loader />) : author ? (
+                                    {loadingAuthor ? (<LoaderPosts/>) : author ? (
                                         <>
                                             <Image source={{ uri: author.image }} style={styles.person} contentFit="cover" transition={200} cachePolicy="memory-disk" />
                                             <Text style={styles.ownerName}>{author.fullname}</Text>
                                         </>
-                                    ) : (<Loader />)}
+                                    ) : (<LoaderPosts/>)}
                                 </View>
                             </TouchableOpacity>
                         </View>

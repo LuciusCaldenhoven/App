@@ -29,7 +29,7 @@ export const getNotifications = query({
                         username: sender.username,
                         image: sender.image,
                     },
-                    post,
+                    
                     
                 };
 

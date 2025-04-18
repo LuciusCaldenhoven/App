@@ -5,12 +5,21 @@ const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1, // Ocupa toda la pantalla
-    backgroundColor: COLORS.background, // Fondo del contenedor
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
   contentContainer: {
     flex: 1, // Permite que el contenido crezca dentro del contenedor principal
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+  },
+  pagerView: {
+    flex: 1,
+  },
+  page: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     flexDirection: "row", // Alinea los elementos en fila
@@ -43,6 +52,7 @@ export const styles = StyleSheet.create({
     color: COLORS.primary, // Color del texto
     fontSize: 16, // Tamaño del texto
     fontWeight: "600", // Peso de la fuente
+    
   },
   shareTextDisabled: {
     color: COLORS.grey, // Color del texto cuando está deshabilitado

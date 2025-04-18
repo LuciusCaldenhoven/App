@@ -18,11 +18,11 @@ type PostProps = {
         imageUrl: string;
         imageUrls: string[];
         caption?: string;
-        title: string; 
-        price: number; 
-        category: string; 
-        location: string; 
-        condition: "new" | "used"; 
+        title: string;
+        price: number;
+        category: string;
+        location: string;
+        condition: "new" | "used";
         likes: number;
         comments: number;
         _creationTime: number;
@@ -47,7 +47,7 @@ export default function Post({ post }: PostProps) {
 
     return (
         <TouchableOpacity onPress={() => router.push(`/product/${post._id}`)}>
-            
+
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image
@@ -61,16 +61,15 @@ export default function Post({ post }: PostProps) {
 
                 {/* Información del producto */}
                 <View style={styles.details}>
+                    <Text style={styles.price}>
+                        S/{post.price}.00
+                    </Text>
                     <Text style={styles.title} numberOfLines={1}>
                         {post.title}
                     </Text>
-                    <Text style={styles.supplier} numberOfLines={1}>
-                        {post.category}
-                    </Text>
-                    <Text style={styles.price}>
-                        ${post.price}
-                    </Text>
+
                 </View>
+                
             </View>
         </TouchableOpacity>
 

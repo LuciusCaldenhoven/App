@@ -1,6 +1,6 @@
 import { View, Text, Pressable, FlatList } from 'react-native';
 import React, { useState } from 'react';
-import { styles } from '@/styles/tab.styles';
+import { styles } from '@/components/tabSwitcher/tab.styles';
 import { ITab, ITabProps } from './iTab.props';
 import { COLORS } from '@/constants/theme';
 

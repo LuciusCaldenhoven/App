@@ -3,15 +3,14 @@ import { v } from "convex/values";
 
 export default defineSchema({
     users: defineTable({
-        username: v.string(), // johndoe
-        fullname: v.string(), // John Doe
+        username: v.string(), 
+        fullname: v.string(), 
         email: v.string(),
         image: v.string(),
         posts: v.number(),
         clerkId: v.string(),
-        // Nuevos atributos para sistema de reseñas
-        reviewCount: v.number(),     // Número de reseñas recibidas
-        averageRating: v.number(),   // Promedio de puntaje
+        reviewCount: v.number(),   
+        averageRating: v.number(),   
     }).index("by_clerk_id", ["clerkId"]),
 
     posts: defineTable({
@@ -21,7 +20,6 @@ export default defineSchema({
         caption: v.optional(v.string()),
         likes: v.number(),
         comments: v.number(),
-        // NUEVOS ATRIBUTOS PARA PRODUCTOS
         title: v.string(),
         price: v.number(),
         category: v.string(),
@@ -64,13 +62,12 @@ export default defineSchema({
     chats: defineTable({
         buyerId: v.id("users"),
         sellerId: v.id("users"),
-        postId: v.id("posts"),
-        createdAt: v.number(),
         lastMessage: v.optional(v.string()),
+        lastTime: v.optional(v.number()),
+        badge : v.optional(v.number()),
     })
     .index("by_buyer", ["buyerId"])
-    .index("by_seller", ["sellerId"])
-    .index("by_post", ["postId"]),
+    .index("by_seller", ["sellerId"]),
 
     messages: defineTable({
         chatId: v.id("chats"),
