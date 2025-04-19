@@ -26,11 +26,7 @@ const SingleList = ({ component, text, onPress }: ISingleListProps) => {
 
   return (
     <View>
-      <TouchableOpacity
-        onPress={handlePress}
-        style={styles.container}
-        disabled={isDisabled} 
-      >
+      <TouchableOpacity onPress={handlePress} style={styles.container} disabled={isDisabled} >
         <View style={styles.frcg}>
           <View>{component}</View>
           <Text style={styles.text}>{text}</Text>
@@ -38,7 +34,7 @@ const SingleList = ({ component, text, onPress }: ISingleListProps) => {
         <MaterialCommunityIcons name="chevron-right" color={COLORS.black} size={scale(24)} />
       </TouchableOpacity>
       {renderBorderBottom(1)}
-      {renderMarginBottom(12)}
+      {renderMarginBottom(15)}
     </View>
   );
 };

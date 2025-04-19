@@ -10,7 +10,12 @@ export default defineSchema({
         posts: v.number(),
         clerkId: v.string(),
         reviewCount: v.number(),   
-        averageRating: v.number(),   
+        averageRating: v.number(),  
+        bio: v.optional(v.string()),
+        phone: v.optional(v.string()),
+        location: v.optional(v.string()),
+        lat: v.optional(v.number()),
+        lng: v.optional(v.number()), 
     }).index("by_clerk_id", ["clerkId"]),
 
     posts: defineTable({

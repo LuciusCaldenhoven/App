@@ -12,25 +12,13 @@ export const sendMessage = mutation({
   handler: async (ctx, { chatId, content, file }) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
-    // Inserta el mensaje en la base de datos
-    const messageId = await ctx.db.insert("messages", {
-      chatId,
-      senderId: currentUser._id,
-      content,
-      file: file || undefined,
-      createdAt: Date.now(),
-    });
-
-    // Actualiza el último mensaje en el chat
-    await ctx.db.patch(chatId, {
-      lastMessage: content,
-    });
+    const messageId = await ctx.db.insert("messages", { chatId, senderId: currentUser._id, content, file: file || undefined, createdAt: Date.now(), });
+    await ctx.db.patch(chatId, { lastMessage: content, lastTime: Date.now(), badge: 0 });
 
     return messageId;
   },
 });
 
-// Obtener mensajes de un chat
 export const getMessages = query({
   args: {
     chatId: v.id("chats"),

@@ -13,12 +13,16 @@ export const createStyles = () =>
     frcg: {
       flexDirection: 'row',
       alignItems: 'center',
-      columnGap: scale(12),
+      columnGap: scale(20),
+      marginBottom: scale(8),
     },
     
     text: {
       fontSize: FontSize.FONT_14Px,
-      color: COLORS.black,
+      color: COLORS.gray,
       fontFamily: "Regular",
     },
+    component:{
+      color: COLORS.black,
+    }
   });

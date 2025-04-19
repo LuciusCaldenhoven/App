@@ -1,6 +1,6 @@
 import { scale } from "@/constants/scale";
 import { COLORS } from "@/constants/theme";
-import { StyleSheet } from "react-native";
+import { Platform, StatusBar, StyleSheet } from "react-native";
 
 
 
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.background,
         paddingHorizontal: scale(2),
-        paddingTop: scale(20),
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50, 
     },
     inputField: {
         height: 44,
@@ -131,4 +131,34 @@ export const styles = StyleSheet.create({
         justifyContent: "center", // Centra horizontalmente
         gap: 5, // Espaciado entre el ícono y el texto
       },
+      btnn: {
+        backgroundColor: COLORS.secondary,
+        height: 50,
+        borderRadius: 8,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      btnText: {
+        color: "black",
+        fontSize: 16,
+        fontFamily: "Regular",
+      },
+      cont:{
+        marginLeft: 15,
+        marginRight: 15,
+
+      },
+      titleProfile :{
+        fontFamily: "Medium",
+        fontSize: 25, 
+       
+        marginTop: 20,
+        marginBottom: 10,
+      },
+      titleText :{
+        fontFamily: "Regular",
+        fontSize: 14, 
+        marginBottom: 25,
+        color: COLORS.gray,
+      }
 });

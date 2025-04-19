@@ -88,35 +88,35 @@ export default function Profile() {
         <Text style={styles.title}>General</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<AntDesign name="user" size={scale(24)} color={COLORS.gray} />}
+          component={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
           text="Informacion Personal" />
         <SingleList
-          component={<AntDesign name="inbox" size={scale(24)} color={COLORS.gray} />}
+          component={<AntDesign name="inbox" size={scale(24)} color={COLORS.black} />}
           text="Mis Productos"
           onPress={() => router.push("/My_products/myproducts")}
         />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
           text="Publicitar"
           onPress={() => router.push("/booking.screen/booking/booking")}
         />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
           text="Mas" />
         {renderMarginBottom(12)}
         <Text style={styles.title}>Ayuda</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
           text="Mas" />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
           text="Mas" />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
           text="Mas" />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.gray} />}
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
           text="Mas" />
 
         <Button
