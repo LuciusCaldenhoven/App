@@ -5,40 +5,53 @@ import { getAuthenticatedUser } from "./users";
 // Enviar un mensaje
 export const sendMessage = mutation({
   args: {
-    chatId: v.id("chats"),
     content: v.string(),
-    file: v.optional(v.string()),
+    chatId: v.id('chats'),
+    file: v.optional(v.string()), // Archivo opcional
   },
-  handler: async (ctx, { chatId, content, file }) => {
+  handler: async (ctx, { content, chatId, file }) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
-    const messageId = await ctx.db.insert("messages", { chatId, senderId: currentUser._id, content, file: file || undefined, createdAt: Date.now(), });
-    await ctx.db.patch(chatId, { lastMessage: content, lastTime: Date.now(), badge: 0 });
+    // Inserta el mensaje en la tabla `messages`
+    const messageId = await ctx.db.insert('messages', {
+      chatId,
+      senderId: currentUser._id,
+      content,
+      file: file || undefined,
+      createdAt: Date.now(),
+    });
+
+    // Actualiza el chat con el último mensaje y la hora
+    await ctx.db.patch(chatId, {
+      lastMessage: content,
+      lastTime: Date.now(),
+    });
 
     return messageId;
   },
 });
 
 export const getMessages = query({
-  args: {
-    chatId: v.id("chats"),
-  },
-  handler: async (ctx, { chatId }) => {
-    const currentUser = await getAuthenticatedUser(ctx);
-
-    // Verifica si el usuario tiene acceso al chat
-    const chat = await ctx.db.get(chatId);
-    if (!chat || (chat.buyerId !== currentUser._id && chat.sellerId !== currentUser._id)) {
-      throw new Error("No tienes acceso a este chat.");
-    }
-
+  args: { chatId: v.id('chats') },
+  handler: async ({ db, storage }, { chatId }) => {
     // Obtiene los mensajes del chat
-    const messages = await ctx.db
-      .query("messages")
-      .withIndex("by_chat", (q) => q.eq("chatId", chatId))
-      .order("asc")
+    const messages = await db
+      .query('messages')
+      .withIndex('by_chat', (q) => q.eq('chatId', chatId))
+      .order('asc')
       .collect();
 
-    return messages;
+    // Si el mensaje tiene un archivo, obtiene la URL del almacenamiento
+    return Promise.all(
+      messages.map(async (message) => {
+        if (message.file) {
+          const url = await storage.getUrl(message.file);
+          if (url) {
+            return { ...message, file: url };
+          }
+        }
+        return message;
+      })
+    );
   },
 });

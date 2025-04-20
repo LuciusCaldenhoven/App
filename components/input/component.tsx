@@ -7,6 +7,7 @@ import {IInputProps} from './input.props';
 import { scale } from '@/constants/scale';
 
 const InputComponent = ({
+  value,
   onChangeText,
   secureTextEntry,
   placeholder,
@@ -24,6 +25,7 @@ const InputComponent = ({
       {leftAction && <View style={{ marginLeft: scale(10) }}>{leftAction}</View>}
 
       <TextInput
+        value={value} // Vincular el valor del input a la prop `value`
         placeholder={placeholder}
         style={styles.input}
         placeholderTextColor={COLORS.placeholder}

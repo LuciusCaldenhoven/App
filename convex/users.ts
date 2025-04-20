@@ -28,9 +28,7 @@ export const createUser = mutation({
             posts: 0,
             reviewCount: 0,
             averageRating: 0,
-
         });
-
     }
 });
 
@@ -63,21 +61,36 @@ export async function getAuthenticatedUser(ctx: QueryCtx | MutationCtx) {
     return currentUser;
 }
 
+export const generateUploadUrl = mutation(async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    return await ctx.storage.generateUploadUrl();
+});
+
 export const updateProfile = mutation({
     args: {
         fullname: v.string(),
-        image: v.optional(v.string()), // Agregamos la imagen como argumento opcional
+        storageId: v.optional(v.id("_storage")),
     },
     handler: async (ctx, args) => {
         const currentUser = await getAuthenticatedUser(ctx);
 
-        // Actualizamos el perfil del usuario en la base de datos
+        let imageUrl = currentUser.image;
+
+        if (args.storageId) {
+            const url = await ctx.storage.getUrl(args.storageId);
+            if (!url) throw new Error("No se pudo obtener la URL de la imagen");
+            imageUrl = url;
+        }
+
         await ctx.db.patch(currentUser._id, {
             fullname: args.fullname,
-            ...(args.image && { image: args.image }), // Solo actualiza la imagen si se proporciona
+            ...(imageUrl && { image: imageUrl }), // Guardar la URL pública en el campo `image`
         });
     },
 });
+
 
 
 export const getUserProfile = query({

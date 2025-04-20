@@ -11,6 +11,7 @@ import { createStyles } from '@/components/singleItem/message.styles';
 import SingleItem from "@/components/singleItem/singleItem";
 import { scale } from "@/constants/scale";
 import { renderBorderBottom } from "@/constants/ui-utils";
+import { useAuth } from "@clerk/clerk-expo";
 
 
 export default function NotificationsAndMessages() {
@@ -20,6 +21,8 @@ export default function NotificationsAndMessages() {
 
   const notifications = useQuery(api.notifications.getNotifications);
   const chats = useQuery(api.chats.getChats);
+  const { userId } = useAuth();
+  const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
 
   const renderContent = () => {
     if (selectedTab === "notifications") {
@@ -46,7 +49,9 @@ export default function NotificationsAndMessages() {
               containerStyle={estilos.input} />
             <FlatList
               data={chats || []} 
-              renderItem={({ item: chat }) => ( <SingleItem chat = {chat} /> )}
+              renderItem={({ item: chat }) => (
+                currentUser ? <SingleItem chat={chat} currentUserId={currentUser._id} /> : null
+              )}
               keyExtractor={(chat) => chat._id} />
             {renderBorderBottom(90)}
           </View>
@@ -62,7 +67,7 @@ export default function NotificationsAndMessages() {
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[ styles.button, selectedTab === "notifications" && styles.activeButton, ]} onPress={() => setSelectedTab("notifications")} >
           <Text style={[ styles.buttonText, selectedTab === "notifications" && styles.activeButtonText, ]} >
-            Notificaciones
+            Notificaciones 
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

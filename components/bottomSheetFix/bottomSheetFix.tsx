@@ -6,6 +6,7 @@ import InputComponent from '../input/component';
 import { MaterialIcons } from '@expo/vector-icons';
 import { scale } from '@/constants/scale';
 import { COLORS } from '@/constants/theme';
+import { useState } from 'react';
 
 export const BottomSheetFix = ({
     visible,
@@ -15,6 +16,8 @@ export const BottomSheetFix = ({
     description,
     placeholder,
 }: IbottomSheetFixProps) => {
+    const [inputValue, setInputValue] = useState(""); // Estado para almacenar el valor del campo de entrada
+
     return (
         <Modal
             presentationStyle="overFullScreen"
@@ -41,7 +44,7 @@ export const BottomSheetFix = ({
                                 />
                             }
                             placeholder={placeholder}
-                            onChangeText={(e) => console.log(e)}
+                            onChangeText={(text) => setInputValue(text)} // Actualiza el estado con el valor ingresado
                         />
                     </View>
                 </View>
@@ -49,7 +52,7 @@ export const BottomSheetFix = ({
                     textStyles={{ fontFamily: 'Regular' }}
                     buttonStyles={styles.buttonStyles}
                     text="Guardar"
-                    onPress={OnPress}
+                    onPress={() => OnPress(inputValue)} // Pasa el valor ingresado al OnPress
                 />
             </KeyboardAvoidingView>
         </Modal>

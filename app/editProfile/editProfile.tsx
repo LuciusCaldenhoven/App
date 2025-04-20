@@ -13,6 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import SingleList from '@/components/singleList/component';
 import { scale } from '@/constants/scale';
 import { BottomSheetFix } from '@/components/bottomSheetFix/bottomSheetFix';
+import * as FileSystem from "expo-file-system";
 
 
 const EditProfile = () => {
@@ -29,12 +30,10 @@ const EditProfile = () => {
 
     const updateProfile = useMutation(api.users.updateProfile);
 
-    const handleSaveProfile = async () => {
-        await updateProfile({
-            fullname: editedProfile.fullname,
-            image: editedProfile.image,
-        });
-    };
+    
+
+    const generateUploadUrl = useMutation(api.posts.generateUploadUrl); // puedes moverlo a /users también
+    
 
     const handlePickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -48,20 +47,46 @@ const EditProfile = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 1,
+            quality: 0.8,
         });
 
         if (!result.canceled) {
             const newImageUri = result.assets[0].uri;
 
-            setEditedProfile({ ...editedProfile, image: newImageUri });
+            try {
+                // 1. Obtener URL de subida desde Convex
+                const uploadUrl = await generateUploadUrl();
 
-            await updateProfile({
-                fullname: editedProfile.fullname,
-                image: newImageUri,
-            });
+                // 2. Subir la imagen usando FileSystem.uploadAsync
+                const uploadResult = await FileSystem.uploadAsync(uploadUrl, newImageUri, {
+                    httpMethod: "POST",
+                    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+                    mimeType: "image/jpeg",
+                });
+
+                if (uploadResult.status !== 200) {
+                    throw new Error("Error al subir la imagen");
+                }
+
+                // 3. Obtener el storageId del resultado de la subida
+                const { storageId } = JSON.parse(uploadResult.body);
+
+                // 4. Actualizar el perfil del usuario con el storageId
+                await updateProfile({
+                    fullname: editedProfile.fullname,
+                    storageId,
+                });
+
+                // 5. Obtener la URL pública para mostrarla de inmediato
+                const imageUrl = `https://your-storage-service.com/${storageId}`; // Replace with your actual logic to generate the image URL
+                setEditedProfile({ ...editedProfile, image: imageUrl });
+            } catch (error) {
+                console.error("Error al subir la imagen:", error);
+                alert("Error al subir la imagen. Inténtalo de nuevo.");
+            }
         }
     };
+
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -104,7 +129,7 @@ const EditProfile = () => {
                                 setVisible={() => setActiveBottomSheet(null)}
                                 title="¿Cómo quieres que te llamen?"
                                 description="Este nombre se mostrará en tu perfil y en lo que publiques"
-                                
+
                                 placeholder="Nombre completo"
                                 OnPress={() => setActiveBottomSheet(null)}
                             />
@@ -122,7 +147,7 @@ const EditProfile = () => {
                                 setVisible={() => setActiveBottomSheet(null)}
                                 title="Tu número de contacto?"
                                 description="Tu número les da seguridad a los que están interesados en tus productos."
-                                
+
                                 placeholder="Número de teléfono"
                                 OnPress={() => setActiveBottomSheet(null)}
                             />
@@ -140,7 +165,7 @@ const EditProfile = () => {
                                 setVisible={() => setActiveBottomSheet(null)}
                                 title="Cuéntanos algo sobre ti"
                                 description="Agrega una pequeña bio para conectar mejor con otros compradores."
-                                
+
                                 placeholder="Biografía"
                                 OnPress={() => setActiveBottomSheet(null)}
                             />
@@ -158,7 +183,7 @@ const EditProfile = () => {
                                 setVisible={() => setActiveBottomSheet(null)}
                                 title="¿Dónde te encuentras?"
                                 description="Esto se mostrará en tus productos para que sepan desde dónde vendes."
-                                
+
                                 placeholder="Ubicación"
                                 OnPress={() => setActiveBottomSheet(null)}
                             />

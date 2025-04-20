@@ -50,6 +50,7 @@ export default function Profile() {
   }
   
 
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 100 }}>
@@ -59,9 +60,9 @@ export default function Profile() {
             style={styles.frcg}
             onPress={() => router.push({ pathname: "/editProfile/editProfile", params: { currentUser: JSON.stringify(currentUser) } })}>
             <Image source={currentUser.image} style={styles.profileImage} />
-            <View>
-              <Text style={styles.title}>{currentUser.fullname}</Text>
-              <Text style={styles.email}>{currentUser.email}</Text>
+            <View style={{ paddingRight: 250}}>
+              <Text numberOfLines={1} style={styles.title}>{currentUser.fullname}</Text>
+              <Text numberOfLines={1} style={styles.email}>{currentUser.email}</Text>
             </View>
             <MaterialCommunityIcons name="chevron-right" color={COLORS.gray} size={scale(24)}  style={{ marginLeft: 60 }}/>
           </TouchableOpacity>
