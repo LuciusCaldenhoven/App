@@ -1,11 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { createStyles } from '@/components/singleItem/message.styles';
 import { Id } from '@/convex/_generated/dataModel';
 import { router } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-
+import { Image } from 'expo-image';
 interface ISingleItemProps {
   chat: {
     _id: Id<"chats">;
@@ -41,6 +41,7 @@ const SingleItem = ({ chat, currentUserId }: ISingleItemProps) => {
       <Image
         source={{ uri: otherUser?.image || 'https://via.placeholder.com/150' }}
         style={styles.person}
+        cachePolicy="memory-disk"
       />
       
       {/* Información del mensaje */}

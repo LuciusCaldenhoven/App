@@ -7,9 +7,10 @@ import { Image } from "expo-image";
 import ReviewComponent from "@/components/review/component";
 import PostBig from "@/components/postBig/postBig";
 import { router } from "expo-router";
-import { renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
+import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import Animated, { useAnimatedStyle, interpolate, useSharedValue } from "react-native-reanimated";
 import LoaderPosts from "../loaders/loaderPosts";
+import { Loader } from "../Loader";
 
 type SellerBottomSheetProps = {
   author: any;
@@ -24,7 +25,7 @@ export default function SellerBottomSheet({
 }: SellerBottomSheetProps) {
   const scrollOffset = useSharedValue(0);
 
-  if (!author || !posts) <LoaderPosts/>; // Manejo de errores
+  if (!author || !posts || true) <Loader />; // Manejo de errores
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -53,12 +54,7 @@ export default function SellerBottomSheet({
       </Animated.View>
 
       {/* Contenido principal */}
-      <ScrollView
-        style={styles.bottomContainer}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
+      <ScrollView style={styles.bottomContainer} contentContainerStyle={{ paddingBottom: 100 }} onScroll={handleScroll} scrollEventThrottle={16} >
         {renderMarginBottom(40)}
 
         {/* Información del autor */}
@@ -66,7 +62,17 @@ export default function SellerBottomSheet({
           {author && <Image source={{ uri: author.image }} style={styles.avatar} />}
           <Text style={styles.textName}>{author && author.fullname.split(" ")[0]}</Text>
         </View>
+        {author.location && (
+          <View style={styles.locationContainer}>
+            <Ionicons name="location-outline" size={22} color="grey" />
+            <Text style={styles.textLocation}>Vive en {author.location}</Text>
+          </View>)}
+        {author.bio && (
+          <View style={styles.locationContainer}>
+            <Text style={styles.textLocation}>{author.bio}</Text>
 
+          </View>)}
+          {renderMarginTop(40)}
         {/* Reseñas */}
         <Text style={styles.textReview}>Reseñas de {author && author.fullname.split(" ")[0]}</Text>
         {renderMarginTop(8)}

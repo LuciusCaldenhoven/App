@@ -12,6 +12,8 @@ import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 import styles from '../chat/chats.styles'
+import { BottomSheet } from '@/components/bottomSheet/BottomSheet';
+import SellerBottomSheet from '@/components/SellerBottomSheet/SellerBottomSheet';
 const ChatPage = () => {
     const { chatid } = useLocalSearchParams(); // Obtener el ID del chat desde la URL
     const [newMessage, setNewMessage] = useState('');
@@ -23,6 +25,7 @@ const ChatPage = () => {
     const sendMessage = useMutation(api.mensajes.sendMessage);
     const messages = useQuery(api.mensajes.getMessages, { chatId: chatid as Id<'chats'> }) || [];
     const chats = useQuery(api.chats.getChats);
+    const [showBottomSheet, setShowBottomSheet] = useState(false);
     // Desplazar automáticamente al final cuando se agregan nuevos mensajes
     useEffect(() => {
         setTimeout(() => {
@@ -75,12 +78,13 @@ const ChatPage = () => {
         }
     };
     const { userId } = useAuth();
+    const { productId } = useLocalSearchParams();
     const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
     const chat = chats?.find((c) => c._id === chatid);
     const isSeller = chat?.seller?._id === currentUser?._id;
     const otherUser = isSeller ? chat?.buyer : chat?.seller;
-
-
+   
+    const posts = useQuery( api.posts.getPostsByUser, currentUser?._id ? { userId: currentUser._id } : "skip" );
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
@@ -90,11 +94,21 @@ const ChatPage = () => {
                         <Ionicons name="chevron-back" size={scale(28)} color={'black'} />
                     </TouchableOpacity>
 
-                    <Image
-                        source={{ uri: otherUser?.image || 'https://via.placeholder.com/150' }}
-                        style={styles.image} />
-                    <Text numberOfLines={1} style={styles.text}> {otherUser?.fullname || "Usuario Desconocido"} </Text>
-
+                    <TouchableOpacity style={[styles.headerContent]} onPress={() => setShowBottomSheet(true)} >
+                        <Image
+                            source={{ uri: otherUser?.image || 'https://via.placeholder.com/150' }}
+                            style={styles.image}
+                        />
+                        <Text numberOfLines={1} style={styles.text}>
+                            {otherUser?.fullname || "Usuario Desconocido"}
+                        </Text>
+                        <Ionicons
+                            name="information-circle-outline"
+                            size={scale(28)}
+                            color={'grey'}
+                            style={styles.icon}
+                        />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.main}>
                     <FlatList
@@ -109,7 +123,7 @@ const ChatPage = () => {
                             return <ChatCard message={message} time={time} isSelf={isSelf} />;
                         }}
                         keyExtractor={(item) => item._id.toString()}
-                        
+
                     />
                 </View>
                 {/* Entrada de mensaje */}
@@ -140,6 +154,13 @@ const ChatPage = () => {
                     <ActivityIndicator color="#fff" animating size="large" />
                 </View>
             )}
+            <BottomSheet visible={showBottomSheet} setVisible={setShowBottomSheet}>
+                <SellerBottomSheet
+                    author={otherUser}
+                    posts={posts || []}
+                    setShowBottomSheet={setShowBottomSheet}
+                />
+            </BottomSheet>
         </View>
     );
 };

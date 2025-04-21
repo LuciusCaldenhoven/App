@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(18),
         paddingVertical: scale(8),
     },
+
+    headerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+       
+        paddingRight: 115,
+    },
     header: {
         flexDirection: 'row',
         paddingTop: scale(20),
@@ -25,7 +32,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#E0E0E0',
         alignContent: 'center',
         alignItems: 'center',
-        paddingRight: 130,
+        paddingRight: 150,
     },
     inputContainer: {
         padding: 10,

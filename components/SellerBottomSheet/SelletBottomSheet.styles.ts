@@ -111,4 +111,16 @@ export const styles = StyleSheet.create({
    
     zIndex: 10, // Asegúrate de que los botones estén al frente
   },
+  locationContainer :{
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 20,
+    marginTop: 10,
+  },
+  textLocation : {
+    fontFamily: "Regular",
+    fontSize: 14,
+    color: COLORS.black,
+    paddingHorizontal: 10,
+  }
 });
