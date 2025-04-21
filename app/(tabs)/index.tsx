@@ -1,19 +1,22 @@
-import { FlatList, RefreshControl, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Animated, FlatList, RefreshControl, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "../../styles/feed.styles";
-import { useAuth } from "@clerk/clerk-expo";
+
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES } from "@/constants/theme";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Loader } from "@/components/Loader";
 import Post from "@/components/Post";
-import { useState } from "react";
-import Search from "@/app/search/index"
+import { useRef, useState } from "react";
+import Search from "@/components/search/index"
+import { useRouter } from "expo-router";
 
 export default function Index() {
-  const { signOut } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
-
+  const router = useRouter();
+  const translateY = useRef(new Animated.Value(0)).current;
+  const [backgroundColor, setBackgroundColor] = useState<string>(COLORS.background);
+  const [searchText, setSearchText] = useState("");
   const posts = useQuery(api.posts.getFeedPosts)
 
   if (posts === undefined) return <Loader />
@@ -21,16 +24,26 @@ export default function Index() {
 
   const onRefresh = () => {
     setRefreshing(true);
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+    setTimeout(() => { setRefreshing(false); }, 2000);
   };
 
-  
+  const handleFocus = () => {
+    setBackgroundColor('red');
+    Animated.timing(translateY, {
+      toValue: -100,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+  const handleSearch = () => {
+    if (searchText.trim() !== "") {
+      router.push("/search/searchResults");
+    }
+  };
 
 
   return (
+    
     <View style={styles.container}>
       <View style={styles.appBarWrapper}>
         <View style={styles.appBar}>
@@ -43,11 +56,7 @@ export default function Index() {
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={COLORS.secondary}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.secondary} />
         }
       >
         {/* 🏆 Encabezado fijo con textos y barra de búsqueda */}
@@ -60,9 +69,19 @@ export default function Index() {
           </Text>
 
           {/* Barra de búsqueda */}
-          <View style={{ paddingHorizontal: 8 }}>
-            <Search />
-          </View>
+          <Animated.View style={[styles.actionRow, { transform: [{ translateY }], backgroundColor }]}>
+            <TouchableOpacity style={styles.searchBtn} onPress={handleFocus}>
+              <Ionicons name="search" size={24} color={COLORS.grey} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder={"¿Qué quieres comprar?"}
+                placeholderTextColor={COLORS.grey}
+                
+                onSubmitEditing={handleSearch}
+               
+              />
+            </TouchableOpacity>
+          </Animated.View>
 
           {/* Título de la sección */}
           <Text style={styles.titulo}>Las Novedadessss pa</Text>
@@ -80,7 +99,7 @@ export default function Index() {
 
       </ScrollView>
 
-        
+
 
     </View>
   );

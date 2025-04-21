@@ -1,7 +1,7 @@
 import { View, TextInput, FlatList, Text, TouchableOpacity, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "convex/react";
-import { styles } from "@/styles/search.styles";
+import { styles } from "@/components/search/search.styles";
 import { Feather } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Ionicons } from "@expo/vector-icons";
 import Filter from "./filter";
+import Search from "@/components/search";
 
 type PostProps = {
   _id: Id<"posts">;
@@ -57,46 +58,12 @@ export default function SearchPage() {
 
   return (
     <View style={styles.container}>
-      {/* 🔎 Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchWrapper}>
-          <TextInput
-            style={styles.searchInput}
-            value={searchKey}
-            onChangeText={setSearchKey}
-            placeholder="¿Qué estás buscando?"
-            placeholderTextColor={COLORS.grey}
-            autoFocus
-          />
-        </View>
+      <Search shouldRedirect={false}/>
 
-        <TouchableOpacity style={styles.searchBtn} onPress={handleSearch}>
-          <Feather name="search" size={24} color={COLORS.offwhite} />
-        </TouchableOpacity>
-
-
-
-        <TouchableOpacity style={styles.closeBtn} onPress={() => router.back()}>
-          <Feather name="x" size={24} color={COLORS.offwhite} />
-        </TouchableOpacity>
-
-      </View>
-      <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 6,
-          marginHorizontal: 16,
-          marginBottom: 16,
-        }}
-        onPress={() => {
-          setFilterVisible(true); // 👈 Esto abre el Bottom Sheet
-        }}
-      >
+      <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 6, marginHorizontal: 16, marginBottom: 16, }} onPress={() => { setFilterVisible(true); }} >
         <Ionicons name="filter" size={20} color={COLORS.primary} />
         <Text style={{ color: COLORS.primary, fontSize: 15 }}>Ver filtros</Text>
       </TouchableOpacity>
-      {/* 📌 Mostrar imagen si no hay resultados */}
       {searchResults.length === 0 ? (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <Image

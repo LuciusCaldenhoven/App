@@ -1,11 +1,12 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { createStyles } from '@/components/singleItem/message.styles';
+import { createStyles } from '@/components/singleItem/singleItem.styles';
 import { Id } from '@/convex/_generated/dataModel';
 import { router } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Image } from 'expo-image';
+
 interface ISingleItemProps {
   chat: {
     _id: Id<"chats">;
@@ -28,7 +29,7 @@ interface ISingleItemProps {
 }
 
 const SingleItem = ({ chat, currentUserId }: ISingleItemProps) => {
-  // Determinar si el usuario actual es el seller o el buyer
+  
   const isSeller = chat.seller._id === currentUserId;
   const otherUser = isSeller ? chat.buyer : chat.seller;
 

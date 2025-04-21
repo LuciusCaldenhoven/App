@@ -47,7 +47,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="mensajes"
+        name="comunication/mensajes"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="mail" size={size} color={color} />

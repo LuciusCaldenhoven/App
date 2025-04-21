@@ -355,6 +355,43 @@ export const styles = StyleSheet.create({
     fontFamily: "Bold",
     fontSize: SIZES.xLarge ,
     paddingHorizontal: 8,
-  }
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingBottom: 16,
+  },
+
+  searchBtn: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    gap: 10,
+    padding: 14,
+    alignItems: 'center',
+    width: 355,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#c2c2c2',
+    borderRadius: 30,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    marginVertical: 10,
+  },
+  searchInput: {
+
+    fontFamily: "JetBrainsMono-Medium",
+    width: "80%",
+    height: "100%",
+    paddingHorizontal: 0,
+    alignSelf: "center", 
+},
+
   
 });

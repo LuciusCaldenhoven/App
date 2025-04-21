@@ -132,7 +132,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
             <View style={styles.frsb}>
               <Text style={styles.clearAll}>Clear All</Text>
               <Button
-                text= "Show 100+ cars"
+                text="Show 100+ cars"
                 textStyles={styles.btnTextStyle}
                 buttonStyles={styles.btnContainerStyle}
               />
@@ -148,3 +148,14 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
   );
 }
 
+{/* <TouchableOpacity style={styles.filterBtn}>
+  <Ionicons name="options-outline" size={24} />
+</TouchableOpacity>
+
+
+filterBtn: {
+  padding: 10,
+  borderWidth: 1,
+  borderColor: '#A2A0A2',
+  borderRadius: 24,
+}, */}

@@ -10,15 +10,13 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignContent: "center",
-        backgroundColor: COLORS.secondary,
         borderRadius: SIZES.medium,
         marginVertical: SIZES.medium,
         height: 50,
         width: 330,
-        paddingHorizontal: 0, // 🔥 Evita espacios extra
+        paddingHorizontal: 0, 
         marginHorizontal: SIZES.small,
-        
-        
+        backgroundColor: 'blue',
     },
     searchIcon: {
         marginHorizontal: 10,
@@ -27,18 +25,44 @@ export const styles = StyleSheet.create({
     },
     searchWrapper: {
         width: "90%",
-        backgroundColor: COLORS.secondary,
+        backgroundColor: COLORS.green,
         marginRight: SIZES.small,
         borderRadius: SIZES.small,
     },
-    searchBtn: {
-        width: 50,
-        height: "100%",
-        borderRadius: SIZES.medium,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: COLORS.primary,
-    },
+    actionRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingBottom: 16,
+      },
+    
+      searchBtn: {
+        backgroundColor: '#fff',
+        flexDirection: 'row',
+        gap: 10,
+        padding: 14,
+        alignItems: 'center',
+        width: 355,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#c2c2c2',
+        borderRadius: 30,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        shadowOffset: {
+          width: 1,
+          height: 1,
+        },
+        marginVertical: 10,
+      },
+      filterBtn: {
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#A2A0A2',
+        borderRadius: 24,
+      },
     searchInput: {
 
         fontFamily: "JetBrainsMono-Medium",
