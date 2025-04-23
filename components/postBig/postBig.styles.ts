@@ -27,6 +27,7 @@ export const styles = StyleSheet.create({
     textAlign: "left", 
     color: COLORS.black, 
     marginLeft: 23,
+    maxWidth: 180, // Limitar la altura máxima
   },
   
 });

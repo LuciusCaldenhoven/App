@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, ScrollView, Text, View } from 'react-native';
 
-import { createStyles } from './status.styles';
+import  createStyles from './status.styles';
 import assets from '../../../assets';
 import Button from '../../../components/button/component';
 import { renderBorderBottom, renderMarginBottom } from '@/constants/ui-utils';

@@ -7,7 +7,7 @@ import { COLORS } from "@/constants/theme";
 import NotificationItem from "@/components/notificationItem/Notification";
 import InputComponent from "@/components/input/component";
 import { MaterialIcons } from "@expo/vector-icons";
-import { styles } from '../comunication/messages.styles';
+import  {styles}  from '../comunication/messages.styles';
 import SingleItem from "@/components/singleItem/singleItem";
 import { scale } from "@/constants/scale";
 import { renderBorderBottom } from "@/constants/ui-utils";

@@ -2,12 +2,12 @@ import { scale } from "@/constants/scale";
 import { COLORS, FontSize } from "@/constants/theme";
 import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 
-export const createStyles = () =>
+const createStyles = () =>
     StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: '#F8F8F8',
-            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
         },
         main: {
             flex: 1,
@@ -20,7 +20,7 @@ export const createStyles = () =>
             paddingHorizontal: scale(12),
             paddingVertical: scale(12),
             borderRadius: scale(10),
-            
+
             overflow: 'hidden',
             backgroundColor: COLORS.white,
         },
@@ -39,21 +39,24 @@ export const createStyles = () =>
         tabStyle: {
             borderWidth: 1,
             borderColor: COLORS.btnBorder,
-            flexDirection : 'row',
-            columnGap : scale(4),
-            paddingRight : scale(16),
-            paddingLeft : scale(12),
+            flexDirection: 'row',
+            columnGap: scale(4),
+            paddingRight: scale(16),
+            paddingLeft: scale(12),
         },
-        ph : {
-            paddingRight : scale(18),
-            paddingLeft : scale(18),
+        ph: {
+            paddingRight: scale(18),
+            paddingLeft: scale(18),
         },
         tabTextStyle: {
             color: COLORS.placeholder,
             fontFamily: "Regular",
             fontSize: FontSize.FONT_12Px,
         },
-        buttonStyles :{
-            marginHorizontal : scale(18),
+        buttonStyles: {
+            marginHorizontal: scale(18),
         }
     });
+
+
+export default createStyles;

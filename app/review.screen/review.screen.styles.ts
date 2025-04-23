@@ -2,7 +2,7 @@ import { scale } from "@/constants/scale";
 import { COLORS, FontSize } from "@/constants/theme";
 import { Dimensions, StyleSheet } from "react-native";
 
-export const createStyles = () =>
+const createStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -34,3 +34,5 @@ export const createStyles = () =>
     },
       
   });
+
+  export default createStyles;

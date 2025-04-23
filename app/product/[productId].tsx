@@ -14,6 +14,7 @@ import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { BottomSheet } from "@/components/bottomSheet/BottomSheet";
 import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
 import LoaderPosts from "@/components/loaders/loaderPosts";
+import { useAuth } from "@clerk/clerk-expo";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -49,7 +50,7 @@ export default function ProductDetail() {
         if (opacity >= 1) {
             runOnJS(setStatusBarStyle)("dark");
         } else {
-            runOnJS(setStatusBarStyle)("light"); 
+            runOnJS(setStatusBarStyle)("light");
         }
 
         return {
@@ -63,10 +64,7 @@ export default function ProductDetail() {
         productId ? { postId: productId as Id<"posts"> } : "skip"
     );
 
-    const author = useQuery(
-        api.users.getUserProfile,
-        post?.userId ? { id: post.userId } : "skip"
-    );
+    const author = useQuery( api.users.getUserProfile, post?.userId ? { id: post.userId } : "skip" );
 
     const posts = useQuery(
         api.posts.getPostsByUser,
@@ -96,6 +94,33 @@ export default function ProductDetail() {
         const index = Math.round(contentOffsetX / width);
         setCurrentIndex(index);
     };
+
+const createChat = useMutation(api.chats.createChat);
+const existingChats = useQuery(api.chats.getChats);
+
+const { userId } = useAuth();
+const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+
+const handleChat = async () => {
+    try {
+        const existingChat = existingChats?.find(
+            (chat: any) =>
+                (currentUser?._id === chat.buyerId && post?.userId === chat.sellerId) || (currentUser?._id === chat.sellerId && post?.userId === chat.sbuyerIdellerId) 
+        );
+        
+        if (existingChat) {
+            router.push(`/chat/${existingChat._id}`);
+        } else {
+            const newChat = await createChat({
+                sellerId: post?.userId as Id<"users">,               
+            });
+
+            router.push(`/chat/${newChat}`);
+        }
+    } catch (error) {
+        console.error("Error al manejar el chat:", error);
+    }
+};
 
     // Estados de carga
     const loadingPost = !post;
@@ -129,32 +154,32 @@ export default function ProductDetail() {
                     {/* Carrusel de imágenes */}
                     {post?.imageUrls && (
                         <Animated.FlatList
-                        ref={flatListRef}
-                        data={post.imageUrls}
-                        horizontal
-                        pagingEnabled
-                        showsHorizontalScrollIndicator={false}
-                        keyExtractor={(_, index) => index.toString()}
-                        onScroll={handleScroll}
-                        renderItem={({ item, index }) => (
-                          <View style={styles.imageContainer}>
-                            <Animated.View
-                              style={[
-                                styles.image,
-                                index === currentIndex ? imageAnimatedStyle : null, // Aplica la animación solo a la imagen visible
-                              ]}
-                            >
-                              <Image
-                                source={{ uri: item }}
-                                style={styles.image}
-                                contentFit="cover"
-                                transition={200}
-                                cachePolicy="memory-disk"
-                              />
-                            </Animated.View>
-                          </View>
-                        )}
-                      />
+                            ref={flatListRef}
+                            data={post.imageUrls}
+                            horizontal
+                            pagingEnabled
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={(_, index) => index.toString()}
+                            onScroll={handleScroll}
+                            renderItem={({ item, index }) => (
+                                <View style={styles.imageContainer}>
+                                    <Animated.View
+                                        style={[
+                                            styles.image,
+                                            index === currentIndex ? imageAnimatedStyle : null, // Aplica la animación solo a la imagen visible
+                                        ]}
+                                    >
+                                        <Image
+                                            source={{ uri: item }}
+                                            style={styles.image}
+                                            contentFit="cover"
+                                            transition={200}
+                                            cachePolicy="memory-disk"
+                                        />
+                                    </Animated.View>
+                                </View>
+                            )}
+                        />
                     )}
                     {post?.imageUrls && (
                         <View style={styles.imageIndicator}>
@@ -162,7 +187,7 @@ export default function ProductDetail() {
                         </View>)}
 
                     {/* Detalles del producto */}
-                    {loadingPost ? (<LoaderPosts/>) : (
+                    {loadingPost ? (<LoaderPosts />) : (
                         <View style={styles.details}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.title}>{post.title}</Text>
@@ -178,12 +203,12 @@ export default function ProductDetail() {
                             {/* Perfil del autor */}
                             <TouchableOpacity style={styles.profile} onPress={() => setShowBottomSheet(true)}>
                                 <View style={styles.cg14}>
-                                    {loadingAuthor ? (<LoaderPosts/>) : author ? (
+                                    {loadingAuthor ? (<LoaderPosts />) : author ? (
                                         <>
                                             <Image source={{ uri: author.image }} style={styles.person} contentFit="cover" transition={200} cachePolicy="memory-disk" />
                                             <Text style={styles.ownerName}>{author.fullname}</Text>
                                         </>
-                                    ) : (<LoaderPosts/>)}
+                                    ) : (<LoaderPosts />)}
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -199,7 +224,7 @@ export default function ProductDetail() {
                                     <Text style={styles.price}>${post.price}</Text>
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]}>
+                            <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat} >
                                 <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
                             </TouchableOpacity>
                         </View>

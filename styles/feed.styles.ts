@@ -5,7 +5,7 @@ import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16; // 🔹 Ajusta el ancho de los posts en una vista de dos columnas
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   // 🔹 Contenedor principal de la app
   container: {
     flex: 1,
@@ -395,3 +395,5 @@ export const styles = StyleSheet.create({
 
   
 });
+
+export default styles;

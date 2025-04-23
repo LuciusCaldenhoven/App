@@ -6,18 +6,23 @@ import { getAuthenticatedUser } from "./users";
 export const createChat = mutation({
   args: {
     sellerId: v.id("users"),
-    postId: v.id("posts"),
   },
-  handler: async (ctx, { sellerId, postId }) => {
+  handler: async (ctx, { sellerId }) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
-    // Verifica si ya existe un chat entre el comprador, vendedor y producto
+    // Verifica si ya existe un chat entre el comprador y el vendedor
     const existingChat = await ctx.db
       .query("chats")
       .filter((q) =>
-        q.and(
-          q.eq(q.field("buyerId"), currentUser._id),
-          q.eq(q.field("sellerId"), sellerId)
+        q.or(
+          q.and(
+            q.eq(q.field("buyerId"), currentUser._id),
+            q.eq(q.field("sellerId"), sellerId)
+          ),
+          q.and(
+            q.eq(q.field("buyerId"), sellerId),
+            q.eq(q.field("sellerId"), currentUser._id)
+          )
         )
       )
       .unique();
@@ -26,7 +31,7 @@ export const createChat = mutation({
       return existingChat._id; // Devuelve el ID del chat existente
     }
 
-    // Crea un nuevo chat
+    // Crea un nuevo chat si no existe
     const chatId = await ctx.db.insert("chats", {
       buyerId: currentUser._id,
       sellerId,

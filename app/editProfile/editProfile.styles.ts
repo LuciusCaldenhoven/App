@@ -5,7 +5,7 @@ import { Platform, StatusBar, StyleSheet } from "react-native";
 
 
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -162,3 +162,5 @@ export const styles = StyleSheet.create({
         color: COLORS.gray,
       }
 });
+
+export default styles;

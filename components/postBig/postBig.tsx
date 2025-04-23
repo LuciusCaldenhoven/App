@@ -15,7 +15,7 @@ export default function PostBig({ post, onPressPost }: { post: any; onPressPost:
       />
 
       {/* Título del producto */}
-      <Text style={styles.titleLarge}>{post.title}</Text>
+      <Text numberOfLines={1} style={styles.titleLarge}>{post.title}</Text>
       <Text style={styles.title}>{post.category}</Text>
     </TouchableOpacity>
   );

@@ -7,27 +7,27 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "bundleIdentifier": "com.elpibeluuu1.segundamano",
+      "buildNumber": "3",
       "supportsTablet": true,
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "NSCameraUsageDescription": "Se necesita para tomar fotos de productos.",
+        "NSLocationWhenInUseUsageDescription": "Se usa para mostrar productos cerca de ti.",
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "ITSAppUsesNonExemptEncryption": false,
         "SKAdNetworkItems": [
           {
             "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
           },
           {
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
-          },
-          {
-            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
-          },
-          {
-            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
-        ],
-        "ITSAppUsesNonExemptEncryption": false
+        ]
       }
     },
     "android": {
@@ -44,17 +44,18 @@
     },
     "plugins": [
       "expo-router",
+      "expo-font",
+      "expo-notifications",
+      "expo-camera",
+      "expo-location",
       [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ],
-      "expo-font"
-      
+      ]
     ],
     "experiments": {
       "typedRoutes": true

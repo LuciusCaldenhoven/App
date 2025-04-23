@@ -2,7 +2,7 @@ import { View, Text, SafeAreaView, TextInput, TouchableOpacity, KeyboardAvoiding
 import React, { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { styles } from '../editProfile/editProfile.styles';
+import  styles  from '../editProfile/editProfile.styles';
 import { COLORS } from '@/constants/theme';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';

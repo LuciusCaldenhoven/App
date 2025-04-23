@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text } from 'react-native';
-import { createStyles } from '../payment/payment.styles';
+import  createStyles  from '../payment/payment.styles';
 import StepperComponent from "@/components/stepper/component";
 import VisaCard from '@/components/visaCard/component';
 import { renderMarginBottom } from "@/constants/ui-utils";

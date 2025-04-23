@@ -2,7 +2,7 @@ import { Platform, StatusBar, StyleSheet } from "react-native";
 import { COLORS, FontSize } from "@/constants/theme";
 import { scale } from "@/constants/scale";
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
@@ -39,3 +39,5 @@ export const styles = StyleSheet.create({
         textAlign: "center",
     },
 });
+
+export default styles;

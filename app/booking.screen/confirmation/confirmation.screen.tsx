@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, ScrollView, Text, View} from 'react-native';
 import StepperComponent from '../../../components/stepper/component';
-import {createStyles} from './confirmation.styles';
+import createStyles from './confirmation.styles';
 
 import Button from '../../../components/button/component';
 import { renderMarginBottom,renderBorderBottom } from '@/constants/ui-utils';

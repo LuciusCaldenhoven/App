@@ -14,6 +14,7 @@ import { scale } from '@/constants/scale';
 import styles from '../chat/chats.styles'
 import { BottomSheet } from '@/components/bottomSheet/BottomSheet';
 import SellerBottomSheet from '@/components/SellerBottomSheet/SellerBottomSheet';
+import LoaderChats from '@/components/loaders/loaderChats';
 const ChatPage = () => {
     const { chatid } = useLocalSearchParams(); // Obtener el ID del chat desde la URL
     const [newMessage, setNewMessage] = useState('');
@@ -77,14 +78,27 @@ const ChatPage = () => {
             setSelectedImage(uri);
         }
     };
+
+    
     const { userId } = useAuth();
-    const { productId } = useLocalSearchParams();
     const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
     const chat = chats?.find((c) => c._id === chatid);
     const isSeller = chat?.seller?._id === currentUser?._id;
     const otherUser = isSeller ? chat?.buyer : chat?.seller;
    
     const posts = useQuery( api.posts.getPostsByUser, currentUser?._id ? { userId: currentUser._id } : "skip" );
+
+    if (!currentUser) {
+        return (
+          
+           
+              <LoaderChats />
+            
+
+        );
+      }
+        
+
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >

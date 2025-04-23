@@ -1,7 +1,7 @@
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { styles } from "@/styles/feed.styles";
+import { styles } from "@/app/(tabs)/main/feed.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";

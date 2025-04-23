@@ -24,7 +24,6 @@ export const createPost = mutation({
     handler: async (ctx, args) => {
         const currentUser = await getAuthenticatedUser(ctx);
 
-        // ✅ Obtener la URL de la imagen principal
         const imageUrl = await ctx.storage.getUrl(args.storageId);
         if (!imageUrl) throw new Error("Image not found");
 

@@ -3,7 +3,7 @@ import { COLORS, FontSize } from '@/constants/theme';
 import { Platform, StatusBar, StyleSheet } from 'react-native';
 
 
-export const createStyles = () =>
+const createStyles = () =>
     StyleSheet.create({
         container: {
             flex: 1,
@@ -94,3 +94,5 @@ export const createStyles = () =>
             fontSize: FontSize.FONT_14Px,
           },
     });
+
+    export default createStyles;

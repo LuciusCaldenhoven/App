@@ -1,20 +1,20 @@
-import {Dimensions, Platform, StatusBar, StyleSheet} from 'react-native';
+import { Dimensions, Platform, StatusBar, StyleSheet } from 'react-native';
 import { COLORS, FontSize } from '@/constants/theme';
 import { scale } from '@/constants/scale';
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-export const createStyles = () =>
+const createStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: COLORS.background,
-      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
     },
     main: {
       flex: 1,
       paddingHorizontal: scale(18),
     },
-    image: {width: width - scale(40), height: scale(180)},
+    image: { width: width - scale(40), height: scale(180) },
     titleContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -68,3 +68,4 @@ export const createStyles = () =>
       marginHorizontal: scale(18),
     },
   });
+export default createStyles;

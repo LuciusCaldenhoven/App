@@ -58,3 +58,4 @@ export const styles = StyleSheet.create({
     marginHorizontal: scale(18),
   },
 });
+ 

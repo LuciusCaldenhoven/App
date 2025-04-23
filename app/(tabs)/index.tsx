@@ -1,122 +1,133 @@
-import { Animated, FlatList, RefreshControl, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { styles } from "../../styles/feed.styles";
-
+import { Animated, FlatList, RefreshControl, ScrollView, Text, View, Image } from "react-native";
+import  styles  from "@/styles/feed.styles";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES } from "@/constants/theme";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Loader } from "@/components/Loader";
 import Post from "@/components/Post";
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Search from "@/components/search/index"
-import { useRouter } from "expo-router";
+import { CategoryBox } from "@/components/categoryBox/categoryBox";
+import { renderMarginBottom } from "@/constants/ui-utils";
+import { products } from "@/assets/assets.index/data";
 
 export default function Index() {
-  const [refreshing, setRefreshing] = useState(false);
-  const router = useRouter();
-  const translateY = useRef(new Animated.Value(0)).current;
-  const [backgroundColor, setBackgroundColor] = useState<string>(COLORS.background);
-  const [searchText, setSearchText] = useState("");
-  const posts = useQuery(api.posts.getFeedPosts)
+    const [refreshing, setRefreshing] = useState(false);
+    const [hasError, setHasError] = useState(false);
 
-  if (posts === undefined) return <Loader />
-  if (posts.length === 0) return <NoPostsFound />
+    const posts = useQuery(api.posts.getFeedPosts);
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => { setRefreshing(false); }, 2000);
-  };
-
-  const handleFocus = () => {
-    setBackgroundColor('red');
-    Animated.timing(translateY, {
-      toValue: -100,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-  const handleSearch = () => {
-    if (searchText.trim() !== "") {
-      router.push("/search/searchResults");
-    }
-  };
-
-
-  return (
-    
-    <View style={styles.container}>
-      <View style={styles.appBarWrapper}>
-        <View style={styles.appBar}>
-          <Ionicons name="location-outline" size={24} />
-          <Text style={styles.location}>Arequipa, Peru</Text>
-        </View>
-      </View>
-
-      <ScrollView
-        style={{ flex: 1 }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.secondary} />
+    useEffect(() => {
+        try {
+            if (posts && !Array.isArray(posts)) {
+                throw new Error("La estructura de posts no es válida.");
+            }
+        } catch (error) {
+            console.error("Error inicial al cargar datos:", error);
+            setHasError(true);
         }
-      >
-        {/* 🏆 Encabezado fijo con textos y barra de búsqueda */}
-        <View style={{ backgroundColor: COLORS.background, paddingBottom: 10 }}>
-          <Text style={{ fontFamily: "Bold", fontSize: SIZES.xxLarge - 6, marginTop: SIZES.xSmall, color: COLORS.black, marginHorizontal: 12 }}>
-            Gana dinero extra
-          </Text>
-          <Text style={{ fontFamily: "Bold", fontSize: SIZES.xxLarge - 6, marginTop: 0, color: COLORS.primary, marginHorizontal: 12 }}>
-            Sin esfuerzo
-          </Text>
+    }, [posts]);
 
-          {/* Barra de búsqueda */}
-          <Animated.View style={[styles.actionRow, { transform: [{ translateY }], backgroundColor }]}>
-            <TouchableOpacity style={styles.searchBtn} onPress={handleFocus}>
-              <Ionicons name="search" size={24} color={COLORS.grey} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder={"¿Qué quieres comprar?"}
-                placeholderTextColor={COLORS.grey}
-                
-                onSubmitEditing={handleSearch}
-               
-              />
-            </TouchableOpacity>
-          </Animated.View>
+    const onRefresh = () => {
+        setRefreshing(true);
+        setTimeout(() => { setRefreshing(false); }, 2000);
+    };
 
-          {/* Título de la sección */}
-          <Text style={styles.titulo}>Las Novedadessss pa</Text>
+    if (hasError) {
+        return (
+            <View style={styles.container}>
+                <Text style={{ color: "red", padding: 20 }}>Ocurrió un error al cargar los datos. Intenta más tarde.</Text>
+            </View>
+        );
+    }
+    else {
+        console.log("TODO BIEN");
+    }
+
+    if (posts === undefined) return <Loader />;
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.appBarWrapper}>
+                <View style={styles.appBar}>
+                    <Ionicons name="location-outline" size={24} />
+                    <Text style={styles.location}>Arequipa, Peru</Text>
+                </View>
+            </View>
+
+            <ScrollView
+                style={{ flex: 1 }}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.secondary} />
+                }
+            >
+                <View style={{ backgroundColor: COLORS.background, paddingBottom: 10 }}>
+                    <Text style={{ fontFamily: "Bold", fontSize: SIZES.xxLarge - 6, marginTop: SIZES.xSmall, color: COLORS.black, marginHorizontal: 12 }}>
+                        Gana dinero extra
+                    </Text>
+                    <Text style={{ fontFamily: "Bold", fontSize: SIZES.xxLarge - 6, marginTop: 0, color: COLORS.primary, marginHorizontal: 12 }}>
+                        Sin esfuerzo
+                    </Text>
+
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", paddingHorizontal: 10, paddingBottom: 16 }}>
+                        <Search shouldRedirect={true} />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 25, paddingBottom: 16 }}>
+                        <CategoryBox
+                            icon={<Image source={require('@/assets/assets.index/ropa.png')} style={{ width: 100, height: 100 }} />}
+                            title="Ropa y Accesorios"
+                            backgroundColor="#rgb(255, 235, 186)"
+                            onPress={() => console.log('Ropa')}
+                            width={160}
+                            height={140}
+                            textColor="rgb(170, 106, 3)"
+                        />
+                        <CategoryBox
+                            icon={<Image source={require('@/assets/assets.index/electronica.png')} style={{ width: 100, height: 100 }} />}
+                            title="Electrónica"
+                            backgroundColor="#rgb(150, 159, 240)"
+                            onPress={() => console.log('Electrónica')}
+                            width={160}
+                            height={140}
+                            textColor="#rgb(1, 12, 114)"
+                        />
+                    </View>
+
+                    <View style={{ paddingHorizontal: 12, paddingBottom: 16 }}>
+                        <FlatList
+                            data={products}
+                            renderItem={({ item }) => (
+                                <CategoryBox
+                                    icon={<Image source={item.icon} style={{ width: 70, height: 70 }} />}
+                                    title={item.title}
+                                    backgroundColor={'rgb(240, 248, 248)'}
+                                    onPress={() => console.log(item.title)}
+                                />
+                            )}
+                            keyExtractor={(item) => item.id.toString()}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ columnGap: 12 }}
+                        />
+                    </View>
+
+                    {renderMarginBottom(50)}
+                    <Text style={styles.titulo}>Las Novedadessss pa</Text>
+                </View>
+
+                <FlatList
+                    data={posts}
+                    renderItem={({ item }) => <Post post={item} />}
+                    keyExtractor={(item) => item._id}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ columnGap: 0, paddingLeft: 12, paddingRight: 12 }}
+                />
+            </ScrollView>
         </View>
-
-        {/* 🔄 Sección de productos con desplazamiento horizontal */}
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => <Post post={item} />}
-          keyExtractor={(item) => item._id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ columnGap: 0, paddingLeft: 12, paddingRight: 12 }}
-        />
-
-      </ScrollView>
-
-
-
-    </View>
-  );
+    );
 }
-
-
-
-const NoPostsFound = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: COLORS.background,
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <Text style={{ fontSize: 20, color: COLORS.primary }}>No posts yet</Text>
-  </View>
-);
-

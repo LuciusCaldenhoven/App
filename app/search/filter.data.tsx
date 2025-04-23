@@ -2,7 +2,7 @@ import { scale } from "@/constants/scale"
 import { COLORS } from "@/constants/theme"
 import { FontAwesome6 } from "@expo/vector-icons"
 
-export const data = [
+const data = [
     {
         id: 1,
         label: 'Venta',
@@ -19,7 +19,7 @@ export const data = [
         value: 'Servicio',
     },
 ]
-export const condicionData = [
+const condicionData = [
     {
         id: 1,
         label: 'Nuevo',
@@ -36,7 +36,7 @@ export const condicionData = [
         value: 'Reacondicionado',
     },
 ]
-export const Renta = [
+const Renta = [
     {
         id: 1,
         label: 'Hora',
@@ -58,7 +58,7 @@ export const Renta = [
         value: 'Mes',
     },
 ]
-export const Planes = [
+const Planes = [
     {
         id: 1,
         label: 'Pro',
@@ -78,3 +78,6 @@ export const Planes = [
         component: <FontAwesome6 name ="fire" size={scale(18)}/>,
     },
 ]
+
+
+export  { data, Planes, Renta, condicionData };

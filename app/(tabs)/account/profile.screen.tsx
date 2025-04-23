@@ -1,7 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
-import { styles } from "../account/profile.styles";
+import {styles } from "../account/profile.styles";
 import { useAuth } from "@clerk/clerk-expo";
 import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
@@ -19,7 +19,7 @@ import LoaderPosts from "@/components/loaders/loaderPosts";
 
 
 
-export default function Profile() {
+function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
@@ -131,7 +131,7 @@ export default function Profile() {
 };
 
 
-
+export default Profile;
 
 function NoPostsFound() {
   return (

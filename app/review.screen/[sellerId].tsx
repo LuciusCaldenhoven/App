@@ -8,7 +8,7 @@ import { COLORS, FontSize } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
 import InputComponent from "@/components/input/component";
 import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { createStyles } from "../review.screen/review.screen.styles";
+import  createStyles  from "../review.screen/review.screen.styles";
 import ReviewComponent from "@/components/review/component";
 
 export default function SellerReviewsScreen() {

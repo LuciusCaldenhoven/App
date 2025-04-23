@@ -1,7 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
-import { styles } from "../My_products/myproducts.styles";
+import  styles  from "../My_products/myproducts.styles";
 import { useAuth } from "@clerk/clerk-expo";
 import { useQuery } from "convex/react";
 import { useState } from "react";
