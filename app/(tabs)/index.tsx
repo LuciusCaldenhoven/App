@@ -1,5 +1,5 @@
 import { Animated, FlatList, RefreshControl, ScrollView, Text, View, Image } from "react-native";
-import  styles  from "@/styles/feed.styles";
+import styles from "@/styles/feed.styles";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES } from "@/constants/theme";
 import { useQuery } from "convex/react";
@@ -7,45 +7,36 @@ import { api } from "@/convex/_generated/api";
 import { Loader } from "@/components/Loader";
 import Post from "@/components/Post";
 import React, { useEffect, useRef, useState } from "react";
-import Search from "@/components/search/index"
+import Search from "@/components/search/index";
 import { CategoryBox } from "@/components/categoryBox/categoryBox";
 import { renderMarginBottom } from "@/constants/ui-utils";
-import { products } from "@/assets/assets.index/data";
+import products from "@/assets/index/data";
 
 export default function Index() {
     const [refreshing, setRefreshing] = useState(false);
-    const [hasError, setHasError] = useState(false);
+
 
     const posts = useQuery(api.posts.getFeedPosts);
 
-    useEffect(() => {
-        try {
-            if (posts && !Array.isArray(posts)) {
-                throw new Error("La estructura de posts no es válida.");
-            }
-        } catch (error) {
-            console.error("Error inicial al cargar datos:", error);
-            setHasError(true);
-        }
-    }, [posts]);
+    if (posts === undefined) return <Loader />;
 
     const onRefresh = () => {
         setRefreshing(true);
-        setTimeout(() => { setRefreshing(false); }, 2000);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
     };
 
-    if (hasError) {
+
+    if (posts === undefined) return <Loader />;
+
+    if (posts.length === 0) {
         return (
             <View style={styles.container}>
-                <Text style={{ color: "red", padding: 20 }}>Ocurrió un error al cargar los datos. Intenta más tarde.</Text>
+                <NoPost />
             </View>
         );
     }
-    else {
-        console.log("TODO BIEN");
-    }
-
-    if (posts === undefined) return <Loader />;
 
     return (
         <View style={styles.container}>
@@ -65,35 +56,59 @@ export default function Index() {
                 }
             >
                 <View style={{ backgroundColor: COLORS.background, paddingBottom: 10 }}>
-                    <Text style={{ fontFamily: "Bold", fontSize: SIZES.xxLarge - 6, marginTop: SIZES.xSmall, color: COLORS.black, marginHorizontal: 12 }}>
+                    <Text
+                        style={{
+                            fontFamily: "Bold",
+                            fontSize: SIZES.xxLarge - 6,
+                            marginTop: SIZES.xSmall,
+                            color: COLORS.black,
+                            marginHorizontal: 12,
+                        }}
+                    >
                         Gana dinero extra
                     </Text>
-                    <Text style={{ fontFamily: "Bold", fontSize: SIZES.xxLarge - 6, marginTop: 0, color: COLORS.primary, marginHorizontal: 12 }}>
+                    <Text
+                        style={{
+                            fontFamily: "Bold",
+                            fontSize: SIZES.xxLarge - 6,
+                            marginTop: 0,
+                            color: COLORS.primary,
+                            marginHorizontal: 12,
+                        }}
+                    >
                         Sin esfuerzo
                     </Text>
 
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", paddingHorizontal: 10, paddingBottom: 16 }}>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingHorizontal: 10,
+                            paddingBottom: 16,
+                        }}
+                    >
                         <Search shouldRedirect={true} />
                     </View>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 25, paddingBottom: 16 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 25, paddingBottom: 16, }} >
                         <CategoryBox
-                            icon={<Image source={require('@/assets/assets.index/ropa.png')} style={{ width: 100, height: 100 }} />}
+                            icon={<Image source={require('@/assets/index/ropa.png')} style={{ width: 100, height: 100 }} />}
                             title="Ropa y Accesorios"
-                            backgroundColor="#rgb(255, 235, 186)"
+                            backgroundColor="rgb(255, 235, 186)"
                             onPress={() => console.log('Ropa')}
                             width={160}
                             height={140}
                             textColor="rgb(170, 106, 3)"
                         />
                         <CategoryBox
-                            icon={<Image source={require('@/assets/assets.index/electronica.png')} style={{ width: 100, height: 100 }} />}
+                            icon={<Image source={require('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
                             title="Electrónica"
-                            backgroundColor="#rgb(150, 159, 240)"
+                            backgroundColor="rgb(150, 159, 240)"
                             onPress={() => console.log('Electrónica')}
                             width={160}
                             height={140}
-                            textColor="#rgb(1, 12, 114)"
+                            textColor="rgb(1, 12, 114)"
                         />
                     </View>
 
@@ -128,6 +143,16 @@ export default function Index() {
                     contentContainerStyle={{ columnGap: 0, paddingLeft: 12, paddingRight: 12 }}
                 />
             </ScrollView>
+        </View>
+    );
+}
+
+function NoPost() {
+    return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+            <Text style={{ fontSize: 16, color: "gray", textAlign: "center" }}>
+                No hay publicaciones disponibles en este momento.
+            </Text>
         </View>
     );
 }

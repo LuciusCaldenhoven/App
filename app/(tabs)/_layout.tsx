@@ -47,7 +47,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="comunication/mensajes"
+        name="mensajes"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="mail" size={size} color={color} />
@@ -56,7 +56,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="account/profile.screen"
+        name="profile.screen"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />

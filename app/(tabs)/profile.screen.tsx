@@ -1,7 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
-import {styles } from "../account/profile.styles";
+import styles from "@/styles/profile.styles";
 import { useAuth } from "@clerk/clerk-expo";
 import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
@@ -16,40 +16,40 @@ import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
 import LoaderPosts from "@/components/loaders/loaderPosts";
 
-
-
-
 function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
+  // Obtener el usuario actual
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+
+  // Obtener las publicaciones del usuario
+  
+
+  // Mutación para actualizar el perfil
+  const updateProfile = useMutation(api.users.updateProfile);
 
   const [editedProfile, setEditedProfile] = useState({
     fullname: currentUser?.fullname || "",
   });
-
-
-  const posts = useQuery(api.posts.getPostsByUser, {});
-
-  const updateProfile = useMutation(api.users.updateProfile);
 
   const handleSaveProfile = async () => {
     await updateProfile(editedProfile);
     setIsEditModalVisible(false);
   };
 
-
-  if (!currentUser || posts === undefined) {
+  // Mostrar un loader si los datos aún no están disponibles
+  if (!currentUser ) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <View style={{ transform: [{ scale: 1.5 }] }}>
           <LoaderPosts />
         </View>
       </View>
     );
   }
-  
 
+ 
 
   return (
     <View style={styles.container}>
@@ -58,17 +58,30 @@ function Profile() {
         <View style={styles.profileContainer}>
           <TouchableOpacity
             style={styles.frcg}
-            onPress={() => router.push({ pathname: "/editProfile/editProfile", params: { currentUser: JSON.stringify(currentUser) } })}>
+            onPress={() =>
+              router.push({
+                pathname: "/editProfile/editProfile",
+                params: { currentUser: JSON.stringify(currentUser) },
+              })
+            }
+          >
             <Image source={currentUser.image} style={styles.profileImage} />
-            <View style={{ paddingRight: 250}}>
-              <Text numberOfLines={1} style={styles.title}>{currentUser.fullname}</Text>
-              <Text numberOfLines={1} style={styles.email}>{currentUser.email}</Text>
+            <View style={{ paddingRight: 250 }}>
+              <Text numberOfLines={1} style={styles.title}>
+                {currentUser.fullname}
+              </Text>
+              <Text numberOfLines={1} style={styles.email}>
+                {currentUser.email}
+              </Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" color={COLORS.gray} size={scale(24)}  style={{ marginLeft: 60 }}/>
+            <MaterialCommunityIcons
+              name="chevron-right"
+              color={COLORS.gray}
+              size={scale(24)}
+              style={{ marginLeft: 60 }}
+            />
           </TouchableOpacity>
         </View>
-
-
 
         {renderMarginBottom(12)}
 
@@ -90,7 +103,8 @@ function Profile() {
         {renderMarginBottom(6)}
         <SingleList
           component={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
-          text="Informacion Personal" />
+          text="Informacion Personal"
+        />
         <SingleList
           component={<AntDesign name="inbox" size={scale(24)} color={COLORS.black} />}
           text="Mis Productos"
@@ -103,48 +117,34 @@ function Profile() {
         />
         <SingleList
           component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas" />
+          text="Mas"
+        />
         {renderMarginBottom(12)}
         <Text style={styles.title}>Ayuda</Text>
         {renderMarginBottom(6)}
         <SingleList
           component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas" />
-        <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas" />
-        <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas" />
-        <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas" />
-
-        <Button
-          onPress={() => signOut()}
-          text="chau"
-
+          text="Mas"
         />
+        <SingleList
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
+          text="Mas"
+        />
+        <SingleList
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
+          text="Mas"
+        />
+        <SingleList
+          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
+          text="Mas"
+        />
+
+        <Button onPress={() => signOut()} text="chau" />
       </ScrollView>
     </View>
   );
-};
-
+}
 
 export default Profile;
 
-function NoPostsFound() {
-  return (
-    <View
-      style={{
-        height: "100%",
-        backgroundColor: COLORS.background,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Ionicons name="images-outline" size={48} color={COLORS.primary} />
-      <Text style={{ fontSize: 20, color: COLORS.white }}>No posts yet</Text>
-    </View>
-  );
-}
+// Componente para mostrar cuando no hay publicaciones

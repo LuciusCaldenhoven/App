@@ -9,7 +9,7 @@ import { ITab } from "@/components/tabSwitcher/iTab.props";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import Slider from '@react-native-community/slider';
 import InputComponent from "@/components/input/component";
-import { data, condicionData } from "./filter.data";
+import exportData  from "./filter.data";
 import Button from "@/components/button/component";
 
 
@@ -47,7 +47,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
 
             <TabSwitcher
               title='Tipos'
-              data={data}
+              data={exportData.data}
               onPress={e => console.log(e)}
             />
 
@@ -92,7 +92,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
 
             <TabSwitcher
               title="Condicion"
-              data={condicionData}
+              data={exportData.condicionData}
               onPress={e => console.log(e)}
               tabContainerStyle={styles.tabContainerStyle}
               tabStyle={styles.tabStyle}
@@ -112,7 +112,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
             {renderMarginBottom(16)}
             <TabSwitcher
               title="Condicion"
-              data={condicionData}
+              data={exportData.condicionData}
               onPress={e => console.log(e)}
               tabContainerStyle={styles.tabContainerStyle}
               tabStyle={styles.tabStyle}
@@ -120,7 +120,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
             />
             <TabSwitcher
               title="Condicion"
-              data={condicionData}
+              data={exportData.condicionData}
               onPress={e => console.log(e)}
               tabContainerStyle={styles.tabContainerStyle}
               tabStyle={styles.tabStyle}

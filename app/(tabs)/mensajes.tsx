@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Loader } from "@/components/Loader";
@@ -7,17 +7,14 @@ import { COLORS } from "@/constants/theme";
 import NotificationItem from "@/components/notificationItem/Notification";
 import InputComponent from "@/components/input/component";
 import { MaterialIcons } from "@expo/vector-icons";
-import  {styles}  from '../comunication/messages.styles';
+import styles from "@/styles/messages.styles";
 import SingleItem from "@/components/singleItem/singleItem";
 import { scale } from "@/constants/scale";
 import { renderBorderBottom } from "@/constants/ui-utils";
 import { useAuth } from "@clerk/clerk-expo";
 
-
 export default function NotificationsAndMessages() {
   const [selectedTab, setSelectedTab] = useState<"notifications" | "messages">("notifications");
-
-  
 
   const notifications = useQuery(api.notifications.getNotifications);
   const chats = useQuery(api.chats.getChats);
@@ -32,29 +29,34 @@ export default function NotificationsAndMessages() {
           style={{ flex: 1 }}
           data={notifications}
           renderItem={({ item }) => (
-            <NotificationItem item={{ ...item, _creationTime: new Date(item._creationTime) }}
-              onDelete={(notification) => console.log("Eliminar:", notification)} />)}
+            <NotificationItem
+              item={{ ...item, _creationTime: new Date(item._creationTime) }}
+              onDelete={(notification) => console.log("Eliminar:", notification)}
+            />
+          )}
           keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContainer} />
+          contentContainerStyle={styles.listContainer}
+        />
       );
-    }
-    else {
+    } else {
       if (!chats || chats.length === 0) return <NoMessagesFound />;
       return (
         <View style={styles.container}>
-         
-            <InputComponent onChangeText={e => console.log(e)} leftAction={<MaterialIcons color={COLORS.gray} name="search" size={scale(22)} />}
-              placeholder="Buscar mensajes"
-              containerStyle={styles.input} />
-            <FlatList
-              data={chats || []}
-              renderItem={({ item: chat }) => (
-                currentUser ? <SingleItem chat={chat} currentUserId={currentUser._id} /> : null
-              )}
-              keyExtractor={(chat) => chat._id} />
-            {renderBorderBottom(90)}
-         
+          <InputComponent
+            onChangeText={(e) => console.log(e)}
+            leftAction={<MaterialIcons color={COLORS.gray} name="search" size={scale(22)} />}
+            placeholder="Buscar mensajes"
+            containerStyle={styles.input}
+          />
+          <FlatList
+            data={chats || []}
+            renderItem={({ item: chat }) =>
+              currentUser ? <SingleItem chat={chat} currentUserId={currentUser._id} /> : null
+            }
+            keyExtractor={(chat) => chat._id}
+          />
+          {renderBorderBottom(90)}
         </View>
       );
     }
@@ -68,14 +70,23 @@ export default function NotificationsAndMessages() {
         {selectedTab === "notifications" ? "Notificaciones" : "Mensajes"}
       </Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button, selectedTab === "notifications" && styles.activeButton,]} onPress={() => setSelectedTab("notifications")} >
-          <Text style={[styles.buttonText, selectedTab === "notifications" && styles.activeButtonText,]} >
+        <TouchableOpacity
+          style={[styles.button, selectedTab === "notifications" && styles.activeButton]}
+          onPress={() => setSelectedTab("notifications")}
+        >
+          <Text
+            style={[styles.buttonText, selectedTab === "notifications" && styles.activeButtonText]}
+          >
             Notificaciones
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, selectedTab === "messages" && styles.activeButton,]} onPress={() => setSelectedTab("messages")} >
-          <Text style={[styles.buttonText, selectedTab === "messages" && styles.activeButtonText,]} >
+          style={[styles.button, selectedTab === "messages" && styles.activeButton]}
+          onPress={() => setSelectedTab("messages")}
+        >
+          <Text
+            style={[styles.buttonText, selectedTab === "messages" && styles.activeButtonText]}
+          >
             Mensajes
           </Text>
         </TouchableOpacity>
@@ -88,9 +99,7 @@ export default function NotificationsAndMessages() {
 function NoNotificationsFound() {
   return (
     <View style={styles.centered}>
-      <Text style={{ fontSize: 20, color: COLORS.black }}>
-        No hay notificaciones aún
-      </Text>
+      <Text style={{ fontSize: 20, color: COLORS.black }}>No hay notificaciones aún</Text>
     </View>
   );
 }
@@ -98,9 +107,7 @@ function NoNotificationsFound() {
 function NoMessagesFound() {
   return (
     <View style={styles.centered}>
-      <Text style={{ fontSize: 20, color: COLORS.black }}>
-        No hay mensajes aún
-      </Text>
+      <Text style={{ fontSize: 20, color: COLORS.black }}>No hay mensajes aún</Text>
     </View>
   );
 }

@@ -7,8 +7,8 @@ import { scale } from "@/constants/scale";
 import { COLORS, FontSize } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
 import InputComponent from "@/components/input/component";
-import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import  createStyles  from "../review.screen/review.screen.styles";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import createStyles from "../review.screen/review.screen.styles";
 import ReviewComponent from "@/components/review/component";
 
 export default function SellerReviewsScreen() {
@@ -18,7 +18,9 @@ export default function SellerReviewsScreen() {
   });
 
   const styles = createStyles();
+
   if (!reviews) return <Loader />;
+  if (reviews.length === 0) return <NoReviewsFound />;
 
   return (
     <View style={styles.container}>
@@ -38,12 +40,34 @@ export default function SellerReviewsScreen() {
           placeholder="Find Reviews..."
         />
       </View>
+      <FlatList
+        data={reviews}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
+          <ReviewComponent
+            sellerId={sellerId as Id<"users">}
+            containerStyle={styles.reviewCard}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
+  );
+}
 
-      
-      <ReviewComponent sellerId={sellerId as Id<"users">} containerStyle={styles.reviewCard} />
-        
-        
-    
+function NoReviewsFound() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.background,
+      }}
+    >
+      <Text style={{ color: COLORS.primary, fontSize: 22 }}>
+        No hay reseñas disponibles
+      </Text>
     </View>
   );
 }

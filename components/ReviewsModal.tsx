@@ -1,7 +1,7 @@
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { styles } from "@/app/(tabs)/main/feed.styles";
+import  styles  from "@/styles/feed.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
@@ -48,6 +48,10 @@ export default function ReviewsModal({ onClose, postId, sellerId, visible }: Rev
     }
   };
 
+  if (!reviews) {
+    return <Loader />;
+  }
+
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
@@ -62,8 +66,10 @@ export default function ReviewsModal({ onClose, postId, sellerId, visible }: Rev
           <View style={{ width: 24 }} />
         </View>
 
-        {reviews === undefined ? (
-          <Loader />
+        {reviews.length === 0 ? (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ color: COLORS.grey, fontSize: 16 }}>No hay reseñas aún</Text>
+          </View>
         ) : (
           <FlatList
             data={reviews}

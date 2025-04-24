@@ -3,8 +3,7 @@ import React from 'react';
 import { createStyles } from '@/components/singleItem/singleItem.styles';
 import { Id } from '@/convex/_generated/dataModel';
 import { router } from 'expo-router';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
+
 import { Image } from 'expo-image';
 
 interface ISingleItemProps {

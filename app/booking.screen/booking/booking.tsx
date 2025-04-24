@@ -9,7 +9,7 @@ import InputComponent from "@/components/input/component";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { scale } from "@/constants/scale";
 import TabSwitcher from "@/components/tabSwitcher/component";
-import { Planes, Renta } from "@/app/search/filter.data";
+import exportData from "@/app/search/filter.data";
 import Button from "@/components/button/component";
 import { router } from "expo-router";
 
@@ -59,7 +59,7 @@ const BookingScreen = () => {
                         {renderMarginBottom(12)}
                         <TabSwitcher
                             title="Planes"
-                            data={Planes}
+                            data={exportData.Planes}
                             onPress={e => console.log(e)}
                             tabContainerStyle={styles.tabContainerStyle}
                             tabStyle={styles.tabStyle}
@@ -68,7 +68,7 @@ const BookingScreen = () => {
                         
                         <TabSwitcher
                             title="Tiempo"
-                            data={Renta}
+                            data={exportData.Renta}
                             onPress={e => console.log(e)}
                             tabContainerStyle={styles.tabContainerStyle}
                             tabStyle={[styles.tabStyle,  styles.ph]}

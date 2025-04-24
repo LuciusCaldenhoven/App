@@ -10,7 +10,7 @@
     "newArchEnabled": false,
     "ios": {
       "bundleIdentifier": "com.elpibeluuu1.segundamano",
-      "buildNumber": "3",
+      "buildNumber": "5",
       "supportsTablet": true,
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
@@ -35,7 +35,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.elpibeluuu1.Segunda_mano"
+      "package": "com.elpibeluuu1.Segunda_mano",
+      "jsEngine": "jsc"
     },
     "web": {
       "bundler": "metro",

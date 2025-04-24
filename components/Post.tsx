@@ -1,15 +1,11 @@
 import { styles } from "@/styles/ProductCard.styles";
 import { router } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Image } from "expo-image"
+import { Image } from "expo-image";
 import { Id } from "@/convex/_generated/dataModel";
-import { useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
-
-
-
 
 type PostProps = {
     post: {
@@ -35,19 +31,12 @@ type PostProps = {
     };
 };
 
-
-
-
-
 export default function Post({ post }: PostProps) {
-
-
     const { user } = useUser();
     const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
     return (
         <TouchableOpacity onPress={() => router.push(`/product/${post._id}`)}>
-
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image
@@ -58,22 +47,13 @@ export default function Post({ post }: PostProps) {
                         cachePolicy="memory-disk"
                     />
                 </View>
-
-                {/* Información del producto */}
                 <View style={styles.details}>
-                    <Text style={styles.price}>
-                        S/{post.price}.00
-                    </Text>
+                    <Text style={styles.price}>S/{post.price}.00</Text>
                     <Text style={styles.title} numberOfLines={1}>
                         {post.title}
                     </Text>
-
                 </View>
-                
             </View>
         </TouchableOpacity>
-
     );
-
-
 }

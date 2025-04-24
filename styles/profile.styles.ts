@@ -3,7 +3,7 @@ import { COLORS, FontSize } from "@/constants/theme";
 import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
@@ -67,3 +67,4 @@ export const styles = StyleSheet.create({
   
 });
 
+export default styles;

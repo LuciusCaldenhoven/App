@@ -20,15 +20,14 @@ const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
 
 export default function ProductDetail() {
-    // Parámetros y estados
     const { productId } = useLocalSearchParams();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showBottomSheet, setShowBottomSheet] = useState(false);
 
-    // Referencias y animaciones
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useScrollViewOffset(scrollRef);
     const flatListRef = useRef(null);
+
     const imageAnimatedStyle = useAnimatedStyle(() => ({
         transform: [
             {
@@ -58,13 +57,12 @@ export default function ProductDetail() {
         };
     }, []);
 
-    // Consultas y mutaciones
     const post = useQuery(
         api.posts.getBookmarkedPostById,
         productId ? { postId: productId as Id<"posts"> } : "skip"
     );
 
-    const author = useQuery( api.users.getUserProfile, post?.userId ? { id: post.userId } : "skip" );
+    const author = useQuery(api.users.getUserProfile, post?.userId ? { id: post.userId } : "skip");
 
     const posts = useQuery(
         api.posts.getPostsByUser,
@@ -73,7 +71,12 @@ export default function ProductDetail() {
 
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
 
-    // Funciones
+    const createChat = useMutation(api.chats.createChat);
+    const existingChats = useQuery(api.chats.getChats);
+
+    const { userId } = useAuth();
+    const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+
     const handleBookmark = async () => {
         await toggleBookmark({ postId: post!._id });
     };
@@ -95,46 +98,37 @@ export default function ProductDetail() {
         setCurrentIndex(index);
     };
 
-const createChat = useMutation(api.chats.createChat);
-const existingChats = useQuery(api.chats.getChats);
+    const handleChat = async () => {
+        try {
+            const existingChat = existingChats?.find(
+                (chat: any) =>
+                    (currentUser?._id === chat.buyerId && post?.userId === chat.sellerId) ||
+                    (currentUser?._id === chat.sellerId && post?.userId === chat.buyerId)
+            );
 
-const { userId } = useAuth();
-const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+            if (existingChat) {
+                router.push(`/chat/${existingChat._id}`);
+            } else {
+                const newChat = await createChat({
+                    sellerId: post?.userId as Id<"users">,
+                });
 
-const handleChat = async () => {
-    try {
-        const existingChat = existingChats?.find(
-            (chat: any) =>
-                (currentUser?._id === chat.buyerId && post?.userId === chat.sellerId) || (currentUser?._id === chat.sellerId && post?.userId === chat.sbuyerIdellerId) 
-        );
-        
-        if (existingChat) {
-            router.push(`/chat/${existingChat._id}`);
-        } else {
-            const newChat = await createChat({
-                sellerId: post?.userId as Id<"users">,               
-            });
-
-            router.push(`/chat/${newChat}`);
+                router.push(`/chat/${newChat}`);
+            }
+        } catch (error) {
+            console.error("Error al manejar el chat:", error);
         }
-    } catch (error) {
-        console.error("Error al manejar el chat:", error);
-    }
-};
+    };
 
-    // Estados de carga
-    const loadingPost = !post;
-    const loadingAuthor = post && !author;
-    // Renderizado
+    if (!post || !author || !currentUser) {
+        return <Loader />;
+    }
+
     return (
         <>
             <StatusBar style="light" backgroundColor="white" />
             <View style={styles.container}>
-                {/* Header */}
-                <Animated.View style={[styles.header, headerAnimatedStyle]}>
-                </Animated.View>
-
-                {/* Botones (Siempre visibles) */}
+                <Animated.View style={[styles.header, headerAnimatedStyle]}></Animated.View>
                 <View style={styles.headerButtonsContainer}>
                     <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
                         <Ionicons name="chevron-back" size={20} />
@@ -148,10 +142,7 @@ const handleChat = async () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-
-                {/* Contenido principal */}
-                <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} ref={scrollRef} scrollEventThrottle={16} >
-                    {/* Carrusel de imágenes */}
+                <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} ref={scrollRef} scrollEventThrottle={16}>
                     {post?.imageUrls && (
                         <Animated.FlatList
                             ref={flatListRef}
@@ -166,7 +157,7 @@ const handleChat = async () => {
                                     <Animated.View
                                         style={[
                                             styles.image,
-                                            index === currentIndex ? imageAnimatedStyle : null, // Aplica la animación solo a la imagen visible
+                                            index === currentIndex ? imageAnimatedStyle : null,
                                         ]}
                                     >
                                         <Image
@@ -183,65 +174,52 @@ const handleChat = async () => {
                     )}
                     {post?.imageUrls && (
                         <View style={styles.imageIndicator}>
-                            <Text style={styles.imageIndicatorText}> {currentIndex + 1} / {post.imageUrls.length} </Text>
-                        </View>)}
-
-                    {/* Detalles del producto */}
-                    {loadingPost ? (<LoaderPosts />) : (
-                        <View style={styles.details}>
-                            <View style={styles.titleRow}>
-                                <Text style={styles.title}>{post.title}</Text>
-                            </View>
-                            <View style={styles.descriptionWrapper}>
-                                <Text style={styles.description}>Descripción</Text>
-                                <Text style={styles.descText}>{post.caption}</Text>
-                            </View>
-                            {renderMarginBottom(12)}
-                            {renderBorderBottom(2)}
-                            {renderMarginTop(18)}
-
-                            {/* Perfil del autor */}
-                            <TouchableOpacity style={styles.profile} onPress={() => setShowBottomSheet(true)}>
-                                <View style={styles.cg14}>
-                                    {loadingAuthor ? (<LoaderPosts />) : author ? (
-                                        <>
-                                            <Image source={{ uri: author.image }} style={styles.person} contentFit="cover" transition={200} cachePolicy="memory-disk" />
-                                            <Text style={styles.ownerName}>{author.fullname}</Text>
-                                        </>
-                                    ) : (<LoaderPosts />)}
-                                </View>
-                            </TouchableOpacity>
+                            <Text style={styles.imageIndicatorText}>
+                                {currentIndex + 1} / {post.imageUrls.length}
+                            </Text>
                         </View>
                     )}
-                </Animated.ScrollView>
-
-                {/* Footer */}
-                {post && (
-                    <View style={styles.footer}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                            <TouchableOpacity style={styles.footerText}>
-                                <View style={styles.priceWrapper}>
-                                    <Text style={styles.price}>${post.price}</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat} >
-                                <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
-                            </TouchableOpacity>
+                    <View style={styles.details}>
+                        <View style={styles.titleRow}>
+                            <Text style={styles.title}>{post.title}</Text>
                         </View>
+                        <View style={styles.descriptionWrapper}>
+                            <Text style={styles.description}>Descripción</Text>
+                            <Text style={styles.descText}>{post.caption}</Text>
+                        </View>
+                        {renderMarginBottom(12)}
+                        {renderBorderBottom(2)}
+                        {renderMarginTop(18)}
+                        <TouchableOpacity style={styles.profile} onPress={() => setShowBottomSheet(true)}>
+                            <View style={styles.cg14}>
+                                <Image
+                                    source={{ uri: author.image }}
+                                    style={styles.person}
+                                    contentFit="cover"
+                                    transition={200}
+                                    cachePolicy="memory-disk"
+                                />
+                                <Text style={styles.ownerName}>{author.fullname}</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                )}
-
+                </Animated.ScrollView>
+                <View style={styles.footer}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <TouchableOpacity style={styles.footerText}>
+                            <View style={styles.priceWrapper}>
+                                <Text style={styles.price}>${post.price}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat}>
+                            <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
                 {renderBorderBottom(6)}
-
-                {/* BottomSheet */}
                 <BottomSheet visible={showBottomSheet} setVisible={setShowBottomSheet}>
-                    <SellerBottomSheet
-                        author={author}
-                        posts={posts || []}
-                        setShowBottomSheet={setShowBottomSheet}
-                    />
+                    <SellerBottomSheet author={author} posts={posts || []} setShowBottomSheet={setShowBottomSheet} />
                 </BottomSheet>
-
             </View>
         </>
     );

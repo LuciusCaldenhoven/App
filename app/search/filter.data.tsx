@@ -80,4 +80,6 @@ const Planes = [
 ]
 
 
-export  { data, Planes, Renta, condicionData };
+const exportData = { data, Planes, Renta, condicionData };
+
+export default exportData;
