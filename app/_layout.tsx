@@ -7,18 +7,12 @@ import { SplashScreen, useRouter } from "expo-router";
 import * as Navigation from "expo-navigation-bar";
 import { Platform, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { LogBox } from 'react-native'; // Importar LogBox
 
-SplashScreen.preventAutoHideAsync();
+
+
 
 // Desactivar advertencias específicas
-LogBox.ignoreLogs(['Warning: ...']); // Si tienes advertencias específicas que deseas ignorar
 
-// Manejador global de errores
-ErrorUtils.setGlobalHandler((error, isFatal) => {
-  console.error('Error no manejado: ', error, isFatal);
-  // Puedes mostrar un mensaje al usuario o registrar el error en algún sistema
-});
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -32,8 +26,12 @@ export default function RootLayout() {
   });
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) await SplashScreen.hideAsync();
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
   }, [fontsLoaded]);
+
+
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -53,5 +51,5 @@ export default function RootLayout() {
         </View>
       </SafeAreaProvider>
     </ClerkAndConvexProvider>
-  );
+);
 }

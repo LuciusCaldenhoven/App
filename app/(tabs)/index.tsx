@@ -1,4 +1,4 @@
-import { Animated, FlatList, RefreshControl, ScrollView, Text, View, Image } from "react-native";
+import { Animated, FlatList, RefreshControl, ScrollView, Text, View, Image, Button } from "react-native";
 import styles from "@/styles/feed.styles";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES } from "@/constants/theme";
@@ -150,6 +150,7 @@ export default function Index() {
 function NoPost() {
     return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+            
             <Text style={{ fontSize: 16, color: "gray", textAlign: "center" }}>
                 No hay publicaciones disponibles en este momento.
             </Text>
