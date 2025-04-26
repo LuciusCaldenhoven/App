@@ -25,8 +25,8 @@ export default function ProductDetail() {
     const [showBottomSheet, setShowBottomSheet] = useState(false);
 
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
-    const scrollOffset = useScrollViewOffset(scrollRef);
-    const flatListRef = useRef(null);
+    const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef: null);
+    const flatListRef = useAnimatedRef<Animated.FlatList<any>>();
 
     const imageAnimatedStyle = useAnimatedStyle(() => ({
         transform: [

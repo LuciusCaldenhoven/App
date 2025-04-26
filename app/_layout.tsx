@@ -10,10 +10,6 @@ import { StatusBar } from "expo-status-bar";
 
 
 
-
-// Desactivar advertencias específicas
-
-
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "JetBrainsMono-Medium": require("../assets/fonts/JetBrainsMono-Medium.ttf"),

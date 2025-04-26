@@ -64,9 +64,7 @@ const EditProfile = () => {
                     mimeType: "image/jpeg",
                 });
 
-                if (uploadResult.status !== 200) {
-                    throw new Error("Error al subir la imagen");
-                }
+              
 
                 // 3. Obtener el storageId del resultado de la subida
                 const { storageId } = JSON.parse(uploadResult.body);

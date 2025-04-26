@@ -36,7 +36,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.elpibeluuu1.Segunda_mano",
-      "jsEngine": "jsc"
+      "jsEngine": "hermes"
     },
     "web": {
       "bundler": "metro",
