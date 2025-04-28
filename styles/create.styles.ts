@@ -4,15 +4,11 @@ import { COLORS } from "@/constants/theme";
 const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
+
   contentContainer: {
-    flex: 1, // Permite que el contenido crezca dentro del contenedor principal
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+    flex: 1,
+    backgroundColor: COLORS.white, // Color de fondo
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
   },
   pagerView: {
     flex: 1,
@@ -22,18 +18,20 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    flexDirection: "row", // Alinea los elementos en fila
-    alignItems: "center", // Centra los elementos verticalmente
-    justifyContent: "space-between", // Espacia los elementos entre sí
-    paddingHorizontal: 16, // Espaciado lateral
-    paddingVertical: 12, // Espaciado superior e inferior
-    borderBottomWidth: 0.5, // Línea divisoria
-    borderBottomColor: COLORS.surface, // Color de la línea divisoria
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+
+    paddingVertical: 12,
+    borderBottomWidth: 0.2,
+    borderBottomColor: COLORS.gray,
+
   },
   headerTitle: {
-    fontSize: 18, // Tamaño del texto
-    fontWeight: "600", // Peso de la fuente
-    color: COLORS.white, // Color del texto
+    fontSize: 16,
+    color: COLORS.black,
+    fontFamily: "Medium",
+    paddingLeft: 50,
   },
   contentDisabled: {
     opacity: 0.7, // Reduce la opacidad cuando está deshabilitado
@@ -49,10 +47,9 @@ export const styles = StyleSheet.create({
     opacity: 0.5, // Reduce la opacidad cuando el botón está deshabilitado
   },
   shareText: {
-    color: COLORS.primary, // Color del texto
-    fontSize: 16, // Tamaño del texto
-    fontWeight: "600", // Peso de la fuente
-    
+    fontSize: 15, // Tamaño del texto
+    fontFamily: "Medium", // Fuente del texto
+
   },
   shareTextDisabled: {
     color: COLORS.grey, // Color del texto cuando está deshabilitado
@@ -70,10 +67,6 @@ export const styles = StyleSheet.create({
   content: {
     flex: 1, // Permite que el contenido crezca dinámicamente
   },
-  scrollContent: {
-    flexGrow: 1, // Permite que el contenido se expanda y haga scroll si es necesario
-    paddingBottom: 20,
-  },
   imageSection: {
     width: width, // Ocupa todo el ancho de la pantalla
     height: width, // Hace que la sección de imagen sea cuadrada
@@ -82,8 +75,10 @@ export const styles = StyleSheet.create({
     alignItems: "center", // Centra horizontalmente
   },
   previewImage: {
-    width: "100%", // La imagen ocupa todo el ancho disponible
-    height: "100%", // La imagen ocupa todo el alto disponible
+    width: "100%",
+    height: undefined,
+    aspectRatio: 4,
+    borderRadius: 10,
   },
   changeImageButton: {
     position: "absolute", // Se posiciona sobre la imagen
@@ -102,14 +97,15 @@ export const styles = StyleSheet.create({
     fontWeight: "500", // Peso del texto
   },
   inputSection: {
-    padding: 16, // Espaciado interno
-    flex: 1, // Permite que el contenido crezca dentro de la sección
-    justifyContent: "center", // Centra el contenido verticalmente
-    gap: 12, // Espaciado entre inputs
+    paddingVertical: 17, 
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+   
   },
   captionContainer: {
-    flexDirection: "row", // Alinea el avatar y el input en fila
-    alignItems: "flex-start", // Alinea los elementos al inicio
+    flexDirection: "row", 
+    alignItems: "flex-start",
   },
   userAvatar: {
     width: 36, // Tamaño del avatar
@@ -159,16 +155,14 @@ export const styles = StyleSheet.create({
     fontWeight: "600", // Peso de la fuente
   },
   imageCarousel: {
-    width: "100%", // Ocupa todo el ancho disponible
-    height: "50%", // Ajusta la altura del carrusel
-    alignItems: "center", // Centra el contenido horizontalmente
+    marginVertical: 10,
+    height: 110,
+    backgroundColor: 'white',
   },
   imageWrapper: {
-    width: width, // Cada imagen ocupa el ancho completo
-    height: "100%", // Ocupa toda la altura disponible
-    justifyContent: "center", // Centra la imagen verticalmente
-    alignItems: "center", // Centra la imagen horizontalmente
-    marginHorizontal: 0, // Espaciado entre imágenes
+    marginHorizontal: 5,
+    overflow: "hidden",
+    paddingBottom: 30,
   },
   conditionLabel: {
     fontSize: 16, // Tamaño del texto
@@ -177,7 +171,19 @@ export const styles = StyleSheet.create({
     marginBottom: 8, // Espacio entre el label y los botones
   },
   conditionOptions: {
-    flexDirection: "row", // Alinea los botones en fila
-    gap: 12, // Espacio entre "Nuevo" y "Usado"
+    flexDirection: "row",
+    gap: 12,
+  },
+  addImageButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+    padding: 10,
+  },
+  addImageText: {
+    color: COLORS.black,
+    fontSize: 14,
+    marginTop: 5,
+    fontFamily: "Medium",
   },
 });

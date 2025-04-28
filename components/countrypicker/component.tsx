@@ -5,11 +5,11 @@ import {createStyles} from './countrypicker.styles';
 import {ICountryProps} from './ICountrypicker.props';
 
 const countries = [
+  { code: 'PE', name: 'Peru', flag: '🇵🇪', ph: '+51' },
   { code: 'IN', name: 'India', flag: '🇮🇳', ph: '+91' },
   { code: 'US', name: 'United States', flag: '🇺🇸', ph: '+1' },
   { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', ph: '+44' },
   { code: 'FR', name: 'France', flag: '🇫🇷', ph: '+33' },
-  { code: 'PE', name: 'Peru', flag: '🇵🇪', ph: '+51' },
   { code: 'CL', name: 'Chile', flag: '🇨🇱', ph: '+56' },
   { code: 'AR', name: 'Argentina', flag: '🇦🇷', ph: '+54' },
   { code: 'CO', name: 'Colombia', flag: '🇨🇴', ph: '+57' },

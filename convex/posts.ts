@@ -16,9 +16,10 @@ export const createPost = mutation({
         storageId: v.id("_storage"),
         title: v.string(),
         price: v.number(),
+        currency: v.string(),
         category: v.string(),
         location: v.string(),
-        condition: v.union(v.literal("new"), v.literal("used")),
+        condition: v.string(),
         imageUrls: v.array(v.id("_storage")), // 🔥 Ahora recibe storageId, no strings
     },
     handler: async (ctx, args) => {
@@ -48,7 +49,8 @@ export const createPost = mutation({
             category: args.category,
             location: args.location,
             condition: args.condition,
-            imageUrls, // 🔥 Ahora almacena URLs en lugar de storageId
+            currency: args.currency,
+            imageUrls, 
         });
 
         await ctx.db.patch(currentUser._id, {

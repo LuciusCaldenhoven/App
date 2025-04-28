@@ -28,9 +28,10 @@ export default defineSchema({
         comments: v.number(),
         title: v.string(),
         price: v.number(),
+        currency: v.string(),
         category: v.string(),
         location: v.string(),
-        condition: v.union(v.literal("new"), v.literal("used")),
+        condition: v.string(),
         imageUrls: v.array(v.string()),
     })
     .index("by_user", ["userId"])

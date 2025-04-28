@@ -3,38 +3,41 @@ import { styles } from "@/styles/create.styles";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, TextInput, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, FlatList, Image as RNImage, Keyboard } from "react-native";
 import React from 'react';
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import * as FileSystem from "expo-file-system";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import SlideItem from "@/components/swiper/SlideItem";
-import Pagination from "@/components/swiper/Pagination";
-import swiperData from "@/components/swiper/data/index";
-import { Animated, Dimensions } from "react-native";
-import Slider from "@/components/swiper/Slider";
+import NewInput from "@/components/newInput/newInput";
+import { GestureHandlerRootView, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { renderMarginBottom } from "@/constants/ui-utils";
+import products from "@/assets/index/data";
+import moneda from "@/assets/precio/precio.data";
+import condicion from "@/assets/condicion/condicion.data";
 
 export default function CreateScreen() {
   const router = useRouter();
-  const { user } = useUser();
+
 
   const [caption, setCaption] = useState("");
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [isSharing, setIsSharing] = useState(false);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
-  const [condition, setCondition] = useState<"new" | "used">("new");
+  const [condition, setCondition] = useState("");
+  const [currency, setCurrency] = useState("");
 
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: number }>({});
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 0.8,
+      quality: 0.1,
       selectionLimit: 10,
     });
 
@@ -61,7 +64,7 @@ export default function CreateScreen() {
           mimeType: "image/jpeg",
         });
 
-       
+
 
         const { storageId } = JSON.parse(uploadResult.body);
         uploadedImages.push(storageId);
@@ -75,7 +78,8 @@ export default function CreateScreen() {
         price: parseFloat(price),
         category,
         location,
-        condition: condition as "new" | "used",
+        condition,
+        currency,
       });
 
       setSelectedImages([]);
@@ -84,8 +88,8 @@ export default function CreateScreen() {
       setPrice("");
       setCategory("");
       setLocation("");
-      setCondition("new");
-
+      setCondition("");
+      setCurrency("");
       router.push("/(tabs)");
     } catch (error) {
       console.log("Error sharing post", error);
@@ -94,111 +98,185 @@ export default function CreateScreen() {
     }
   };
 
-  const handleImagePress = (index: number) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+  const handleKeyboardDismiss = () => {
+    Keyboard.dismiss();
   };
 
+  useEffect(() => {
+    selectedImages.forEach((uri) => {
+      RNImage.getSize(
+        uri,
+        (width, height) => {
+          setImageDimensions((prev) => ({
+            ...prev,
+            [uri]: width / height, 
+          }));
+        },
+        (error) => console.error("Error fetching image size:", error)
+      );
+    });
+  }, [selectedImages]);
+  
   return (
+    <View style={styles.contentContainer}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => { setSelectedImages([]); setCaption(""); }} disabled={isSharing} >
+          <Ionicons name="chevron-back" size={24} color={COLORS.black} style={{ paddingLeft: 7 }} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Nuevo Producto</Text>
+        <TouchableOpacity style={[styles.shareButton, isSharing && styles.shareButtonDisabled]} disabled={isSharing || selectedImages.length === 0} onPress={handleShare} >
+          {isSharing ? (<ActivityIndicator size="small" color={COLORS.primary} />) : (<Text style={styles.shareText}>Publicar</Text>)}
+        </TouchableOpacity>
+      </View>
 
-    
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-    >
-      <View style={styles.contentContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => {
-              setSelectedImages([]);
-              setCaption("");
-            }}
-            disabled={isSharing}
-          >
-            <Ionicons
-              name="close-outline"
-              size={28}
-              color={isSharing ? COLORS.grey : COLORS.white}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Nuevo Producto</Text>
-          <TouchableOpacity
-            style={[styles.shareButton, isSharing && styles.shareButtonDisabled]}
-            disabled={isSharing || selectedImages.length === 0}
-            onPress={handleShare}
-          >
-            {isSharing ? (
-              <ActivityIndicator size="small" color={COLORS.primary} />
-            ) : (
-              <Text style={styles.shareText}>Publicar</Text>
-            )}
-          </TouchableOpacity>
+
+      <ScrollView contentContainerStyle={{paddingBottom: 600}}>
+        <View style={[styles.content, isSharing && styles.contentDisabled]}>
+
+          <View style={styles.imageCarousel}>
+            {selectedImages.length === 0 ? (
+                <TouchableOpacity style={styles.emptyImageContainer} onPress={pickImage}>
+                  <Ionicons name="image-outline" size={50} color={COLORS.grey} />
+                  <Text style={styles.emptyImageText}>Selecciona imágenes</Text>
+                </TouchableOpacity>
+              ) : 
+               <FlatList
+                    data={selectedImages}
+                    horizontal
+                    keyExtractor={(item, index) => index.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item }) => {
+                      const aspectRatio = imageDimensions[item] || 1;
+                      const imageWidth = 100 * aspectRatio;
+      
+                      return (
+                        
+                          <View style={styles.imageWrapper}>
+                            {imageWidth > 70 ? (
+                              <Image source={{ uri: item }} style={{ width: imageWidth, height: 100, borderRadius: 5, }} resizeMode="contain" />
+                            ) :
+                              <Image source={{ uri: item }} style={{ width: 70, height: 100, borderRadius: 5, }} resizeMode="cover" />
+                          }
+                          </View>
+                          
+                       
+                      );
+                    }}
+                    ListFooterComponent={
+                      <TouchableOpacity
+                        style={styles.addImageButton}
+                        onPress={pickImage}
+                      >
+                        <Ionicons name="add-circle" size={40} color={COLORS.black} />
+                        <Text style={styles.addImageText}>Agregar más</Text>
+                      </TouchableOpacity>
+                    }
+                  />
+          }
+            
+          </View>
         </View>
+        <Text style={{fontFamily: "Medium", fontSize: 12, color: COLORS.black, paddingLeft: 10}}>
+              Fotos: {selectedImages.length}/10 selecciona tus imagenes principales
+        </Text>
+        {renderMarginBottom(20)}
+        <GestureHandlerRootView >
+          <TouchableOpacity onPress={handleKeyboardDismiss}>
+          <View style={styles.inputSection}>
+            <NewInput 
+              label="Título del producto" 
+              value={title} 
+              onChangeText={setTitle}
+            />
+          </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} bounces={true} keyboardShouldPersistTaps="handled">
-          <View style={[styles.content, isSharing && styles.contentDisabled]}>
-
-            {/* Carrusel de imágenes */}
-            <View style={styles.imageCarousel}>
-              <FlatList
-                data={selectedImages}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                snapToAlignment="center"
-                snapToInterval={300} // Ajusta el tamaño según las imágenes
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <View style={styles.imageWrapper}>
-                    <Image source={{ uri: item }} style={styles.previewImage} contentFit="cover" transition={200} />
-                  </View>
-                )}
+          <View style={[styles.inputSection, { flexDirection: "row", paddingLeft: 20, paddingRight: 10 }]}>
+            <View style={{ flex: 3 }}>
+              <NewInput 
+                label="Precio" 
+                keyboardType="numeric" 
+                value={price} 
+                onChangeText={setPrice}
               />
-
-              <TouchableOpacity
-                style={styles.changeImageButton}
-                onPress={pickImage}
-                disabled={isSharing}
-              >
-                <Ionicons name="image-outline" size={20} color={COLORS.white} />
-                <Text style={styles.changeImageText}>Cambiar</Text>
-              </TouchableOpacity>
             </View>
-
-            {/* Inputs */}
-            <View style={styles.inputSection}>
-              <TextInput style={styles.input} placeholder="Título del producto" value={title} onChangeText={setTitle} />
-              <TextInput style={styles.input} placeholder="Categoría" value={category} onChangeText={setCategory} />
-              <TextInput style={styles.input} placeholder="Ubicación" value={location} onChangeText={setLocation} />
-              <TextInput style={styles.input} placeholder="Precio ($)" keyboardType="numeric" value={price} onChangeText={setPrice} />
-
-              {/* Condición */}
-              <View style={styles.conditionContainer}>
-                <Text style={styles.conditionLabel}>Condición:</Text>
-                <View style={styles.conditionOptions}>
-                  <TouchableOpacity onPress={() => setCondition("new")} style={condition === "new" ? styles.selected : styles.unselected}>
-                    <Text>Nuevo</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setCondition("used")} style={condition === "used" ? styles.selected : styles.unselected}>
-                    <Text>Usado</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Descripción */}
-              <TextInput
-                style={styles.captionInput}
-                placeholder="Escribe una descripción..."
-                placeholderTextColor={COLORS.grey}
-                multiline
-                value={caption}
-                onChangeText={setCaption}
-                editable={!isSharing}
+            <View style={{ flex: 1.2 }}>
+              <NewInput 
+                label="Moneda" 
+                value={currency} 
+                onChangeText={setCurrency} 
+                data={moneda} 
               />
             </View>
           </View>
-        </ScrollView>
-      </View>
-    </KeyboardAvoidingView>
+
+          <View style={styles.inputSection}>
+            <NewInput 
+              label="Categoría" 
+              value={category} 
+              onChangeText={setCategory}
+              data={products}
+            />
+          </View>
+
+          <View style={styles.inputSection}>
+            <NewInput 
+              label="Condición" 
+              value={condition} 
+              onChangeText={setCondition}
+              data={condicion}
+            />
+          </View>
+
+          <View style={styles.inputSection}>
+            <NewInput 
+              label="Descripción" 
+              minHeight={120} 
+              multiline={true}
+              value={caption} 
+              onChangeText={setCaption}
+            />
+          </View>
+          </TouchableOpacity>
+        </GestureHandlerRootView>
+      </ScrollView >
+    </View >
+
   );
 }
+
+
+
+
+
+
+
+// <View style={styles.inputSection}>
+//             <TextInput style={styles.input} placeholder="Título del producto" value={title} onChangeText={setTitle} />
+//             <TextInput style={styles.input} placeholder="Categoría" value={category} onChangeText={setCategory} />
+//             <TextInput style={styles.input} placeholder="Ubicación" value={location} onChangeText={setLocation} />
+//             <TextInput style={styles.input} placeholder="Precio ($)" keyboardType="numeric" value={price} onChangeText={setPrice} />
+
+        
+//             <View style={styles.conditionContainer}>
+//               <Text style={styles.conditionLabel}>Condición:</Text>
+//               <View style={styles.conditionOptions}>
+//                 <TouchableOpacity onPress={() => setCondition("new")} style={condition === "new" ? styles.selected : styles.unselected}>
+//                   <Text>Nuevo</Text>
+//                 </TouchableOpacity>
+//                 <TouchableOpacity onPress={() => setCondition("used")} style={condition === "used" ? styles.selected : styles.unselected}>
+//                   <Text>Usado</Text>
+//                 </TouchableOpacity>
+//               </View>
+//             </View>
+
+
+//             <TextInput
+//               style={styles.captionInput}
+//               placeholder="Escribe una descripción..."
+//               placeholderTextColor={COLORS.grey}
+//               multiline
+//               value={caption}
+//               onChangeText={setCaption}
+//               editable={!isSharing}
+//             />
+//           </View>
