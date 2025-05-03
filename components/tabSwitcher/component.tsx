@@ -5,7 +5,7 @@ import { ITab, ITabProps } from './iTab.props';
 import { COLORS } from '@/constants/theme';
 
 
-const TabSwitcher = ({ title, data, onPress, tabStyle, tabContainerStyle, tabTextStyle }: ITabProps) => {
+const TabSwitcher = ({ title, data, onPress, tabStyle, tabContainerStyle, tabTextStyle }: Omit<ITabProps, 'onPress'> & { onPress: (value: string) => void }) => {
   const [active, setActive] = useState<ITab>(data[0]);
 
   return (
@@ -17,30 +17,21 @@ const TabSwitcher = ({ title, data, onPress, tabStyle, tabContainerStyle, tabTex
           <Pressable
             key={item.id}
             onPress={() => {
-              onPress(item);
-              setActive(item);
+              onPress(item.value); // Pasa el valor del tipo seleccionado
+              setActive(item); // Actualiza el estado interno del TabSwitcher
             }}
             style={[
               styles.tab,
               tabStyle,
-              item.id === active.id && styles.activeTab,
-            ]}>
-            {item?.component && React.isValidElement(item?.component)
-              ? React.cloneElement(item.component as React.ReactElement<any>, {
-                  style: {
-                    color:
-                      item.id === active.id
-                        ? COLORS.white
-                        : COLORS.gray,
-                  },
-                })
-              : item?.component}
-
+              item.id === active?.id && styles.activeTab,
+            ]}
+            accessibilityRole="button"
+          >
             <Text
               style={[
                 styles.tabText,
                 tabTextStyle,
-                item.id === active.id && styles.tabTextActive,
+                item.id === active?.id && styles.tabTextActive,
               ]}
             >
               {item.label}

@@ -34,10 +34,10 @@ export const styles = StyleSheet.create({
     tabText: {
       fontSize: SIZES.small + 2,
       color: COLORS.black,
-      fontFamily: "SemiBold",
+      fontFamily: "Medium",
     },
     text: {
-      fontFamily: "Bold",
+      fontFamily: "Medium",
       fontSize: SIZES.medium + 4,
       color : COLORS.black,
     },

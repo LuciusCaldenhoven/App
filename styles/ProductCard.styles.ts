@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     height: 280,
     borderRadius: SIZES.medium,
     marginHorizontal: 5,
-    overflow: "hidden", // Asegura que los bordes redondeados afecten a todo el contenido
+    overflow: "hidden", 
   },
 
   imageContainer: {

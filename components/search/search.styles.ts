@@ -43,9 +43,8 @@ export const styles = StyleSheet.create({
         gap: 10,
         padding: 14,
         alignItems: 'center',
-        width: 355,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#c2c2c2',
+        width: "95%",
+        
         borderRadius: 30,
         elevation: 2,
         shadowColor: '#000',
@@ -64,8 +63,7 @@ export const styles = StyleSheet.create({
         borderRadius: 24,
       },
     searchInput: {
-
-        fontFamily: "JetBrainsMono-Medium",
+        fontFamily: "Medium",
         width: "80%",
         height: "100%",
         paddingHorizontal: 0,
@@ -78,6 +76,7 @@ export const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        
         backgroundColor: COLORS.background,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40 
     },

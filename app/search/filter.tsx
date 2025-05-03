@@ -1,18 +1,19 @@
 // app/search/filter.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Pressable, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Pressable, TextInput, Dimensions, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/filter.styles";
 import { COLORS, SIZES } from "@/constants/theme";
 import TabSwitcher from "@/components/tabSwitcher/component";
-import { ITab } from "@/components/tabSwitcher/iTab.props";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
-import Slider from '@react-native-community/slider';
 import InputComponent from "@/components/input/component";
-import exportData  from "./filter.data";
+import exportData from "./filter.data";
 import Button from "@/components/button/component";
-
-
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import { Dropdown } from "react-native-element-dropdown";
+import AnimatedSelectableBox from "@/components/tagSelector/tagSelector";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 type FilterProps = {
   visible: boolean;
@@ -20,35 +21,94 @@ type FilterProps = {
   onApplyFilters: (filters: any) => void;
 };
 
-
-
-
 export default function Filter({ visible, onClose, onApplyFilters }: FilterProps) {
+  const screenWidth = Dimensions.get('window').width;
+  const [filters, setFilters] = useState<{
+    type: string;
+    condition: string[];
+    priceRange: number[];
+    date: string;
+  }>({
+    type: "",
+    condition: [],
+    priceRange: [0, 1000],
+    date: "",
+  });
 
-  const [value, setValue] = useState(0)
-  const [min, setMin] = useState(0);
-  const [max, setMax] = useState(100);
+  // Consulta el número de productos filtrados
+  const productCount = useQuery(api.posts.getFilteredProductCount, {
+    ...filters,
+    condition: filters.condition.join(","),
+  });
+
+  const handleApplyFilters = () => {
+    onApplyFilters(filters);
+    onClose();
+  };
+
+  const toggleSeleccion = (item: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      condition: prev.condition.includes(item)
+        ? prev.condition.filter((i) => i !== item)
+        : [...prev.condition, item],
+    }));
+  };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType="fade" transparent>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.header}>
             <Text style={styles.title}>Filtrar búsqueda</Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={COLORS.primary} />
-
+              <Ionicons name="close" size={24} style={styles.closeButton} />
             </TouchableOpacity>
-
           </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
 
-            <View style={styles.separator} />
-
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ paddingHorizontal: 16 }}
+            contentContainerStyle={{ paddingBottom: 100 }}
+          >
+            {renderMarginBottom(16)}
+            <Text style={styles.label}>Ordenar por</Text>
+            {renderMarginBottom(16)}
+            <Dropdown
+              data={exportData.ordenarPorData}
+              labelField="label"
+              valueField="value"
+              value={filters.type}
+              onChange={(item) =>
+                setFilters((prev) => ({ ...prev, type: item.value }))
+              }
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholder}
+              selectedTextStyle={styles.selectedText}
+              containerStyle={styles.dropdownContainer}
+              itemTextStyle={styles.itemText}
+              renderRightIcon={() => (
+                <Ionicons name="chevron-down" size={20} color={COLORS.primary} />
+              )}
+              renderItem={(item, selected) => (
+                <View
+                  style={[
+                    styles.item,
+                    selected ? styles.itemSelected : null,
+                  ]}
+                >
+                  <Text style={styles.itemText}>{item.label}</Text>
+                </View>
+              )}
+            />
+            {renderMarginBottom(16)}
             <TabSwitcher
-              title='Tipos'
+              title="Tipos"
               data={exportData.data}
-              onPress={e => console.log(e)}
+              onPress={(selectedType) => {
+                console.log("Tipo seleccionado:", selectedType);
+                setFilters((prev) => ({ ...prev, type: String(selectedType) }));
+              }}
             />
 
             {renderBorderBottom(0)}
@@ -56,32 +116,43 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
 
             <View style={styles.frsb}>
               <Text style={styles.text}>Rango de precio</Text>
-              <Text style={styles.text}>S/{value}</Text>
             </View>
-
-            <Slider
-              style={styles.slider}
-              minimumValue={min}
-              maximumValue={max}
-              step={1}
-              minimumTrackTintColor={COLORS.black}
-              maximumTrackTintColor={COLORS.black}
-              thumbTintColor={COLORS.black}
-              value={value}
-              onValueChange={e => setValue(e)}
-            />
+            <View style={{ paddingHorizontal: 25 }}>
+              <MultiSlider
+                values={filters.priceRange}
+                min={0}
+                max={1000}
+                step={1}
+                sliderLength={screenWidth - 85}
+                onValuesChange={(values) =>
+                  setFilters((prev) => ({ ...prev, priceRange: values }))
+                }
+                selectedStyle={{ backgroundColor: COLORS.black }}
+                unselectedStyle={{ backgroundColor: '#ddd' }}
+                markerStyle={{ backgroundColor: COLORS.white }}
+              />
+            </View>
 
             <View style={styles.frsb}>
               <InputComponent
                 keyboardType="numeric"
-                onChangeText={e => setMin(Number(e))}
-                placeholder="Min"
+                value={filters.priceRange[0].toString()}
+                onChangeText={(e) => {
+                  const value = Number(e);
+                  if (!isNaN(value)) setFilters((prev) => ({ ...prev, priceRange: [value, prev.priceRange[1]] }));
+                }}
+                placeholder="Mínimo"
                 containerStyle={styles.inputContainer}
               />
+
               <InputComponent
                 keyboardType="numeric"
-                onChangeText={e => setMax(Number(e))}
-                placeholder="Max"
+                value={filters.priceRange[1].toString()}
+                onChangeText={(e) => {
+                  const value = Number(e);
+                  if (!isNaN(value)) setFilters((prev) => ({ ...prev, priceRange: [prev.priceRange[0], value] }));
+                }}
+                placeholder="Máximo"
                 containerStyle={styles.inputContainer}
               />
             </View>
@@ -90,72 +161,62 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
             {renderBorderBottom(10)}
             {renderMarginBottom(16)}
 
-            <TabSwitcher
-              title="Condicion"
-              data={exportData.condicionData}
-              onPress={e => console.log(e)}
-              tabContainerStyle={styles.tabContainerStyle}
-              tabStyle={styles.tabStyle}
-              tabTextStyle={styles.tabTextStyle}
-            />
+            <View style={styles.frsb}>
+              <Text style={styles.text}>Condicion</Text>
+            </View>
 
-            {renderMarginTop(8)}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 16 }}>
+              {exportData.condicionData.map((item) => (
+                <AnimatedSelectableBox
+                  key={item.id}
+                  label={item.label}
+                  isSelected={filters.condition.includes(item.value)}
+                  onToggle={() => toggleSeleccion(item.value)}
+                />
+              ))}
+            </View>
+            <View style={styles.frsb}>
+              <Text style={styles.text}>Fecha de publicacion</Text>
+            </View>
 
-            <InputComponent
-              keyboardType="default"
-              onChangeText={e => console.log(e)}
-              placeholder="Ubicación"
-            />
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 16 }}>
+              {exportData.fecha.map((item) => (
+                <AnimatedSelectableBox
+                  key={item.id}
+                  label={item.label}
+                  isSelected={filters.date === item.value}
+                  onToggle={() => setFilters((prev) => ({ ...prev, date: item.value }))}
+                />
+              ))}
+            </View>
 
             {renderMarginTop(16)}
             {renderBorderBottom(10)}
             {renderMarginBottom(16)}
-            <TabSwitcher
-              title="Condicion"
-              data={exportData.condicionData}
-              onPress={e => console.log(e)}
-              tabContainerStyle={styles.tabContainerStyle}
-              tabStyle={styles.tabStyle}
-              tabTextStyle={styles.tabTextStyle}
-            />
-            <TabSwitcher
-              title="Condicion"
-              data={exportData.condicionData}
-              onPress={e => console.log(e)}
-              tabContainerStyle={styles.tabContainerStyle}
-              tabStyle={styles.tabStyle}
-              tabTextStyle={styles.tabTextStyle}
-            />
 
             {renderBorderBottom(10)}
-            {renderMarginBottom(16)}
-            <View style={styles.frsb}>
-              <Text style={styles.clearAll}>Clear All</Text>
-              <Button
-                text="Show 100+ cars"
-                textStyles={styles.btnTextStyle}
-                buttonStyles={styles.btnContainerStyle}
-              />
-            </View>
-
-            {renderMarginBottom(16)}
-
           </ScrollView>
+        </View>
+        <View style={styles.footer}>
+          <View style={styles.frsb}>
+            <TouchableOpacity>
+              <Text style={styles.clearAll}>Clear All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleApplyFilters}>
+              {productCount === undefined ? (
+                <ActivityIndicator size="small" color={COLORS.primary} />
+              ) : (
+                <Button
+                  text={`Mostrar ${productCount || 0} productos`}
+                  textStyles={styles.btnTextStyle}
+                  buttonStyles={styles.btnContainerStyle}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
-
   );
 }
 
-{/* <TouchableOpacity style={styles.filterBtn}>
-  <Ionicons name="options-outline" size={24} />
-</TouchableOpacity>
-
-
-filterBtn: {
-  padding: 10,
-  borderWidth: 1,
-  borderColor: '#A2A0A2',
-  borderRadius: 24,
-}, */}

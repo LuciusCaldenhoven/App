@@ -186,4 +186,22 @@ export const styles = StyleSheet.create({
     marginTop: 5,
     fontFamily: "Medium",
   },
+  editButton: {
+    position: "absolute",
+    top: 5,
+    left: 5, 
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 15,
+    padding: 5,
+    zIndex: 1,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 5,
+    right: 5, 
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 15,
+    padding: 5,
+    zIndex: 1,
+  },
 });

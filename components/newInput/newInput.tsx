@@ -25,8 +25,6 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
     const transY = useRef(new Animated.Value(0));
     const [isVisible, setIsVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState<any>(null);
-    const [products, setProducts] = useState<any[]>(data || []);
-
 
 
     const handleFocus = () => {

@@ -11,7 +11,6 @@ import Filter from "./filter";
 import Search from "@/components/search";
 
 export default function SearchPage() {
-  const router = useRouter();
   const { query } = useLocalSearchParams();
   const [searchKey, setSearchKey] = useState(query ? String(query) : "");
   const [filterVisible, setFilterVisible] = useState(false);
@@ -20,29 +19,25 @@ export default function SearchPage() {
 
   const searchResults = allPosts
     ? allPosts.filter((post) =>
-        post.title.toLowerCase().includes(searchKey.toLowerCase())
-      )
+      post.title.toLowerCase().includes(searchKey.toLowerCase())
+    )
     : [];
 
   return (
     <View style={styles.container}>
-      <Search shouldRedirect={false} />
+      <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
+        <Ionicons name="arrow-back" size={20} style={{ marginRight: 20, paddingLeft:20 }}  />
 
-      <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 6,
-          marginHorizontal: 16,
-          marginBottom: 16,
-        }}
-        onPress={() => {
-          setFilterVisible(true);
-        }}
-      >
-        <Ionicons name="filter" size={20} color={COLORS.primary} />
-        <Text style={{ color: COLORS.primary, fontSize: 15 }}>Ver filtros</Text>
-      </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <Search shouldRedirect={false} />
+        </View>
+
+        <TouchableOpacity onPress={() => setFilterVisible(true)}>
+          <Ionicons name="filter" size={20} style={{ marginHorizontal: 10 }} />
+        </TouchableOpacity>
+      </View>
+
+
 
       {searchResults.length === 0 ? (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -55,6 +50,7 @@ export default function SearchPage() {
       ) : (
         <FlatList
           data={searchResults}
+          numColumns={2}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <Post post={item} />}
         />

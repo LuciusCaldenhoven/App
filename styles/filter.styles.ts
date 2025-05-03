@@ -14,30 +14,40 @@ export const styles = StyleSheet.create({
     },
     sheet: {
       backgroundColor: COLORS.background,
-      padding: 15,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      maxHeight: "90%",
+      
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      maxHeight: "93%",
     },
     header: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between", 
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 0.2,
+      borderBottomColor: COLORS.gray,
     },
     title: {
-      color: COLORS.primary,
+      flex: 1,
+      textAlign: "center", 
       fontSize: 18,
-      fontFamily: "Bold",
-      marginBottom: 8,
+      fontFamily: "Medium",
+      color: "black",
+      paddingLeft: 30,
     },
+    closeButton: {
+      paddingLeft: 5,
+    },
+    
     option: {
       paddingHorizontal: SIZES.medium,
-  
+
 
     },
     applyBtn: {
       marginTop: 20,
-      backgroundColor: COLORS.primary,
+      backgroundColor: COLORS.black,
       padding: 12,
       borderRadius: 10,
       alignItems: "center",
@@ -48,9 +58,9 @@ export const styles = StyleSheet.create({
       fontWeight: "bold",
     },
     text: {
-      fontFamily: "Bold",
+      fontFamily: "Medium",
       fontSize: SIZES.medium + 4,
-      color : COLORS.primary,
+      color : COLORS.black,
     },
     separator: {
       height: 1,
@@ -74,7 +84,7 @@ export const styles = StyleSheet.create({
       flex : 1,
     },
     tabContainerStyle: {
-      borderWidth: 0,
+      borderWidth: 1,
     },
     tabStyle: {
       borderWidth: 1,
@@ -82,13 +92,13 @@ export const styles = StyleSheet.create({
     },
     tabTextStyle:{
       color: COLORS.placeholder,
-      fontFamily: "Regular",
+      fontFamily: "Medium",
       fontSize: FontSize.FONT_12Px,
     },
     clearAll: {
       color: COLORS.black,
       fontSize: FontSize.FONT_12Px,
-      fontFamily: "Regular",
+      fontFamily: "Medium",
     },
     
     btnContainerStyle: {
@@ -103,6 +113,65 @@ export const styles = StyleSheet.create({
       fontFamily: "SemiBold",
 
     },
+    footer: {
+      position: "absolute",
+      height: 100,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: "#fff",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderTopColor: COLORS.grey,
+      borderTopWidth: StyleSheet.hairlineWidth,
+    },
+    label: {
+
+        fontFamily: "Medium",
+        fontSize: SIZES.medium + 4,
+        color : COLORS.black,
+    
+    },
+    dropdown: {
+      height: 50,
+      borderWidth: 1.5,
+      borderColor: COLORS.primary,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      backgroundColor: "#fff",
+      justifyContent: "center",
+    },
+    placeholder: {
+      fontSize: 14,
+      color: "#aaa",
+    },
+    selectedText: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: "#222",
+    },
+    dropdownContainer: {
+      borderRadius: 10,
+      paddingVertical: 4,
+      backgroundColor: "#fff",
+      elevation: 5,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    item: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+    },
+    itemSelected: {
+      backgroundColor: "#f0f0f0",
+    },
+    itemText: {
+      fontSize: 14,
+      color: "#333",
+    },
+  
     
   });
   

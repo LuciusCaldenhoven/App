@@ -12,6 +12,7 @@ export const generateUploadUrl = mutation(async (ctx) => {
 
 export const createPost = mutation({
     args: {
+        tipo: v.string(),
         caption: v.optional(v.string()),
         storageId: v.id("_storage"),
         title: v.string(),
@@ -38,19 +39,18 @@ export const createPost = mutation({
 
         // ✅ Guardar los datos en la BD con URLs completas
         const postId = await ctx.db.insert("posts", {
+            tipo: args.tipo,
             userId: currentUser._id,
             imageUrl, // 🔥 Imagen principal con URL real
             storageId: args.storageId,
             caption: args.caption,
-            likes: 0,
-            comments: 0,
             title: args.title,
             price: args.price,
             category: args.category,
             location: args.location,
             condition: args.condition,
             currency: args.currency,
-            imageUrls, 
+            imageUrls,
         });
 
         await ctx.db.patch(currentUser._id, {
@@ -74,7 +74,7 @@ export const getFeedPosts = query({
             posts.map(async (post) => {
                 const postAuthor = (await ctx.db.get(post.userId))!;
 
-                
+
 
                 const bookmark = await ctx.db
                     .query("bookmarks")
@@ -89,7 +89,7 @@ export const getFeedPosts = query({
                         username: postAuthor?.username,
                         image: postAuthor?.image
                     },
-                    
+
                     isBookmarked: !!bookmark
                 };
             })
@@ -101,7 +101,71 @@ export const getFeedPosts = query({
 });
 
 
+export const getFilteredProductCount = query({
+    args: {
+        type: v.optional(v.string()),
+        condition: v.optional(v.string()),
+        priceRange: v.optional(v.array(v.number())),
+        date: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        let query = ctx.db.query("posts");
 
+        // Filtrar por tipo
+        if (args.type) {
+            query = query.filter((q) => q.eq(q.field("tipo"), args.type));
+        }
+
+
+        // Filtrar por condición
+        if (args.condition) {
+            // Asegúrate de que args.condition sea un array
+            const conditions = Array.isArray(args.condition)
+                ? args.condition
+                : args.condition.split(","); // Convierte la cadena en un array
+        
+            console.log("Condiciones procesadas:", conditions);
+        
+            query = query.filter((q) =>
+                q.or(...conditions.map((cond) => q.eq(q.field("condition"), cond)))
+            );
+        }
+
+        // Filtrar por rango de precios
+        if (args.priceRange) {
+            const [minPrice, maxPrice] = args.priceRange;
+            query = query.filter((q) =>
+                q.and(
+                    q.gte(q.field("price"), minPrice),
+                    q.lte(q.field("price"), maxPrice)
+                )
+            );
+        }
+
+        // Filtrar por fecha de publicación
+        if (args.date) {
+            const now = Date.now(); // Obtén la marca de tiempo actual
+            let dateLimit: number | undefined;
+        
+            if (args.date === "Ultimas 24 horas") {
+                dateLimit = now - 24 * 60 * 60 * 1000; // Últimas 24 horas
+            } else if (args.date === "Ultimos 7 dias") {
+                dateLimit = now - 7 * 24 * 60 * 60 * 1000; // Últimos 7 días
+            } else if (args.date === "Ultimos 30 dias") {
+                dateLimit = now - 30 * 24 * 60 * 60 * 1000; // Últimos 30 días
+            }
+        
+            if (dateLimit) {
+                query = query.filter((q) => q.gte(q.field("_creationTime"), dateLimit));
+            }
+        }
+
+        // Devuelve el número de productos que coinciden con los filtros
+        const results = await query.collect();
+
+        return results.length;
+    },
+});
 
 export const deletePost = mutation({
     args: { postId: v.id("posts") },
@@ -114,8 +178,8 @@ export const deletePost = mutation({
         // verify ownership
         if (post.userId !== currentUser._id) throw new Error("Not authorized to delete this post");
 
-       
-        
+
+
 
         // delete associated comments
         const bookmarks = await ctx.db
@@ -173,7 +237,7 @@ export const getPostById = query({
         if (!post) throw new Error("Post not found");
 
         const author = await ctx.db.get(post.userId); // Obtener datos del autor
-        
+
         return {
             ...post,
             author: {

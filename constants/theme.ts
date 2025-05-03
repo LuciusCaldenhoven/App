@@ -23,6 +23,9 @@ export const COLORS = {
   divider: '#D9D9D9',
   checkBoxBg: '#454545',
   badgeBg: '#3B82F6',
+  main_app1: '#14c1ad',
+  main_app2: '#78f575',
+  main_app3: '#13E679',
 
   visaCard: {
     primary: '#000000',

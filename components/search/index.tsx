@@ -15,7 +15,7 @@ export default function Search({ shouldRedirect }: SearchProps) {
   return (
     
       <TouchableOpacity style={styles.searchBtn} onPress={() => router.push({ pathname: "../search/searchResults" })}>
-        <Ionicons name="search" size={24} color={COLORS.grey} />
+        <Ionicons name="search" size={20} color={COLORS.grey} />
         <TextInput
           style={styles.searchInput}
           placeholder={"Que quieres comprar"}

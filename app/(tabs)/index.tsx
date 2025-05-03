@@ -47,38 +47,8 @@ export default function Index() {
                 </View>
             </View>
 
-            <ScrollView
-                style={{ flex: 1 }}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.secondary} />
-                }
-            >
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }} refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.secondary} /> } >
                 <View style={{ backgroundColor: COLORS.background, paddingBottom: 10 }}>
-                    <Text
-                        style={{
-                            fontFamily: "Bold",
-                            fontSize: SIZES.xxLarge - 6,
-                            marginTop: SIZES.xSmall,
-                            color: COLORS.black,
-                            marginHorizontal: 12,
-                        }}
-                    >
-                        Gana dinero extra
-                    </Text>
-                    <Text
-                        style={{
-                            fontFamily: "Bold",
-                            fontSize: SIZES.xxLarge - 6,
-                            marginTop: 0,
-                            color: COLORS.primary,
-                            marginHorizontal: 12,
-                        }}
-                    >
-                        Sin esfuerzo
-                    </Text>
-
                     <View
                         style={{
                             flexDirection: "row",
@@ -95,16 +65,16 @@ export default function Index() {
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/ropa.png')} style={{ width: 100, height: 100 }} />}
                             title="Ropa y Accesorios"
-                            backgroundColor="rgb(255, 235, 186)"
+                            backgroundColor={COLORS.main_app1}
                             onPress={() => console.log('Ropa')}
                             width={160}
                             height={140}
-                            textColor="rgb(170, 106, 3)"
+                            textColor={COLORS.main_app2}
                         />
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
                             title="Electrónica"
-                            backgroundColor="rgb(150, 159, 240)"
+                            backgroundColor={COLORS.main_app3}
                             onPress={() => console.log('Electrónica')}
                             width={160}
                             height={140}

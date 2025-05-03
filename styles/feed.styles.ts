@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
+     
   },
 
   // 🔹 Estilos para el encabezado de la app (donde aparece "ReVende")
@@ -337,10 +338,13 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   appBarWrapper: {
-    marginHorizontal: 20,
-    marginTop: SIZES.small, // ⚠️ Asegúrate de que `SIZES` está definido
+    paddingBottom: 10,
+    marginTop: SIZES.small, 
+    borderBottomWidth: 0.2,
+    borderBottomColor: COLORS.gray,
   },
   appBar: {
+    paddingHorizontal: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

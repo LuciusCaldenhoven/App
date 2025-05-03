@@ -20,12 +20,11 @@ export default defineSchema({
     }).index("by_clerk_id", ["clerkId"]),
 
     posts: defineTable({
+        tipo: v.string(),
         userId: v.id("users"),
         imageUrl: v.string(),
         storageId: v.id("_storage"),
         caption: v.optional(v.string()),
-        likes: v.number(),
-        comments: v.number(),
         title: v.string(),
         price: v.number(),
         currency: v.string(),

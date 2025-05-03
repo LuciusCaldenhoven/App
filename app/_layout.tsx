@@ -19,6 +19,8 @@ export default function RootLayout() {
     "Medium": require("../assets/fonts/Poppins-Medium.ttf"),
     "ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
     "SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
+
+
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -35,7 +37,7 @@ export default function RootLayout() {
       Navigation.setButtonStyleAsync("light");
     }
   }, []);
-  
+
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
@@ -47,5 +49,5 @@ export default function RootLayout() {
         </View>
       </SafeAreaProvider>
     </ClerkAndConvexProvider>
-);
+  );
 }

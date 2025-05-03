@@ -9,6 +9,7 @@ import { useUser } from "@clerk/clerk-expo";
 
 type PostProps = {
     post: {
+        tipo: string;
         _id: Id<"posts">;
         userId: Id<"users">;
         imageUrl: string;
@@ -16,11 +17,10 @@ type PostProps = {
         caption?: string;
         title: string;
         price: number;
+        currency: string;
         category: string;
         location: string;
-        condition: "new" | "used";
-        likes: number;
-        comments: number;
+        condition: string;
         _creationTime: number;
         isBookmarked: boolean;
         author: {
