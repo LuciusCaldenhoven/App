@@ -101,7 +101,7 @@ export const getFeedPosts = query({
 });
 
 
-export const getFilteredProductCount = query({
+export const getFilteredPosts = query({
     args: {
         type: v.optional(v.string()),
         condition: v.optional(v.string()),
@@ -109,6 +109,8 @@ export const getFilteredProductCount = query({
         date: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        const currentUser = await getAuthenticatedUser(ctx);
+
         let query = ctx.db.query("posts");
 
         // Filtrar por tipo
@@ -116,16 +118,11 @@ export const getFilteredProductCount = query({
             query = query.filter((q) => q.eq(q.field("tipo"), args.type));
         }
 
-
         // Filtrar por condición
         if (args.condition) {
-            // Asegúrate de que args.condition sea un array
             const conditions = Array.isArray(args.condition)
                 ? args.condition
-                : args.condition.split(","); // Convierte la cadena en un array
-        
-            console.log("Condiciones procesadas:", conditions);
-        
+                : args.condition.split(",");
             query = query.filter((q) =>
                 q.or(...conditions.map((cond) => q.eq(q.field("condition"), cond)))
             );
@@ -144,29 +141,53 @@ export const getFilteredProductCount = query({
 
         // Filtrar por fecha de publicación
         if (args.date) {
-            const now = Date.now(); // Obtén la marca de tiempo actual
+            const now = Date.now();
             let dateLimit: number | undefined;
-        
+
             if (args.date === "Ultimas 24 horas") {
-                dateLimit = now - 24 * 60 * 60 * 1000; // Últimas 24 horas
+                dateLimit = now - 24 * 60 * 60 * 1000;
             } else if (args.date === "Ultimos 7 dias") {
-                dateLimit = now - 7 * 24 * 60 * 60 * 1000; // Últimos 7 días
+                dateLimit = now - 7 * 24 * 60 * 60 * 1000;
             } else if (args.date === "Ultimos 30 dias") {
-                dateLimit = now - 30 * 24 * 60 * 60 * 1000; // Últimos 30 días
+                dateLimit = now - 30 * 24 * 60 * 60 * 1000;
             }
-        
+
             if (dateLimit) {
                 query = query.filter((q) => q.gte(q.field("_creationTime"), dateLimit));
             }
         }
 
-        // Devuelve el número de productos que coinciden con los filtros
-        const results = await query.collect();
+        // Obtener los posts filtrados
+        const posts = await query.collect();
 
-        return results.length;
+        // Agregar información adicional a los posts
+        const postsWithInfo = await Promise.all(
+            posts.map(async (post) => {
+                const postAuthor = (await ctx.db.get(post.userId))!;
+
+                const bookmark = await ctx.db
+                    .query("bookmarks")
+                    .withIndex("by_user_and_post", (q) =>
+                        q.eq("userId", currentUser._id).eq("postId", post._id)
+                    )
+                    .first();
+
+                return {
+                    ...post,
+                    author: {
+                        _id: postAuthor?._id,
+                        username: postAuthor?.username,
+                        image: postAuthor?.image,
+                    },
+                    isBookmarked: !!bookmark,
+                };
+            })
+        );
+
+        return postsWithInfo;
     },
 });
-
+  
 export const deletePost = mutation({
     args: { postId: v.id("posts") },
     handler: async (ctx, args) => {

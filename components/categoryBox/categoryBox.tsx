@@ -9,7 +9,7 @@ export const CategoryBox = ({ icon, title, backgroundColor = '#fff', onPress, wi
     <TouchableOpacity onPress={onPress}>
       <View style={{ backgroundColor, width, height, borderRadius: 25, justifyContent: 'center', alignItems: 'center', }}>
         {icon}
-        <Text style={{ marginTop: 8, fontFamily : 'Medium', color: textColor}}>{title}</Text>
+        <Text numberOfLines={1} style={{ marginTop: 8, fontFamily : 'Medium', color: textColor, fontSize: 14,paddingHorizontal:10}}>{title}</Text>
       </View>
     </TouchableOpacity>
   );

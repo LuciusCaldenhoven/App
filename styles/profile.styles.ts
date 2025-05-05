@@ -39,18 +39,18 @@ const styles = StyleSheet.create({
   title_first:{
     fontSize: FontSize.FONT_24Px,
     color: COLORS.black,
-    fontFamily: "JetBrainsMono-Medium",
+    fontFamily: "Regular",
     marginBottom: scale(12),
   },
   title: {
     fontSize: FontSize.FONT_16Px,
     color: COLORS.black,
-    fontFamily: "JetBrainsMono-Medium",
+    fontFamily: "Regular",
   },
   email: {
     fontSize: FontSize.FONT_14Px,
     color: COLORS.placeholder,
-    fontFamily: "JetBrainsMono-Medium",
+    fontFamily: "Regular",
   },
   text: {
     color: COLORS.primary,

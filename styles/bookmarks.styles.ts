@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
         borderBottomColor: COLORS.surface,
     },
     headerTitle: {
-        fontSize: 24,
-        fontFamily: "JetBrainsMono-Medium",
+        fontSize: 28,
+        fontFamily: "Medium",
         color: COLORS.primary,
     },
     listContainer: {

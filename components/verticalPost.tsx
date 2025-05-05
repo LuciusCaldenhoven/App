@@ -11,6 +11,7 @@ import { Id } from "@/convex/_generated/dataModel";
 
 type PostProps = {
     post: {
+        tipo: string;
         _id: Id<"posts">;
         userId: Id<"users">;
         imageUrl: string;
@@ -18,11 +19,10 @@ type PostProps = {
         caption?: string;
         title: string;
         price: number;
+        currency: string;
         category: string;
         location: string;
-        condition: "new" | "used";
-        likes: number;
-        comments: number;
+        condition: string;
         _creationTime: number;
         isBookmarked: boolean;
         author: {
@@ -32,7 +32,6 @@ type PostProps = {
         };
     };
 };
-
 export default function VerticalPost({ post }: PostProps) {
     const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 

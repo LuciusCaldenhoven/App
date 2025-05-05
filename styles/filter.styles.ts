@@ -97,21 +97,23 @@ export const styles = StyleSheet.create({
     },
     clearAll: {
       color: COLORS.black,
-      fontSize: FontSize.FONT_12Px,
+      fontSize: 14,
       fontFamily: "Medium",
     },
     
     btnContainerStyle: {
-      paddingVertical: scale(10),
+      paddingVertical: 16,
       paddingHorizontal: scale(12),
       backgroundColor: COLORS.black,
-      
+      borderRadius: scale(10),
     },
     
     btnTextStyle: {
       fontSize: FontSize.FONT_12Px,
       fontFamily: "SemiBold",
-
+      color: COLORS.white,
+      width: 135,
+      textAlign: "center",
     },
     footer: {
       position: "absolute",

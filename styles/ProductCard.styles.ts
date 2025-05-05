@@ -26,7 +26,8 @@ export const styles = StyleSheet.create({
   },
 
   details: {
-    padding: SIZES.small - 3,
+    paddingHorizontal: 5,
+    paddingTop: 5,
     marginLeft: -2,
   },
 

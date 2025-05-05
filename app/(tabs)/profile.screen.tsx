@@ -20,7 +20,7 @@ function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-  // Obtener el usuario actual
+
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
 
   // Obtener las publicaciones del usuario
@@ -147,4 +147,4 @@ function Profile() {
 
 export default Profile;
 
-// Componente para mostrar cuando no hay publicaciones
+

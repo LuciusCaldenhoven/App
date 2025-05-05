@@ -65,24 +65,24 @@ export default function Index() {
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/ropa.png')} style={{ width: 100, height: 100 }} />}
                             title="Ropa y Accesorios"
-                            backgroundColor={COLORS.main_app1}
+                            backgroundColor={'rgba(2, 194, 143, 0.5)'}
                             onPress={() => console.log('Ropa')}
                             width={160}
                             height={140}
-                            textColor={COLORS.main_app2}
+                           
                         />
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
                             title="Electrónica"
-                            backgroundColor={COLORS.main_app3}
+                            backgroundColor={'rgba(2, 194, 143, 0.5)'}
                             onPress={() => console.log('Electrónica')}
                             width={160}
                             height={140}
-                            textColor="rgb(1, 12, 114)"
+                            
                         />
                     </View>
-
-                    <View style={{ paddingHorizontal: 12, paddingBottom: 16 }}>
+                        ``
+                    <View style={{ paddingHorizontal: 0, paddingBottom: 16 }}>
                         <FlatList
                             data={products}
                             renderItem={({ item }) => (

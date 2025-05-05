@@ -40,7 +40,7 @@ export default function Bookmarks() {
             <VerticalPost
               post={{
                 ...post,
-                isBookmarked: true, // 🔥 Ya sabemos que está en favoritos
+                isBookmarked: true, 
                 author:  { _id: "", username: "Desconocido", image: "" }
               }}
             />

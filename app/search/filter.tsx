@@ -1,6 +1,6 @@
 // app/search/filter.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Pressable, TextInput, Dimensions, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, Modal, ScrollView, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/filter.styles";
 import { COLORS, SIZES } from "@/constants/theme";
@@ -14,6 +14,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AnimatedSelectableBox from "@/components/tagSelector/tagSelector";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
 
 type FilterProps = {
   visible: boolean;
@@ -31,12 +32,12 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
   }>({
     type: "",
     condition: [],
-    priceRange: [0, 1000],
+    priceRange: [0, 1500],
     date: "",
   });
 
   // Consulta el número de productos filtrados
-  const productCount = useQuery(api.posts.getFilteredProductCount, {
+  const productCount = useQuery(api.posts.getFilteredPosts, {
     ...filters,
     condition: filters.condition.join(","),
   });
@@ -44,6 +45,15 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
   const handleApplyFilters = () => {
     onApplyFilters(filters);
     onClose();
+  };
+
+  const handleClearAll = () => {
+    setFilters({
+      type: "",
+      condition: [],
+      priceRange: [0, 1500],
+      date: "",
+    });
   };
 
   const toggleSeleccion = (item: string) => {
@@ -54,6 +64,10 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
         : [...prev.condition, item],
     }));
   };
+
+
+
+
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
@@ -121,7 +135,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
               <MultiSlider
                 values={filters.priceRange}
                 min={0}
-                max={1000}
+                max={1500}
                 step={1}
                 sliderLength={screenWidth - 85}
                 onValuesChange={(values) =>
@@ -190,29 +204,31 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
               ))}
             </View>
 
-            {renderMarginTop(16)}
-            {renderBorderBottom(10)}
-            {renderMarginBottom(16)}
 
-            {renderBorderBottom(10)}
           </ScrollView>
         </View>
         <View style={styles.footer}>
           <View style={styles.frsb}>
-            <TouchableOpacity>
-              <Text style={styles.clearAll}>Clear All</Text>
+            <TouchableOpacity onPress={handleClearAll}>
+              <Text style={styles.clearAll}>Limpiar todo</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleApplyFilters}>
+            <View>
               {productCount === undefined ? (
-                <ActivityIndicator size="small" color={COLORS.primary} />
-              ) : (
                 <Button
-                  text={`Mostrar ${productCount || 0} productos`}
+                  text={`Cargando ...`}
                   textStyles={styles.btnTextStyle}
                   buttonStyles={styles.btnContainerStyle}
                 />
+              ) : (
+                <TouchableOpacity onPress={handleApplyFilters}>
+                  <Button
+                    text={`Mostrar ${productCount.length || 0} productos`}
+                    textStyles={styles.btnTextStyle}
+                    buttonStyles={styles.btnContainerStyle}
+                  />
+                </TouchableOpacity>
               )}
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
