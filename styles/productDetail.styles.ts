@@ -94,12 +94,13 @@ export const styles = StyleSheet.create({
   },
   price: {
     padding: 10,
-    fontFamily: "SemiBold",
+    fontFamily: "Regular",
     fontSize: SIZES.large,
+    color: COLORS.main,
   },
   priceWrapper: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: SIZES.large,
+    backgroundColor: COLORS.main,
+    borderRadius: 10,
   },
   ratingRow: {
     flexDirection: "row",
@@ -198,12 +199,12 @@ export const styles = StyleSheet.create({
     fontFamily: "Regular",
   },
   btnText: {
-    color: "black",
+    color: "white",
     fontSize: 16,
     fontFamily: "Regular",
   },
   btnn: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.main,
     height: 50,
     borderRadius: 8,
     justifyContent: "center",

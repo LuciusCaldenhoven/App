@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
       borderRadius : scale(30),
     },
     activeTab: {
-      backgroundColor: COLORS.black,
+      backgroundColor: COLORS.main,
     },
 
     tabText: {

@@ -103,6 +103,7 @@ export const getFeedPosts = query({
 
 export const getFilteredPosts = query({
     args: {
+        category: v.optional(v.string()),
         type: v.optional(v.string()),
         condition: v.optional(v.string()),
         priceRange: v.optional(v.array(v.number())),
@@ -112,6 +113,10 @@ export const getFilteredPosts = query({
         const currentUser = await getAuthenticatedUser(ctx);
 
         let query = ctx.db.query("posts");
+
+        if (args.category) {
+            query = query.filter((q) => q.eq(q.field("category"), args.category));
+        }
 
         // Filtrar por tipo
         if (args.type) {

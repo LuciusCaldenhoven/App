@@ -11,10 +11,11 @@ import Filter from "./filter";
 import Search from "@/components/search";
 
 export default function SearchPage() {
-  const { query } = useLocalSearchParams();
+  const { query, category } = useLocalSearchParams(); // Obtén la categoría de los parámetros
   const [searchKey, setSearchKey] = useState(query ? String(query) : "");
   const [filterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({
+    category: category || "", // Usa la categoría recibida como filtro inicial
     type: "",
     condition: [],
     priceRange: [0, 1500],
@@ -23,6 +24,7 @@ export default function SearchPage() {
 
   // Consulta los posts filtrados directamente desde Convex
   const filteredPosts = useQuery(api.posts.getFilteredPosts, {
+    category: Array.isArray(filters.category) ? filters.category.join(",") : filters.category,
     type: filters.type,
     condition: filters.condition.join(","), 
     priceRange: filters.priceRange,

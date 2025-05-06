@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
     btnContainerStyle: {
       paddingVertical: 16,
       paddingHorizontal: scale(12),
-      backgroundColor: COLORS.black,
+      backgroundColor: COLORS.main,
       borderRadius: scale(10),
     },
     

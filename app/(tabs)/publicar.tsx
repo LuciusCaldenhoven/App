@@ -2,7 +2,7 @@ import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/create.styles";
 import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, FlatList, Image as RNImage, Keyboard } from "react-native";
 import React from 'react';
 import * as ImagePicker from "expo-image-picker";
@@ -15,6 +15,7 @@ import { renderMarginBottom } from "@/constants/ui-utils";
 import products from "@/assets/index/data";
 import moneda from "@/assets/precio/precio.data";
 import condicion from "@/assets/condicion/condicion.data";
+
 
 export default function CreateScreen() {
   const router = useRouter();
@@ -38,9 +39,12 @@ export default function CreateScreen() {
       quality: 0.1,
       selectionLimit: 10,
     });
-
+  
     if (!result.canceled) {
-      setSelectedImages(result.assets.map(asset => asset.uri));
+      setSelectedImages((prev) => {
+        const combined = [...prev, ...result.assets.map((asset) => asset.uri)];
+        return combined.slice(0, 10); 
+      });
     }
   };
 
@@ -48,7 +52,7 @@ export default function CreateScreen() {
   const createPost = useMutation(api.posts.createPost);
 
   const handleShare = async () => {
-    if (selectedImages.length === 0)  return;
+    if (selectedImages.length === 0) return;
 
     try {
       setIsSharing(true);
@@ -109,7 +113,7 @@ export default function CreateScreen() {
       );
     });
   }, [selectedImages]);
-
+  
   return (
     <View style={styles.contentContainer}>
       {/* Header */}
@@ -156,7 +160,12 @@ export default function CreateScreen() {
                         <MaterialIcons name="edit" size={17} color={COLORS.white} />
                       </TouchableOpacity>
 
-                      <TouchableOpacity style={styles.deleteButton}>
+                      <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => {
+                          setSelectedImages((prev) => prev.filter((image) => image !== item));
+                        }}
+                      >
                         <Feather name="x" size={17} color={COLORS.white} />
                       </TouchableOpacity>
 
@@ -254,3 +263,6 @@ export default function CreateScreen() {
     </View>
   );
 }
+
+
+

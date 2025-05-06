@@ -10,11 +10,13 @@ import React, { useEffect, useRef, useState } from "react";
 import Search from "@/components/search/index";
 import { CategoryBox } from "@/components/categoryBox/categoryBox";
 import { renderMarginBottom } from "@/constants/ui-utils";
-import products from "@/assets/index/data";
+import products from "@/assets/index/data"
+import { useRouter } from "expo-router";;
+
 
 export default function Index() {
     const [refreshing, setRefreshing] = useState(false);
-
+    const router = useRouter();
 
     const posts = useQuery(api.posts.getFeedPosts);
 
@@ -27,8 +29,6 @@ export default function Index() {
         }, 2000);
     };
 
-
-    if (posts === undefined) return <Loader />;
 
     if (posts.length === 0) {
         return (
@@ -65,8 +65,8 @@ export default function Index() {
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/ropa.png')} style={{ width: 100, height: 100 }} />}
                             title="Ropa y Accesorios"
-                            backgroundColor={'rgba(2, 194, 143, 0.5)'}
-                            onPress={() => console.log('Ropa')}
+                            backgroundColor={'#F9F9F9'}
+                            onPress={() => router.push(`/search/searchResults?category=Ropa y Accesorios`)} 
                             width={160}
                             height={140}
                            
@@ -75,13 +75,13 @@ export default function Index() {
                             icon={<Image source={require('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
                             title="Electrónica"
                             backgroundColor={'rgba(2, 194, 143, 0.5)'}
-                            onPress={() => console.log('Electrónica')}
+                            onPress={() => router.push(`/search/searchResults?category=Electrónica`)} 
                             width={160}
                             height={140}
                             
                         />
                     </View>
-                        ``
+                        
                     <View style={{ paddingHorizontal: 0, paddingBottom: 16 }}>
                         <FlatList
                             data={products}
@@ -90,7 +90,7 @@ export default function Index() {
                                     icon={<Image source={item.icon} style={{ width: 70, height: 70 }} />}
                                     title={item.title}
                                     backgroundColor={'rgb(240, 248, 248)'}
-                                    onPress={() => console.log(item.title)}
+                                    onPress={() => router.push(`/search/searchResults?category=${item.title}`)} 
                                 />
                             )}
                             keyExtractor={(item) => item.id.toString()}
@@ -112,6 +112,8 @@ export default function Index() {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ columnGap: 0, paddingLeft: 12, paddingRight: 12 }}
                 />
+                <Button title="Ver más" onPress={() => router.push('/screen.try/screen')} color={COLORS.primary}  />
+                <Button title="Ver más" onPress={() => router.push('/screen.try/screen2')} color={COLORS.primary}  />
             </ScrollView>
         </View>
     );

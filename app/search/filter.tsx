@@ -25,11 +25,13 @@ type FilterProps = {
 export default function Filter({ visible, onClose, onApplyFilters }: FilterProps) {
   const screenWidth = Dimensions.get('window').width;
   const [filters, setFilters] = useState<{
+    category: string;
     type: string;
     condition: string[];
     priceRange: number[];
     date: string;
   }>({
+    category: "",
     type: "",
     condition: [],
     priceRange: [0, 1500],
@@ -49,6 +51,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
 
   const handleClearAll = () => {
     setFilters({
+      category: "",
       type: "",
       condition: [],
       priceRange: [0, 1500],

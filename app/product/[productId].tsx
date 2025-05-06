@@ -206,11 +206,11 @@ export default function ProductDetail() {
                 </Animated.ScrollView>
                 <View style={styles.footer}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <TouchableOpacity style={styles.footerText}>
-                            <View style={styles.priceWrapper}>
+                        <View style={styles.footerText}>
+                            
                                 <Text style={styles.price}>${post.price}</Text>
-                            </View>
-                        </TouchableOpacity>
+                            
+                        </View>
                         <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat}>
                             <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
                         </TouchableOpacity>
