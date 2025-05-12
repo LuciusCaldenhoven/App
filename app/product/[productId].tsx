@@ -25,7 +25,7 @@ export default function ProductDetail() {
     const [showBottomSheet, setShowBottomSheet] = useState(false);
 
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
-    const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef: null);
+    const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
     const flatListRef = useAnimatedRef<Animated.FlatList<any>>();
 
     const imageAnimatedStyle = useAnimatedStyle(() => ({
@@ -181,7 +181,16 @@ export default function ProductDetail() {
                     )}
                     <View style={styles.details}>
                         <View style={styles.titleRow}>
-                            <Text style={styles.title}>{post.title}</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 10, }}>
+                                <Text style={styles.title}>{post.title}</Text>
+                                {post.condition && (
+                                    <View style={styles.conditionTag}>
+                                        <Text style={styles.conditionText}>{post.condition}</Text>
+                                    </View>
+                                )}
+                            </View>
+
+                            
                         </View>
                         <View style={styles.descriptionWrapper}>
                             <Text style={styles.description}>Descripción</Text>
@@ -207,9 +216,9 @@ export default function ProductDetail() {
                 <View style={styles.footer}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View style={styles.footerText}>
-                            
-                                <Text style={styles.price}>${post.price}</Text>
-                            
+
+                            <Text style={styles.price}>${post.price}</Text>
+
                         </View>
                         <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat}>
                             <Text style={styles.btnText}>¡Mándale un mensaje!</Text>

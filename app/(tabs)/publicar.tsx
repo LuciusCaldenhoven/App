@@ -19,7 +19,7 @@ import condicion from "@/assets/condicion/condicion.data";
 
 export default function CreateScreen() {
   const router = useRouter();
-
+  const toastRef = useRef(null);
   const [caption, setCaption] = useState("");
   const [isSharing, setIsSharing] = useState(false);
   const [title, setTitle] = useState("");
@@ -32,6 +32,7 @@ export default function CreateScreen() {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: number }>({});
 
+  
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

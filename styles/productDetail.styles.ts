@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     position: "relative",
   },
   roundButton: {
-    marginTop : 44,
+    marginTop: 44,
     width: 37,
     height: 37,
     borderRadius: 50,
@@ -81,17 +81,32 @@ export const styles = StyleSheet.create({
     borderTopRightRadius: SIZES.medium + 5,
   },
   titleRow: {
-    paddingBottom: SIZES.small,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    top: 20,
-    alignSelf: "center",
+    paddingHorizontal: 16,
+    paddingTop: 10,
   },
+
   title: {
+    fontSize: 20,
     fontFamily: "SemiBold",
-    fontSize: SIZES.xLarge + 5,
+    color: COLORS.main,
+    flexShrink: 1,
   },
+
+
+  conditionTag: {
+    backgroundColor: "#D9D9D9",
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    marginLeft: 10,
+  },
+
+  conditionText: {
+    fontSize: 14,
+    color: COLORS.main,
+    fontWeight: "600",
+  },
+
   price: {
     padding: 10,
     fontFamily: "Regular",
@@ -120,15 +135,17 @@ export const styles = StyleSheet.create({
   },
   descriptionWrapper: {
     marginTop: SIZES.large * 2,
-    marginHorizontal: SIZES.large,
+    paddingLeft: 15,
+    paddingRight: 25,
   },
   description: {
     fontFamily: "Medium",
-    fontSize: SIZES.large - 2,
+    fontSize: 21,
+    paddingBottom: 10,
   },
   descText: {
     fontFamily: "Regular",
-    fontSize: SIZES.small,
+    fontSize: 13,
     textAlign: "justify",
     marginBottom: SIZES.small,
   },
@@ -263,8 +280,17 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     height: 60,
-    zIndex: 20, 
+    zIndex: 20,
     marginTop: 24,
-    
-},
+
+  },
+  infoRow: {
+    paddingLeft: 15,
+    paddingTop: 7,
+  },
+  infoText: {
+    fontFamily: "Medium",
+    fontSize: 14,
+    color: COLORS.main,
+  }
 });

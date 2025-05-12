@@ -112,8 +112,7 @@ export default function Index() {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ columnGap: 0, paddingLeft: 12, paddingRight: 12 }}
                 />
-                <Button title="Ver más" onPress={() => router.push('/screen.try/screen')} color={COLORS.primary}  />
-                <Button title="Ver más" onPress={() => router.push('/screen.try/screen2')} color={COLORS.primary}  />
+                <Button title="Ver más" onPress={() => router.push('/screen.try/screen3')} color={COLORS.primary}  />
             </ScrollView>
         </View>
     );
