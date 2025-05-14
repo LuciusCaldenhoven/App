@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     sendMessageContainer: {
-        flexDirection: 'row',
+        
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingVertical: scale(8),
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Regular',
         color: COLORS.black,
         marginTop: 23,
-    }
+    },
+    
 });
 
 export default styles;

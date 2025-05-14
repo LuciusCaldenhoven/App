@@ -3,41 +3,59 @@ import { COLORS, FontSize } from "@/constants/theme";
 import { scale } from "@/constants/scale";
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: COLORS.background,
-        paddingHorizontal: 8,
-        marginBottom: 12,
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
-    },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.surface,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontFamily: "JetBrainsMono-Medium",
-        color: COLORS.primary,
-    },
-    listContainer: {
-        paddingVertical: 10,
-    },
-    noProductsContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: COLORS.background,
-    },
-    noProductsText: {
-        fontSize: FontSize.FONT_18Px,
-        color: COLORS.placeholder,
-        textAlign: "center",
-    },
+
+     container: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: COLORS.white,
+  },
+  title:{
+    fontSize: 28,
+    fontFamily: "SemiBold",
+    color: COLORS.black,
+    paddingTop: 80,
+    paddingHorizontal: scale(18),
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 40,
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 30,
+    paddingVertical: 8,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 20,
+    alignItems: "center",
+
+  },
+  activeButton: {
+    backgroundColor: COLORS.black,
+  },
+  buttonText: {
+    fontSize: 12,
+    color: COLORS.black,
+    fontFamily: "Regular",
+  },
+  activeButtonText: {
+    color: "#fff",
+    fontFamily: "Regular",
+  },
+  listContainer: {
+    paddingHorizontal: 5,
+    paddingBottom: 5,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  input: {
+    marginHorizontal: scale(18),
+  },
 });
 
 export default styles;

@@ -6,7 +6,7 @@ import { View, Text, FlatList, RefreshControl } from "react-native";
 import { styles } from "@/styles/bookmarks.styles";
 import { useState } from "react";
 
-import VerticalPost from "@/components/verticalPost";
+import PostFav  from "@/components/PostFav/PostFav";
 
 export default function Bookmarks() {
   const bookmarkedPosts = useQuery(api.bookmarks.getBookmarkedPosts);
@@ -37,7 +37,7 @@ export default function Bookmarks() {
         
         renderItem={({ item: post }) =>
           post && (
-            <VerticalPost
+            <PostFav
               post={{
                 ...post,
                 isBookmarked: true, 

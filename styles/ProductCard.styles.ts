@@ -8,21 +8,33 @@ export const styles = StyleSheet.create({
     height: 280,
     borderRadius: SIZES.medium,
     marginHorizontal: 5,
-    overflow: "hidden", 
+    overflow: "hidden",
   },
-
+  tipo: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    color: "white",
+    fontSize: 12,
+    fontFamily: "Medium",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12, 
+    overflow: "hidden",
+    zIndex: 1,
+  },
   imageContainer: {
     flex: 0.9,
-    width: "100%", 
+    width: "100%",
     marginTop: SIZES.small / 2,
     borderRadius: scale(15),
-    overflow: "hidden", 
+    overflow: "hidden",
   },
 
   image: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover", 
+    resizeMode: "cover",
   },
 
   details: {
@@ -35,7 +47,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Regular",
     fontSize: scale(15),
     marginBottom: 4,
-    color: COLORS.black, 
+    color: COLORS.black,
   },
 
   supplier: {
@@ -48,6 +60,6 @@ export const styles = StyleSheet.create({
   price: {
     fontFamily: "SemiBold",
     fontSize: SIZES.medium,
-    color: COLORS.black, 
+    color: COLORS.black,
   },
 });

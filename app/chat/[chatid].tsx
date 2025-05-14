@@ -32,7 +32,7 @@ const ChatPage = () => {
     const isSeller = chat?.seller?._id === currentUser?._id;
     const otherUser = isSeller ? chat?.buyer : chat?.seller;
     const posts = useQuery(api.posts.getPostsByUser, currentUser?._id ? { userId: currentUser._id } : "skip");
-
+    
     const [showBottomSheet, setShowBottomSheet] = useState(false);
 
     useEffect(() => {
@@ -48,6 +48,7 @@ const ChatPage = () => {
             setUploading(true);
             const response = await fetch(selectedImage);
             const blob = await response.blob();
+            
             await sendMessage({
                 chatId: chatid as Id<'chats'>,
                 content: newMessage,
@@ -91,7 +92,7 @@ const ChatPage = () => {
 
                     <TouchableOpacity style={[styles.headerContent]} onPress={() => setShowBottomSheet(true)}>
                         <Image
-                            source={{ uri: otherUser?.image || 'https://via.placeholder.com/150' }}
+                            source={{ uri: otherUser?.image || '' }}
                             style={styles.image}
                         />
                         <Text numberOfLines={1} style={styles.text}>

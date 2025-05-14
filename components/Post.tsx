@@ -35,9 +35,38 @@ export default function Post({ post }: PostProps) {
     const { user } = useUser();
     const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
+    // Determinar el color de fondo según el tipo de producto
+    const getTipoBackgroundColor = (tipo: string) => {
+        switch (tipo) {
+            case "Venta":
+                return "#DCEEFF"; 
+            case "Alquiler":
+                return "#DFF5E5"; 
+            case "Servicio":
+                return "#F0E9FF"; 
+            default:
+                return "#777"; 
+        }
+    };
+    const getTipoColor = (tipo: string) => {
+        switch (tipo) {
+            case "Venta":
+                return "#4F8EF7"; 
+            case "Alquiler":
+                return "#30C04F"; 
+            case "Servicio":
+                return "#A86AEF"; 
+            default:
+                return "#777"; 
+        }
+    };
+
     return (
         <TouchableOpacity onPress={() => router.push(`/product/${post._id}`)}>
             <View style={styles.container}>
+                {/* Mostrar el tipo de producto con un fondo dinámico */}
+                <Text style={[ styles.tipo, { backgroundColor: getTipoBackgroundColor(post.tipo), color:getTipoColor(post.tipo) }, ]} > {post.tipo} </Text>
+
                 <View style={styles.imageContainer}>
                     <Image
                         source={{ uri: post.imageUrl }}

@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { COLORS } from "@/constants/theme";
+import { scale } from "@/constants/scale";
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 12; // 🔥 Para 2 columnas con espacio
@@ -10,24 +11,24 @@ export const styles = StyleSheet.create({
         backgroundColor: COLORS.background,
         paddingHorizontal: 8,
         marginBottom: 12,
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 12,
         borderBottomWidth: 1,
         borderBottomColor: COLORS.surface,
     },
     headerTitle: {
         fontSize: 28,
-        fontFamily: "Medium",
-        color: COLORS.primary,
+        fontFamily: "SemiBold",
+        color: COLORS.black,
+        paddingTop: 80,
+        paddingHorizontal: scale(18),
     },
     listContainer: {
         paddingVertical: 10,
     },
-    
+
 });

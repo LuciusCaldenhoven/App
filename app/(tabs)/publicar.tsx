@@ -1,269 +1,113 @@
-import { COLORS } from "@/constants/theme";
-import { styles } from "@/styles/create.styles";
-import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, FlatList, Image as RNImage, Keyboard } from "react-native";
-import React from 'react';
-import * as ImagePicker from "expo-image-picker";
-import { Image } from "expo-image";
-import * as FileSystem from "expo-file-system";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import NewInput from "@/components/newInput/newInput";
-import { renderMarginBottom } from "@/constants/ui-utils";
-import products from "@/assets/index/data";
-import moneda from "@/assets/precio/precio.data";
-import condicion from "@/assets/condicion/condicion.data";
+// app/ofrecer.tsx
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Feather, FontAwesome5, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
-
-export default function CreateScreen() {
-  const router = useRouter();
-  const toastRef = useRef(null);
-  const [caption, setCaption] = useState("");
-  const [isSharing, setIsSharing] = useState(false);
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
-  const [condition, setCondition] = useState("");
-  const [currency, setCurrency] = useState("");
-
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: number }>({});
-
-  
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true,
-      quality: 0.1,
-      selectionLimit: 10,
-    });
-  
-    if (!result.canceled) {
-      setSelectedImages((prev) => {
-        const combined = [...prev, ...result.assets.map((asset) => asset.uri)];
-        return combined.slice(0, 10); 
-      });
-    }
-  };
-
-  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
-  const createPost = useMutation(api.posts.createPost);
-
-  const handleShare = async () => {
-    if (selectedImages.length === 0) return;
-
-    try {
-      setIsSharing(true);
-      let uploadedImages = [];
-
-      for (const image of selectedImages) {
-        const uploadUrl = await generateUploadUrl();
-        const uploadResult = await FileSystem.uploadAsync(uploadUrl, image, {
-          httpMethod: "POST",
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-          mimeType: "image/jpeg",
-        });
-
-        const { storageId } = JSON.parse(uploadResult.body);
-        uploadedImages.push(storageId);
-      }
-
-      await createPost({
-        tipo: "producto",
-        storageId: uploadedImages[0],
-        imageUrls: uploadedImages,
-        caption,
-        title,
-        price: parseFloat(price),
-        category,
-        location,
-        condition,
-        currency,
-      });
-
-      setSelectedImages([]);
-      setCaption("");
-      setTitle("");
-      setPrice("");
-      setCategory("");
-      setLocation("");
-      setCondition("");
-      setCurrency("");
-      router.push("/(tabs)");
-    } catch (error) {
-      console.log("Error sharing post", error);
-    } finally {
-      setIsSharing(false);
-    }
-  };
-
-  useEffect(() => {
-    selectedImages.forEach((uri) => {
-      RNImage.getSize(
-        uri,
-        (width, height) => {
-          setImageDimensions((prev) => ({
-            ...prev,
-            [uri]: width / height,
-          }));
-        },
-        (error) => console.error("Error fetching image size:", error)
-      );
-    });
-  }, [selectedImages]);
-  
+export default function OfrecerScreen() {
   return (
-    <View style={styles.contentContainer}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => { setSelectedImages([]); setCaption(""); }} disabled={isSharing}>
-          <Ionicons name="chevron-back" size={24} color={COLORS.black} style={{ paddingLeft: 7 }} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nuevo Producto</Text>
-        <TouchableOpacity style={[styles.shareButton, isSharing && styles.shareButtonDisabled]} disabled={isSharing || selectedImages.length === 0} onPress={handleShare} >
-          {isSharing ? (
-            <ActivityIndicator size="small" color={COLORS.primary} />
-          ) : (
-            <Text style={styles.shareText}>Publicar</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>MiMercado</Text>
+        <Text style={styles.subtitle}>¿Qué deseas ofrecer hoy?</Text>
+        <Text style={styles.select}>Selecciona una opción</Text>
 
-      {/* Contenido */}
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 600 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={[styles.content, isSharing && styles.contentDisabled]}>
-          {/* Carrusel de imágenes */}
-          <View style={styles.imageCarousel}>
-            {selectedImages.length === 0 ? (
-              <TouchableOpacity style={styles.emptyImageContainer} onPress={pickImage}>
-                <Ionicons name="image-outline" size={50} color={COLORS.grey} />
-                <Text style={styles.emptyImageText}>Selecciona imágenes</Text>
-              </TouchableOpacity>
-            ) : (
-              <FlatList
-                data={selectedImages}
-                horizontal
-                keyExtractor={(item, index) => index.toString()}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => {
-                  const aspectRatio = imageDimensions[item] || 1;
-                  const imageWidth = 100 * aspectRatio;
+        <OptionCard
+          title="Venta"
+          description="Ofrece tus productos nuevos o usados"
+          iconComponent={<FontAwesome6 name="box" size={20} color="#4F8EF7" />}
+          bgColor="#DCEEFF"
+        />
 
-                  return (
-                    <View style={styles.imageWrapper}>
-                      <TouchableOpacity style={styles.editButton}>
-                        <MaterialIcons name="edit" size={17} color={COLORS.white} />
-                      </TouchableOpacity>
+        <OptionCard
+          title="Alquiler"
+          description="Alquila tus propiedades o artículos"
+          iconComponent={<FontAwesome5 name="calendar-alt" size={20} color="#30C04F" />}
+          bgColor="#DFF5E5"
+        />
 
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => {
-                          setSelectedImages((prev) => prev.filter((image) => image !== item));
-                        }}
-                      >
-                        <Feather name="x" size={17} color={COLORS.white} />
-                      </TouchableOpacity>
-
-                      {imageWidth > 70 ? (
-                        <Image
-                          source={{ uri: item }}
-                          style={{ width: imageWidth, height: 100, borderRadius: 5 }}
-                          resizeMode="contain"
-                        />
-                      ) : (
-                        <Image
-                          source={{ uri: item }}
-                          style={{ width: 70, height: 100, borderRadius: 5 }}
-                          resizeMode="cover"
-                        />
-                      )}
-                    </View>
-                  );
-                }}
-                ListFooterComponent={
-                  <TouchableOpacity style={styles.addImageButton} onPress={pickImage}>
-                    <Ionicons name="add-circle" size={40} color={COLORS.black} />
-                    <Text style={styles.addImageText}>Agregar más</Text>
-                  </TouchableOpacity>
-                }
-              />
-            )}
-          </View>
-        </View>
-
-        {/* Texto fotos */}
-        <Text style={{ fontFamily: "Medium", fontSize: 12, color: COLORS.black, paddingLeft: 10 }}>
-          Fotos: {selectedImages.length}/10 selecciona tus imagenes principales
-        </Text>
-
-        {renderMarginBottom(20)}
-
-        {/* Inputs */}
-        <View style={styles.inputSection}>
-          <NewInput
-            label="Título del producto"
-            value={title}
-            onChangeText={setTitle}
-          />
-        </View>
-
-        <View style={[styles.inputSection, { flexDirection: "row", paddingLeft: 20, paddingRight: 10 }]}>
-          <View style={{ flex: 3 }}>
-            <NewInput
-              label="Precio"
-              keyboardType="numeric"
-              value={price}
-              onChangeText={setPrice}
-            />
-          </View>
-          <View style={{ flex: 1.2 }}>
-            <NewInput
-              label="Moneda"
-              value={currency}
-              onChangeText={setCurrency}
-              data={moneda}
-            />
-          </View>
-        </View>
-
-        <View style={styles.inputSection}>
-          <NewInput
-            label="Categoría"
-            value={category}
-            onChangeText={setCategory}
-            data={products}
-          />
-        </View>
-
-        <View style={styles.inputSection}>
-          <NewInput
-            label="Condición"
-            value={condition}
-            onChangeText={setCondition}
-            data={condicion}
-          />
-        </View>
-
-        <View style={styles.inputSection}>
-          <NewInput
-            label="Descripción"
-            minHeight={120}
-            multiline={true}
-            value={caption}
-            onChangeText={setCaption}
-          />
-        </View>
+        <OptionCard
+          title="Servicio"
+          description="Ofrece tus habilidades y servicios"
+          iconComponent={<MaterialCommunityIcons name="briefcase-variant" size={20} color="#A86AEF" />}
+          bgColor="#F0E9FF"
+        />
 
       </ScrollView>
     </View>
   );
 }
 
+function OptionCard({ title, description, iconComponent, bgColor }: any) {
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.push(`/InfoProducto/infoProducto?tipo=${title}`)}
+    >
+      <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
+        {iconComponent}
+      </View>
+      <View style={styles.textBox}>
+        <Text style={styles.cardTitle}>{title}</Text>
+        <Text style={styles.cardDesc}>{description}</Text>
+      </View>
+      <MaterialCommunityIcons name="chevron-right" size={24} color="#777" />
+    </TouchableOpacity>
+  );
+}
 
 
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    backgroundColor: 'white'
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold'
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 20
+  },
+  select: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 16
+  },
+  card: {
+    height: 85,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12
+  },
+  textBox: {
+    flex: 1
+  },
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: '600'
+  },
+  cardDesc: {
+    fontSize: 13,
+    color: '#777',
+    marginTop: 2
+  }
+});
