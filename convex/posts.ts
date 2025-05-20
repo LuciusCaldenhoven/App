@@ -21,7 +21,8 @@ export const createPost = mutation({
         category: v.string(),
         location: v.string(),
         condition: v.string(),
-        imageUrls: v.array(v.id("_storage")), // 🔥 Ahora recibe storageId, no strings
+        imageUrls: v.array(v.id("_storage")), 
+        sold: v.boolean(),
     },
     handler: async (ctx, args) => {
         const currentUser = await getAuthenticatedUser(ctx);
@@ -51,6 +52,7 @@ export const createPost = mutation({
             condition: args.condition,
             currency: args.currency,
             imageUrls,
+            sold: args.sold,
         });
 
         await ctx.db.patch(currentUser._id, {
@@ -295,4 +297,42 @@ export const getBookmarkedPostById = query({
             isBookmarked: !!bookmark, // ✅ Ahora sabemos si está guardado en favoritos o no
         };
     }
+});
+
+export const getSoldPostsByUser = query({
+  handler: async (ctx) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    return await ctx.db
+      .query("posts")
+      .withIndex("by_user", (q) => q.eq("userId", currentUser._id))
+      .filter((q) => q.eq(q.field("sold"), true))
+      .collect();
+  },
+});
+
+
+export const getNotSoldPostsByUser = query({
+  handler: async (ctx) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    return await ctx.db
+      .query("posts")
+      .withIndex("by_user", (q) => q.eq("userId", currentUser._id))
+      .filter((q) => q.eq(q.field("sold"), false))
+      .collect();
+  },
+});
+
+export const markAsSold = mutation({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, { postId }) => {
+    const user = await getAuthenticatedUser(ctx);
+
+    const post = await ctx.db.get(postId);
+    if (!post) throw new Error("Post not found");
+    if (post.userId !== user._id) throw new Error("No autorizado");
+
+    await ctx.db.patch(postId, { sold: true });
+  },
 });

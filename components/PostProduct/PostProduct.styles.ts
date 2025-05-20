@@ -40,16 +40,76 @@ export const styles = StyleSheet.create({
         fontWeight: "bold",
         color: COLORS.primary,
     },
-    verticalActions: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 6,
-    gap: 12,
-  },
-  iconButton: {
-    padding: 6,
-    backgroundColor: "#f2f2f2",
-    borderRadius: 10,
-  },
+    rowContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 10,
+        width: "100%",
+    },
 
+    infoContainer: {
+        flex: 1, // permite que ocupe el espacio restante
+    },
+
+    verticalActions: {
+        justifyContent: "center",
+        alignItems: "flex-end",
+        gap: 12,
+    },
+    iconButton: {
+        padding: 6,
+        backgroundColor: "#f2f2f2",
+        borderRadius: 10,
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    container: {
+        width: "80%",
+        backgroundColor: "white",
+        borderRadius: 16,
+        padding: 20,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    titulo: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
+    message: {
+        textAlign: "center",
+        marginBottom: 20,
+    },
+    buttonRow: {
+        flexDirection: "row",
+        gap: 12,
+    },
+    cancelButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        backgroundColor: "#e0e0e0",
+    },
+    cancelText: {
+        fontWeight: "bold",
+    },
+    deleteButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        backgroundColor: "#FF5A5F",
+    },
+    deleteText: {
+        color: "white",
+        fontWeight: "bold",
+    },
 });

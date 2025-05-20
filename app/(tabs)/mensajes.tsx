@@ -6,7 +6,7 @@ import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
 import NotificationItem from "@/components/notificationItem/Notification";
 import InputComponent from "@/components/input/component";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "@/styles/messages.styles";
 import SingleItem from "@/components/singleItem/singleItem";
 import { scale } from "@/constants/scale";
@@ -98,10 +98,34 @@ export default function NotificationsAndMessages() {
 
 function NoNotificationsFound() {
   return (
-    <View style={styles.centered}>
-      <Text style={{ fontSize: 20, color: COLORS.black }}>No hay notificaciones aún</Text>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        backgroundColor: COLORS.background,
+      }}
+    >
+      <Ionicons
+        name="notifications-off-outline"
+        size={80}
+        color={COLORS.main}
+        style={{ marginBottom: 20 }}
+      />
+
+      <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
+        Sin notificaciones
+      </Text>
+
+      <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24 }}>
+        Aún no tienes actividad reciente. 
+      </Text>
+
+      
     </View>
   );
+
 }
 
 function NoMessagesFound() {

@@ -58,16 +58,10 @@ export default function SearchPage() {
       {/* Mostrar estado de carga o resultados */}
       {filteredPosts === undefined ? (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={COLORS.main} />
         </View>
       ) : searchResults.length === 0 ? (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <Image
-            source={require("@/assets/images/Pose23.png")}
-            style={styles.searchImage}
-          />
-          <Text style={styles.noResultsText}>No se encontraron resultados</Text>
-        </View>
+        <NoSearchResults />
       ) : (
         <FlatList
           data={searchResults}
@@ -90,6 +84,30 @@ export default function SearchPage() {
           setFilters(appliedFilters);
         }}
       />
+    </View>
+  );
+}
+
+
+
+
+function NoSearchResults() {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 20 }}>
+      <Ionicons
+        name="search-outline"
+        size={80}
+        color={COLORS.main}
+        style={{ marginBottom: 20 }}
+      />
+
+      <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
+        No se encontraron resultados
+      </Text>
+
+      <Text style={{ fontSize: 16, color: "#888", textAlign: "center" }}>
+        Intenta modificar tu búsqueda o revisar los filtros aplicados.
+      </Text>
     </View>
   );
 }

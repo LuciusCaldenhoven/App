@@ -8,12 +8,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor: COLORS.white,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
   },
   title:{
     fontSize: 28,
     fontFamily: "SemiBold",
     color: COLORS.black,
-    paddingTop: 80,
+    paddingTop: 20,
     paddingHorizontal: scale(18),
   },
   buttonContainer: {

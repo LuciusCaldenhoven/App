@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TouchableOpacity, Dimensions, Share } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions, Share, Modal } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -13,7 +13,6 @@ import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useSc
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import { BottomSheet } from "@/components/bottomSheet/BottomSheet";
 import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
-import LoaderPosts from "@/components/loaders/loaderPosts";
 import { useAuth } from "@clerk/clerk-expo";
 
 const { width } = Dimensions.get("window");
@@ -190,7 +189,7 @@ export default function ProductDetail() {
                                 )}
                             </View>
 
-                            
+
                         </View>
                         <View style={styles.descriptionWrapper}>
                             <Text style={styles.description}>Descripción</Text>
@@ -226,9 +225,10 @@ export default function ProductDetail() {
                     </View>
                 </View>
                 {renderBorderBottom(6)}
-                <BottomSheet visible={showBottomSheet} setVisible={setShowBottomSheet}>
-                    <SellerBottomSheet author={author} posts={posts || []} setShowBottomSheet={setShowBottomSheet} />
-                </BottomSheet>
+                
+                <SellerBottomSheet author={author} posts={posts || []} visible={showBottomSheet} onClose={() => setShowBottomSheet(false)} />
+                
+
             </View>
         </>
     );

@@ -47,7 +47,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
   const handleApplyFilters = () => {
     onApplyFilters(filters);
     onClose();
-  };
+  };   
 
   const handleClearAll = () => {
     setFilters({
@@ -73,7 +73,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
 
 
   return (
-    <Modal visible={visible} animationType="fade" transparent>
+    <Modal visible={visible} animationType="slide"  presentationStyle="pageSheet" onRequestClose={() => {onClose()}} >
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.header}>

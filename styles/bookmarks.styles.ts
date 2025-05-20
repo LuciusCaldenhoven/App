@@ -30,5 +30,19 @@ export const styles = StyleSheet.create({
     listContainer: {
         paddingVertical: 10,
     },
+    favoritosContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        backgroundColor: COLORS.background,
+    },
+    favoritosText: {
+        backgroundColor: COLORS.main,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 12,
+    },
+
 
 });

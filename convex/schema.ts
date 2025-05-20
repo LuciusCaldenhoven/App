@@ -32,6 +32,7 @@ export default defineSchema({
         location: v.string(),
         condition: v.string(),
         imageUrls: v.array(v.string()),
+        sold: v.boolean(),
     })
     .index("by_user", ["userId"])
     .index("by_category", ["category"])
@@ -85,13 +86,11 @@ export default defineSchema({
 
     // NUEVA TABLA PARA RESEÑAS
     reviews: defineTable({
-        fromUserId: v.id("users"),     // Usuario que deja la reseña
-        toUserId: v.id("users"),       // Usuario que la recibe (vendedor)
-        productId: v.id("posts"),      // Producto relacionado
-        rating: v.number(),            // Valoración (1-5)
-        comment: v.string(),           // Comentario
-        createdAt: v.number(),         // Fecha
+        fromUserId: v.id("users"),    
+        toUserId: v.id("users"),        
+        rating: v.number(),            
+        comment: v.string(),           
+        createdAt: v.number(),        
     })
-    .index("by_to_user", ["toUserId"])                      // Buscar reseñas por usuario receptor
-    .index("by_from_user_and_product", ["fromUserId", "productId"]) // Evitar reseñas duplicadas por producto
+    .index("by_to_user", ["toUserId"])                     
 });

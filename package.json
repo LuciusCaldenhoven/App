@@ -18,6 +18,7 @@
     "@clerk/clerk-expo": "^2.11.3",
     "@clerk/types": "^4.47.0",
     "@expo/config-plugins": "~10.0.0",
+    "@expo/metro-config": "^0.20.14",
     "@expo/vector-icons": "^14.0.2",
     "@gorhom/bottom-sheet": "^5.1.2",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
@@ -25,7 +26,6 @@
     "@react-native-picker/picker": "2.11.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
-    "@expo/metro-config": "0.20.14",
     "convex": "^1.20.0",
     "date-fns": "^4.1.0",
     "expo": "^53.0.9",
@@ -69,8 +69,6 @@
     "svix": "^1.61.3"
   },
   "devDependencies": {
-    "metro": "0.82.0",
-    
     "@babel/core": "^7.25.2",
     "@react-native-community/cli": "^18.0.0",
     "@types/jest": "^29.5.12",

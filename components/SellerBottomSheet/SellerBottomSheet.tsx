@@ -1,35 +1,36 @@
-import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, FlatList } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, FlatList, Modal, Pressable } from "react-native";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { styles } from "../SellerBottomSheet/SelletBottomSheet.styles";
 import { Image } from "expo-image";
 import ReviewComponent from "@/components/review/component";
 import PostBig from "@/components/postBig/postBig";
 import { router } from "expo-router";
-import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import Animated, { useAnimatedStyle, interpolate, useSharedValue } from "react-native-reanimated";
-import LoaderPosts from "../loaders/loaderPosts";
 import { Loader } from "../Loader";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import ReviewComponentVertical from "../ReviewComponentVertical/ReviewComponentVertical";
 
 type SellerBottomSheetProps = {
   author: any;
   posts: any[];
-  setShowBottomSheet: (visible: boolean) => void;
+  visible: boolean;
+  onClose: () => void;
 };
 
-export default function SellerBottomSheet({
-  author,
-  posts,
-  setShowBottomSheet,
-}: SellerBottomSheetProps) {
-  const scrollOffset = useSharedValue(0);
 
-  if (!author || !posts || true) <Loader />; // Manejo de errores
+export default function SellerBottomSheet({ author, posts, visible, onClose }: SellerBottomSheetProps) {
+  const scrollOffset = useSharedValue(0);
+  const postsSold = useQuery(api.posts.getSoldPostsByUser, {});
+  const [showAllReviews, setShowAllReviews] = useState(false);
+
+
+  if (!author || !posts) return <Loader />; // Manejo de errores
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {
-      opacity: interpolate(scrollOffset.value, [0, 100], [0, 1]), // Desaparece al desplazarse
+      opacity: interpolate(scrollOffset.value, [0, 100], [0, 1]),
     };
   });
 
@@ -38,50 +39,70 @@ export default function SellerBottomSheet({
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 0.9 }}>
-      {/* Botón de cerrar (Siempre visible) */}
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => { onClose() }} >
       <View style={styles.headerButtonsContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={() => setShowBottomSheet(false)}>
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <AntDesign name="close" size={22} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.shareButton} onPress={() => setShowBottomSheet(false)}>
+        <TouchableOpacity style={styles.shareButton} onPress={onClose}>
           <Feather name="share" size={22} color="black" />
         </TouchableOpacity>
       </View>
-
       {/* Header animado */}
       <Animated.View style={[styles.header, headerAnimatedStyle]}>
       </Animated.View>
 
       {/* Contenido principal */}
       <ScrollView style={styles.bottomContainer} contentContainerStyle={{ paddingBottom: 100 }} onScroll={handleScroll} scrollEventThrottle={16} >
-        {renderMarginBottom(40)}
+
 
         {/* Información del autor */}
         <View style={styles.card}>
           {author && <Image source={{ uri: author.image }} style={styles.avatar} />}
           <Text style={styles.textName}>{author && author.fullname.split(" ")[0]}</Text>
-        </View>
-        {author.location && (
-          <View style={styles.locationContainer}>
-            <Ionicons name="location-outline" size={22} color="grey" />
-            <Text style={styles.textLocation}>Vive en {author.location}</Text>
-          </View>)}
-        {author.bio && (
-          <View style={styles.locationContainer}>
-            <Text style={styles.textLocation}>{author.bio}</Text>
+          {author.location && (
+            <View style={styles.locationContainer}>
+              <Ionicons name="location" size={22} color="grey" />
+              <Text style={styles.textLocation}> {author.location}</Text>
+            </View>)}
+          <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
+            <AntDesign name="star" size={16} color="#FF5A5F" style={{ marginRight: 4 }} />
+            <Text style={{ fontSize: 15, fontWeight: "500", color: "#333" }}>
+              {author.averageRating.toFixed(1)}
+            </Text>
 
-          </View>)}
-          {renderMarginTop(40)}
+            <View style={styles.ventasContainer} />
+            <Text style={{ fontSize: 15, color: "#555" }}>
+              {postsSold?.length} ventas
+            </Text>
+          </View>
+        </View>
+
+        {author.bio && (
+          <View style={{ marginTop: 12, paddingHorizontal: 20 }}>
+            <Text style={styles.bioText} >
+              {author.bio}
+            </Text>
+          </View>
+        )}
+
+
         {/* Reseñas */}
-        <Text style={styles.textReview}>Reseñas de {author && author.fullname.split(" ")[0]}</Text>
-        {renderMarginTop(8)}
-        {author && <ReviewComponent sellerId={author._id} horizontal={true} />}
-        {renderMarginBottom(20)}
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingRight: 20, marginTop: 24, marginBottom: 12 }}>
+          <Text style={styles.textReview}>Reseñas de {author && author.fullname.split(" ")[0]}</Text>
+          <Pressable onPress={() => setShowAllReviews(true)}>
+            <Text style={{ fontSize: 14, color: "#007AFF", fontWeight: "500" }}>Ver más</Text>
+          </Pressable >
+        </View>
+
+
+        {author && <ReviewComponent sellerId={author._id} />}
+
+
 
         {/* Posts del vendedor */}
         <Text style={styles.textReview}>Productos de {author && author.fullname.split(" ")[0]}</Text>
-        {renderMarginBottom(15)}
+
         <FlatList
           data={posts}
           renderItem={({ item }) => (
@@ -91,7 +112,7 @@ export default function SellerBottomSheet({
                 author: { username: "Unknown", image: "", _id: "" },
               }}
               onPressPost={() => {
-                setShowBottomSheet(false);
+                onClose();
                 router.push(`/product/${item._id}`);
               }}
             />
@@ -100,7 +121,14 @@ export default function SellerBottomSheet({
           horizontal
           showsHorizontalScrollIndicator={false}
         />
+
+
+        <ReviewComponentVertical
+          visible={showAllReviews}
+          onClose={() => setShowAllReviews(false)}
+          sellerId={author._id}
+        />
       </ScrollView>
-    </GestureHandlerRootView>
+    </Modal>
   );
 }

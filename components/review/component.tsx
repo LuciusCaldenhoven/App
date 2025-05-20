@@ -1,77 +1,73 @@
 import React from 'react';
 import {
-    View,
-    Text,
-    FlatList,
-    Image,
-    StyleSheet,
-    Pressable,
-    ViewStyle,
+  View,
+  Text,
+  FlatList,
+  Image,
+  StyleSheet,
+  Pressable,
+  ViewStyle,
 } from 'react-native';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { formatDistanceToNow } from 'date-fns';
-import { scale } from '@/constants/scale';
-import { COLORS, FontSize } from '@/constants/theme';
-import { createStyles } from "@/styles/review.styles";
 import { FontAwesome } from '@expo/vector-icons';
-import { renderBorderBottom, renderPaddingBottom } from '@/constants/ui-utils';
-
+import { COLORS } from '@/constants/theme';
+import { Loader } from '../Loader';
+import { styles } from './review.styles';
 
 interface Props {
-    sellerId: Id<"users">;
-    containerStyle?: ViewStyle;
-    horizontal?: boolean;
+  sellerId: Id<'users'>;
+  containerStyle?: ViewStyle;
 }
-const ReviewComponent = ({ sellerId, containerStyle, horizontal = false }: Props) => {
-    const reviews = useQuery(api.reviews.getReviewsByUser, {
-        userId: sellerId,
-    });
-    const styles = createStyles();
-    if (!reviews) return <Text>Cargando reseñas...</Text>;
 
-    return (
-        <FlatList
-            data={reviews}
-            keyExtractor={(item) => item._id} // Usamos el _id como clave única
-            renderItem={({ item }) => (
-                <View style={styles.container}>
-                    <Pressable style={[styles.card, containerStyle]}>
-                        <View style={styles.frsb}>
-                            <View style={styles.frcg}>
-                                <Image source={{ uri: item.user.image }} style={styles.person} />
-                                <Text
-                                    style={styles.reviewTitle}
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
-                                >
-                                    {item.user.fullname}
-                                </Text>
-                            </View>
-                            <View style={styles.frcg}>
-                                <Text style={styles.textBold}>{item.rating}</Text>
-                                <FontAwesome
-                                    name="star"
-                                    size={scale(18)}
-                                    color={COLORS.star}
-                                />
-                            </View>
-                        </View>
-                        {renderPaddingBottom(5)}
-                        <Text style={styles.text}>{item.comment}</Text>
-                    </Pressable>
+const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
+  const reviews = useQuery(api.reviews.getReviewsByUser, {
+    userId: sellerId,
+  });
+
+  if (!reviews) {
+    return <Loader />;
+  }
+
+  return (
+    <FlatList
+      data={reviews}
+      keyExtractor={(item) => item._id}
+      renderItem={({ item }) => (
+        <View style={[styles.cardContainer, containerStyle]}>
+          <Pressable style={styles.card}>
+            {/* Cabecera */}
+            <View style={styles.headerRow}>
+              <View style={styles.userInfo}>
+                <Image source={{ uri: item.user.image }} style={styles.avatar} />
+                <View style={{ marginLeft: 8 }}>
+                  <Text style={styles.username}>{item.user.fullname.split(' ')[0]}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                    <FontAwesome
+                      name="star"
+                      size={12}
+                      color={COLORS.star}
+                      style={{ marginRight: 4 }}
+                    />
+                    <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
+                  </View>
                 </View>
-            )}
-            horizontal={horizontal} // Se aplica el estilo horizontal si es necesario
-            showsHorizontalScrollIndicator={false} // Oculta el indicador de scroll horizontal
-            showsVerticalScrollIndicator={false} // Oculta el indicador de scroll vertical
-        />
-    );
+              </View>
+            </View>
+
+            {/* Comentario */}
+            <View style={styles.commentContainer}>
+              <Text style={styles.comment}>{item.comment}</Text>
+            </View>
+          </Pressable>
+        </View>
+      )}
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 10 }}
+    />
+  );
 };
-
-
-
-
 
 export default ReviewComponent;

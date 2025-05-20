@@ -14,10 +14,8 @@ export const styles = StyleSheet.create({
     },
     sheet: {
       backgroundColor: COLORS.background,
-      
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      maxHeight: "93%",
+
+      maxHeight: "100%",
     },
     header: {
       flexDirection: "row",

@@ -5,11 +5,8 @@ import { scale } from "@/constants/scale";
 
 export const styles = StyleSheet.create({
   bottomContainer: {
-    flex: 0.9,
     backgroundColor: COLORS.white,
-    borderTopLeftRadius: scale(30),
-    borderTopRightRadius: scale(30),
-    paddingVertical: scale(12),
+    paddingTop: 40,
   },
   closeButton: {
     position: "relative",
@@ -17,9 +14,9 @@ export const styles = StyleSheet.create({
     left: 8,
     zIndex: 20,
     padding: 10,
-
   },
-  shareButton:{
+
+  shareButton: {
     position: "relative",
     top: 2,
     left: 280,
@@ -27,30 +24,16 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   card: {
-    
-    backgroundColor: COLORS.white,
-    padding: 24,
-    borderRadius: 24,
-    marginHorizontal: 20,
     marginTop: 24,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    shadowOffset: {
-      width: 1,
-      height: 2,
-    },
     alignItems: "center",
-    gap: 14,
-    marginBottom: 20,
+
   },
-  
+
   number: {
     fontSize: 20,
     fontFamily: "Bold",
     marginLeft: 200,
-    marginBottom : -16,
+    marginBottom: -16,
   },
   txtRating: {
     fontSize: 11,
@@ -70,23 +53,24 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   avatar: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     borderRadius: 80,
-    backgroundColor: COLORS.grey,
+
   },
   textReview: {
-    fontFamily: "SemiBold",
-    fontSize: 20,
+    fontFamily: "Medium",
+    fontSize: 18,
     color: COLORS.black,
-    marginTop: 10,
+    marginVertical: 20,
     marginLeft: 10,
+
   },
   textName: {
     fontFamily: "SemiBold",
     fontSize: 20,
     color: COLORS.black,
-    
+
     marginLeft: 10,
   },
   header: {
@@ -103,24 +87,35 @@ export const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 24,
   },
-  
+
   headerButtonsContainer: {
     flexDirection: "row",
     position: "absolute",
     top: 10,
-   
-    zIndex: 10, // Asegúrate de que los botones estén al frente
+
+    zIndex: 10,
   },
-  locationContainer :{
+  locationContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 20,
-    marginTop: 10,
+    marginTop: 6
   },
-  textLocation : {
+  textLocation: {
     fontFamily: "Regular",
     fontSize: 14,
-    color: COLORS.black,
-    paddingHorizontal: 10,
-  }
+  },
+  ventasContainer: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#ccc",
+    marginHorizontal: 8,
+  },
+  bioText: {
+    fontSize: 14,
+    color: "#555",
+    lineHeight: 20,
+    textAlign: "center",
+
+  },
 });

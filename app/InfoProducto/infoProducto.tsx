@@ -16,6 +16,7 @@ import products from "@/assets/index/data";
 import moneda from "@/assets/precio/precio.data";
 import condicion from "@/assets/condicion/condicion.data";
 import { useLocalSearchParams } from "expo-router";
+import ImageCarousel from "@/components/ImageCarosel/ImageCarosel";
 
 export default function CreateScreen() {
     const router = useRouter();
@@ -27,16 +28,15 @@ export default function CreateScreen() {
     const [location, setLocation] = useState("");
     const [condition, setCondition] = useState("");
     const [currency, setCurrency] = useState("");
-
+    const [sold, setSold] = useState(false);
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
-    const [imageDimensions, setImageDimensions] = useState<{ [key: string]: number }>({});
     const { tipo } = useLocalSearchParams();
     
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: true,
-            quality: 0.5,
+            quality: 0.8,
             selectionLimit: 10,
         });
 
@@ -81,6 +81,7 @@ export default function CreateScreen() {
                 location,
                 condition,
                 currency,
+                sold,
             });
 
             setSelectedImages([]);
@@ -91,6 +92,7 @@ export default function CreateScreen() {
             setLocation("");
             setCondition("");
             setCurrency("");
+            
             router.push("/(tabs)");
         } catch (error) {
             console.log("Error sharing post", error);
@@ -99,20 +101,7 @@ export default function CreateScreen() {
         }
     };
 
-    useEffect(() => {
-        selectedImages.forEach((uri) => {
-            RNImage.getSize(
-                uri,
-                (width, height) => {
-                    setImageDimensions((prev) => ({
-                        ...prev,
-                        [uri]: width / height,
-                    }));
-                },
-                (error) => console.error("Error fetching image size:", error)
-            );
-        });
-    }, [selectedImages]);
+
 
     return (
         <View style={styles.contentContainer}>
@@ -146,53 +135,7 @@ export default function CreateScreen() {
                                 <Text style={styles.emptyImageText}>Selecciona imágenes</Text>
                             </TouchableOpacity>
                         ) : (
-                            <FlatList
-                                data={selectedImages}
-                                horizontal
-                                keyExtractor={(item, index) => index.toString()}
-                                showsHorizontalScrollIndicator={false}
-                                renderItem={({ item }) => {
-                                    const aspectRatio = imageDimensions[item] || 1;
-                                    const imageWidth = 100 * aspectRatio;
-
-                                    return (
-                                        <View style={styles.imageWrapper}>
-                                            <TouchableOpacity style={styles.editButton}>
-                                                <MaterialIcons name="edit" size={17} color={COLORS.white} />
-                                            </TouchableOpacity>
-
-                                            <TouchableOpacity
-                                                style={styles.deleteButton}
-                                                onPress={() => {
-                                                    setSelectedImages((prev) => prev.filter((image) => image !== item));
-                                                }}
-                                            >
-                                                <Feather name="x" size={17} color={COLORS.white} />
-                                            </TouchableOpacity>
-
-                                            {imageWidth > 70 ? (
-                                                <Image
-                                                    source={{ uri: item }}
-                                                    style={{ width: imageWidth, height: 100, borderRadius: 5 }}
-                                                    resizeMode="contain"
-                                                />
-                                            ) : (
-                                                <Image
-                                                    source={{ uri: item }}
-                                                    style={{ width: 70, height: 100, borderRadius: 5 }}
-                                                    resizeMode="cover"
-                                                />
-                                            )}
-                                        </View>
-                                    );
-                                }}
-                                ListFooterComponent={
-                                    <TouchableOpacity style={styles.addImageButton} onPress={pickImage}>
-                                        <Ionicons name="add-circle" size={40} color={COLORS.black} />
-                                        <Text style={styles.addImageText}>Agregar más</Text>
-                                    </TouchableOpacity>
-                                }
-                            />
+                            <ImageCarousel selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
                         )}
                     </View>
                 </View>
@@ -206,58 +149,28 @@ export default function CreateScreen() {
 
                 {/* Inputs */}
                 <View style={styles.inputSection}>
-                    <NewInput
-                        label="Título del producto"
-                        value={title}
-                        onChangeText={setTitle}
-                    />
+                    <NewInput label="Título del producto" value={title} onChangeText={setTitle} />
                 </View>
 
                 <View style={[styles.inputSection, { flexDirection: "row", paddingLeft: 20, paddingRight: 10 }]}>
                     <View style={{ flex: 3 }}>
-                        <NewInput
-                            label="Precio"
-                            keyboardType="numeric"
-                            value={price}
-                            onChangeText={setPrice}
-                        />
+                        <NewInput label="Precio" keyboardType="numeric" value={price} onChangeText={setPrice} />
                     </View>
                     <View style={{ flex: 1.2 }}>
-                        <NewInput
-                            label="Moneda"
-                            value={currency}
-                            onChangeText={setCurrency}
-                            data={moneda}
-                        />
+                        <NewInput label="Moneda" value={currency} onChangeText={setCurrency} data={moneda} />
                     </View>
                 </View>
 
                 <View style={styles.inputSection}>
-                    <NewInput
-                        label="Categoría"
-                        value={category}
-                        onChangeText={setCategory}
-                        data={products}
-                    />
+                    <NewInput label="Categoría" value={category} onChangeText={setCategory} data={products} />
                 </View>
 
                 <View style={styles.inputSection}>
-                    <NewInput
-                        label="Condición"
-                        value={condition}
-                        onChangeText={setCondition}
-                        data={condicion}
-                    />
+                    <NewInput label="Condición" value={condition} onChangeText={setCondition} data={condicion} />
                 </View>
 
                 <View style={styles.inputSection}>
-                    <NewInput
-                        label="Descripción"
-                        minHeight={120}
-                        multiline={true}
-                        value={caption}
-                        onChangeText={setCaption}
-                    />
+                    <NewInput label="Descripción" minHeight={120} multiline={true} value={caption} onChangeText={setCaption} />
                 </View>
 
             </ScrollView>

@@ -101,7 +101,7 @@ export default function Index() {
                     </View>
 
                     {renderMarginBottom(50)}
-                    <Text style={styles.titulo}>Las Novedadessss pa</Text>
+                    <Text style={styles.titulo}>Las Novedadessss paa</Text>
                 </View>
 
                 <FlatList

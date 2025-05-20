@@ -5,7 +5,6 @@ import { getAuthenticatedUser } from "./users";
 export const addReview = mutation({
   args: {
     content: v.string(),
-    postId: v.id("posts"),
     sellerId: v.id("users"),
     rating: v.number(),
   },
@@ -17,21 +16,11 @@ export const addReview = mutation({
     }
 
     // Verificar si ya dejó una reseña para este producto
-    const existing = await ctx.db
-      .query("reviews")
-      .withIndex("by_from_user_and_product", (q) =>
-        q.eq("fromUserId", currentUser._id).eq("productId", args.postId)
-      )
-      .unique();
-
-    if (existing) {
-      throw new ConvexError("Ya dejaste una reseña para este producto.");
-    }
+    
 
     const reviewId = await ctx.db.insert("reviews", {
       fromUserId: currentUser._id,
       toUserId: args.sellerId,
-      productId: args.postId,
       rating: args.rating,
       comment: args.content,
       createdAt: Date.now(),
@@ -52,13 +41,7 @@ export const addReview = mutation({
     });
 
     // Crear notificación
-    await ctx.db.insert("notifications", {
-      receiverId: args.sellerId,
-      senderId: currentUser._id,
-      type: "review",
-      postId: args.postId,
-    });
-
+    
     return reviewId;
   },
 });

@@ -31,7 +31,7 @@ const ChatPage = () => {
     const chat = chats?.find((c) => c._id === chatid);
     const isSeller = chat?.seller?._id === currentUser?._id;
     const otherUser = isSeller ? chat?.buyer : chat?.seller;
-    const posts = useQuery(api.posts.getPostsByUser, currentUser?._id ? { userId: currentUser._id } : "skip");
+    const posts = useQuery(api.posts.getPostsByUser, otherUser?._id ? { userId: otherUser._id } : "skip");
     
     const [showBottomSheet, setShowBottomSheet] = useState(false);
 
@@ -150,13 +150,7 @@ const ChatPage = () => {
                     <ActivityIndicator color="#fff" animating size="large" />
                 </View>
             )}
-            <BottomSheet visible={showBottomSheet} setVisible={setShowBottomSheet}>
-                <SellerBottomSheet
-                    author={otherUser}
-                    posts={posts || []}
-                    setShowBottomSheet={setShowBottomSheet}
-                />
-            </BottomSheet>
+            <SellerBottomSheet author={otherUser} posts={posts || []} visible={showBottomSheet} onClose={() => setShowBottomSheet(false)} />
         </View>
     );
 };

@@ -6,7 +6,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Pressable } from "react-native";
 import { Image } from "expo-image";
 import ReviewComponent from "@/components/review/component";
 import { renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
@@ -15,16 +15,17 @@ import { scale } from "@/constants/scale";
 import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
 import LoaderPosts from "@/components/loaders/loaderPosts";
+import ReviewComponentVertical from "@/components/ReviewComponentVertical/ReviewComponentVertical";
 
 function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
 
   // Obtener las publicaciones del usuario
-  
+
 
   // Mutación para actualizar el perfil
   const updateProfile = useMutation(api.users.updateProfile);
@@ -39,7 +40,7 @@ function Profile() {
   };
 
   // Mostrar un loader si los datos aún no están disponibles
-  if (!currentUser ) {
+  if (!currentUser) {
     return (
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <View style={{ transform: [{ scale: 1.5 }] }}>
@@ -49,7 +50,7 @@ function Profile() {
     );
   }
 
- 
+
 
   return (
     <View style={styles.container}>
@@ -87,16 +88,13 @@ function Profile() {
 
         <View style={styles.rowBetween}>
           <Text style={styles.title}>Review ({currentUser.reviewCount})</Text>
-          <Text
-            onPress={() => router.push(`/review.screen/${currentUser._id}`)}
-            style={styles.text}
-          >
-            See All
-          </Text>
+          <Pressable onPress={() => setShowAllReviews(true)}>
+            <Text style={{ fontSize: 14, color: COLORS.main, fontFamily:'Medium' }}>Ver más</Text>
+          </Pressable >
         </View>
 
         {renderMarginTop(8)}
-        <ReviewComponent sellerId={currentUser._id} horizontal={true} />
+        <ReviewComponent sellerId={currentUser._id} />
 
         {renderMarginBottom(8)}
         <Text style={styles.title}>General</Text>
@@ -140,6 +138,12 @@ function Profile() {
         />
 
         <Button onPress={() => signOut()} text="chau" />
+
+        <ReviewComponentVertical
+          visible={showAllReviews}
+          onClose={() => setShowAllReviews(false)}
+          sellerId={currentUser._id}
+        />
       </ScrollView>
     </View>
   );
