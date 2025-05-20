@@ -53,7 +53,7 @@ export default function ReviewComponentVertical({ visible, onClose, sellerId }: 
                         <AntDesign name="close" size={22} color="black" />
                     </TouchableOpacity>
 
-                    <Text style={styles.title}>Todas las reseñas</Text>
+                    
 
                     {reviews.length === 0 ? (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

@@ -7,7 +7,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarShowLabel: true,
         headerShown: false,
-        tabBarActiveTintColor: COLORS.red,
+        tabBarActiveTintColor: '#4CAF50',
         tabBarInactiveTintColor: COLORS.black,
         tabBarStyle: {
           position: "absolute",

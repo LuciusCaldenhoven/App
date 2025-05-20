@@ -4,7 +4,7 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Id } from "../../convex/_generated/dataModel";
 import { styles } from "../PostProduct/PostProduct.styles";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
 
@@ -13,8 +13,8 @@ type PostProps = {
         tipo: string;
         _id: Id<"posts">;
         userId: Id<"users">;
-        imageUrl: string;
-        imageUrls: string[];
+        storageId: Id<"_storage">;
+        imageUrls: Id<"_storage">[];
         caption?: string;
         title: string;
         price: number;
@@ -23,6 +23,7 @@ type PostProps = {
         location: string;
         condition: string;
         _creationTime: number;
+        isBookmarked: boolean;
         author: {
             _id: string;
             username: string;
@@ -39,13 +40,15 @@ export default function PostProduct({ post }: PostProps) {
         await deletePost({ postId: post._id });
         setShowModal(false);
     };
-
+    const imageUrl = useQuery(api.posts.getImageUrl, {
+            storageId: post.storageId,
+        });
     return (
         <>
             <TouchableOpacity style={styles.card} onPress={() => router.push(`/product/${post._id}`)} >
                 <View style={styles.rowContainer}>
                     <Image
-                        source={{ uri: post.imageUrl }}
+                        source={{ uri: imageUrl }}
                         style={styles.image}
                         contentFit="cover"
                     />

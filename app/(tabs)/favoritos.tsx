@@ -65,16 +65,16 @@ function NoBookmarksFound() {
   return (
     <View style={styles.favoritosContainer}>
       <Ionicons name="bookmark-outline" size={80} color={COLORS.main} style={{ marginBottom: 20 }} />
-      
+
       <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
         Sin favoritos aún
       </Text>
-      
+
       <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24 }}>
         Todavía no has guardado ninguna publicación.
       </Text>
 
-      <TouchableOpacity style={styles.favoritosText} onPress={() => {router.push("/") }} >
+      <TouchableOpacity style={styles.favoritosText} onPress={() => { router.push("/") }} >
         <Text style={{ color: "#fff", fontWeight: "500", fontSize: 16 }}>
           Explorar productos
         </Text>

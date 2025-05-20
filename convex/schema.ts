@@ -22,7 +22,6 @@ export default defineSchema({
     posts: defineTable({
         tipo: v.string(),
         userId: v.id("users"),
-        imageUrl: v.string(),
         storageId: v.id("_storage"),
         caption: v.optional(v.string()),
         title: v.string(),
@@ -31,7 +30,7 @@ export default defineSchema({
         category: v.string(),
         location: v.string(),
         condition: v.string(),
-        imageUrls: v.array(v.string()),
+        imageUrls: v.array(v.id("_storage")),
         sold: v.boolean(),
     })
     .index("by_user", ["userId"])

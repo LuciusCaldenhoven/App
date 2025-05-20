@@ -65,16 +65,16 @@ export default function Index() {
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/ropa.png')} style={{ width: 100, height: 100 }} />}
                             title="Ropa y Accesorios"
-                            backgroundColor={'#F9F9F9'}
+                            backgroundColor={'rgba(0, 200, 83, 0.2)'}
                             onPress={() => router.push(`/search/searchResults?category=Ropa y Accesorios`)} 
                             width={160}
                             height={140}
-                           
+                            textColor="#212121"
                         />
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
                             title="Electrónica"
-                            backgroundColor={'rgba(2, 194, 143, 0.5)'}
+                            backgroundColor={'rgba(0, 230, 118, 0.25)'}
                             onPress={() => router.push(`/search/searchResults?category=Electrónica`)} 
                             width={160}
                             height={140}
@@ -89,7 +89,7 @@ export default function Index() {
                                 <CategoryBox
                                     icon={<Image source={item.icon} style={{ width: 70, height: 70 }} />}
                                     title={item.title}
-                                    backgroundColor={'rgb(240, 248, 248)'}
+                                    backgroundColor={'#FAFAFA)'}
                                     onPress={() => router.push(`/search/searchResults?category=${item.title}`)} 
                                 />
                             )}

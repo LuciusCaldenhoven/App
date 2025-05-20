@@ -3,10 +3,10 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
-import {styles} from "../PostFav/PostFav.styles";
+import { styles } from "../PostFav/PostFav.styles";
 
 
 type PostProps = {
@@ -14,8 +14,8 @@ type PostProps = {
         tipo: string;
         _id: Id<"posts">;
         userId: Id<"users">;
-        imageUrl: string;
-        imageUrls: string[];
+        storageId: Id<"_storage">;
+        imageUrls: Id<"_storage">[];
         caption?: string;
         title: string;
         price: number;
@@ -42,6 +42,10 @@ export default function PostFav({ post }: PostProps) {
         setIsBookmarked(newIsBookmarked);
     };
 
+    const imageUrl = useQuery(api.posts.getImageUrl, {
+        storageId: post.storageId,
+    });
+
     return (
         <TouchableOpacity
             style={styles.card}
@@ -49,7 +53,7 @@ export default function PostFav({ post }: PostProps) {
         >
             {/* Imagen */}
             <Image
-                source={{ uri: post.imageUrl }}
+                source={{ uri: imageUrl }}
                 style={styles.image}
                 contentFit="cover"
             />
@@ -62,7 +66,7 @@ export default function PostFav({ post }: PostProps) {
                 <Text numberOfLines={1} style={styles.category}>
                     {post.category}
                 </Text>
-               
+
             </View>
 
             {/* Favorito */}

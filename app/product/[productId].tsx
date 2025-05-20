@@ -142,35 +142,25 @@ export default function ProductDetail() {
                     </View>
                 </View>
                 <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} ref={scrollRef} scrollEventThrottle={16}>
-                    {post?.imageUrls && (
-                        <Animated.FlatList
-                            ref={flatListRef}
-                            data={post.imageUrls}
-                            horizontal
-                            pagingEnabled
-                            showsHorizontalScrollIndicator={false}
-                            keyExtractor={(_, index) => index.toString()}
-                            onScroll={handleScroll}
-                            renderItem={({ item, index }) => (
-                                <View style={styles.imageContainer}>
-                                    <Animated.View
-                                        style={[
-                                            styles.image,
-                                            index === currentIndex ? imageAnimatedStyle : null,
-                                        ]}
-                                    >
-                                        <Image
-                                            source={{ uri: item }}
-                                            style={styles.image}
-                                            contentFit="cover"
-                                            transition={200}
-                                            cachePolicy="memory-disk"
-                                        />
-                                    </Animated.View>
-                                </View>
-                            )}
-                        />
-                    )}
+
+                    <Animated.FlatList
+                        ref={flatListRef}
+                        data={post.imageUrls}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(_, index) => index.toString()}
+                        onScroll={handleScroll}
+                        renderItem={({ item, index }) => (
+                            <View style={styles.imageContainer}>
+                                <ProductImageItem
+                                    storageId={item as Id<"_storage">}
+                                    animatedStyle={index === currentIndex ? imageAnimatedStyle : undefined}
+                                />
+                            </View>
+                        )}
+                    />
+
                     {post?.imageUrls && (
                         <View style={styles.imageIndicator}>
                             <Text style={styles.imageIndicatorText}>
@@ -225,11 +215,29 @@ export default function ProductDetail() {
                     </View>
                 </View>
                 {renderBorderBottom(6)}
-                
+
                 <SellerBottomSheet author={author} posts={posts || []} visible={showBottomSheet} onClose={() => setShowBottomSheet(false)} />
-                
+
 
             </View>
         </>
+    );
+}
+
+
+function ProductImageItem({ storageId, animatedStyle, }: { storageId: Id<"_storage">; animatedStyle?: any; }) {
+    const imageUrl = useQuery(api.posts.getImageUrl, { storageId });
+    if (!imageUrl) return null;
+
+    return (
+        <Animated.View style={[styles.image, animatedStyle]}>
+            <Image
+                source={{ uri: imageUrl }}
+                style={styles.image}
+                contentFit="cover"
+                transition={200}
+                cachePolicy="memory-disk"
+            />
+        </Animated.View>
     );
 }

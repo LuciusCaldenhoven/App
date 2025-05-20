@@ -12,8 +12,8 @@ type PostProps = {
         tipo: string;
         _id: Id<"posts">;
         userId: Id<"users">;
-        imageUrl: string;
-        imageUrls: string[];
+        storageId: Id<"_storage">; // ✅ ID de imagen principal
+        imageUrls: Id<"_storage">[]; // ✅ Array de storageId
         caption?: string;
         title: string;
         price: number;
@@ -31,33 +31,36 @@ type PostProps = {
     };
 };
 
+
 export default function Post({ post }: PostProps) {
     const { user } = useUser();
     const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
-    // Determinar el color de fondo según el tipo de producto
+    const imageUrl = useQuery(api.posts.getImageUrl, {
+        storageId: post.storageId,
+    });
     const getTipoBackgroundColor = (tipo: string) => {
         switch (tipo) {
             case "Venta":
-                return "#DCEEFF"; 
+                return "#DCEEFF";
             case "Alquiler":
-                return "#DFF5E5"; 
+                return "#DFF5E5";
             case "Servicio":
-                return "#F0E9FF"; 
+                return "#F0E9FF";
             default:
-                return "#777"; 
+                return "#777";
         }
     };
     const getTipoColor = (tipo: string) => {
         switch (tipo) {
             case "Venta":
-                return "#4F8EF7"; 
+                return "#4F8EF7";
             case "Alquiler":
-                return "#30C04F"; 
+                return "#30C04F";
             case "Servicio":
-                return "#A86AEF"; 
+                return "#A86AEF";
             default:
-                return "#777"; 
+                return "#777";
         }
     };
 
@@ -65,11 +68,11 @@ export default function Post({ post }: PostProps) {
         <TouchableOpacity onPress={() => router.push(`/product/${post._id}`)}>
             <View style={styles.container}>
                 {/* Mostrar el tipo de producto con un fondo dinámico */}
-                <Text style={[ styles.tipo, { backgroundColor: getTipoBackgroundColor(post.tipo), color:getTipoColor(post.tipo) }, ]} > {post.tipo} </Text>
+                <Text style={[styles.tipo, { backgroundColor: getTipoBackgroundColor(post.tipo), color: getTipoColor(post.tipo) },]} > {post.tipo} </Text>
 
                 <View style={styles.imageContainer}>
                     <Image
-                        source={{ uri: post.imageUrl }}
+                        source={{ uri: imageUrl  }}
                         style={styles.image}
                         contentFit="cover"
                         transition={200}

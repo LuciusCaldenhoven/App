@@ -10,58 +10,56 @@ export const generateUploadUrl = mutation(async (ctx) => {
     return await ctx.storage.generateUploadUrl();
 });
 
-export const createPost = mutation({
-    args: {
-        tipo: v.string(),
-        caption: v.optional(v.string()),
-        storageId: v.id("_storage"),
-        title: v.string(),
-        price: v.number(),
-        currency: v.string(),
-        category: v.string(),
-        location: v.string(),
-        condition: v.string(),
-        imageUrls: v.array(v.id("_storage")), 
-        sold: v.boolean(),
-    },
-    handler: async (ctx, args) => {
-        const currentUser = await getAuthenticatedUser(ctx);
-
-        const imageUrl = await ctx.storage.getUrl(args.storageId);
-        if (!imageUrl) throw new Error("Image not found");
-
-        // ✅ Convertir cada storageId en una URL real
-        const imageUrls = await Promise.all(
-            args.imageUrls.map(async (storageId) => {
-                const url = await ctx.storage.getUrl(storageId);
-                return url || "";
-            })
-        );
-
-        // ✅ Guardar los datos en la BD con URLs completas
-        const postId = await ctx.db.insert("posts", {
-            tipo: args.tipo,
-            userId: currentUser._id,
-            imageUrl, // 🔥 Imagen principal con URL real
-            storageId: args.storageId,
-            caption: args.caption,
-            title: args.title,
-            price: args.price,
-            category: args.category,
-            location: args.location,
-            condition: args.condition,
-            currency: args.currency,
-            imageUrls,
-            sold: args.sold,
-        });
-
-        await ctx.db.patch(currentUser._id, {
-            posts: currentUser.posts + 1
-        });
-
-        return postId;
-    },
+export const getImageUrl = query({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    const url = await ctx.storage.getUrl(args.storageId);
+    if (!url) throw new Error("URL not found");
+    return url;
+  },
 });
+
+
+export const createPost = mutation({
+  args: {
+    tipo: v.string(),
+    caption: v.optional(v.string()),
+    storageId: v.id("_storage"),
+    title: v.string(),
+    price: v.number(),
+    currency: v.string(),
+    category: v.string(),
+    location: v.string(),
+    condition: v.string(),
+    imageUrls: v.array(v.id("_storage")),
+    sold: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    const postId = await ctx.db.insert("posts", {
+      tipo: args.tipo,
+      userId: currentUser._id,
+      storageId: args.storageId, // ID de imagen principal
+      caption: args.caption,
+      title: args.title,
+      price: args.price,
+      category: args.category,
+      location: args.location,
+      condition: args.condition,
+      currency: args.currency,
+      imageUrls: args.imageUrls,
+      sold: args.sold,
+    });
+
+    await ctx.db.patch(currentUser._id, {
+      posts: currentUser.posts + 1,
+    });
+
+    return postId;
+  },
+});
+
 
 
 export const getFeedPosts = query({

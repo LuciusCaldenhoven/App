@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
         position: "relative",
         top: 3,
         zIndex: 20,
-
+        paddingBottom: 3,
     },
     modalContainer: {
         backgroundColor: '#fff',
