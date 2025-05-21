@@ -68,7 +68,7 @@ export default function SellerBottomSheet({ author, posts, visible, onClose }: S
           <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
             <AntDesign name="star" size={16} color="#FF5A5F" style={{ marginRight: 4 }} />
             <Text style={{ fontSize: 15, fontWeight: "500", color: "#333" }}>
-              {author.averageRating.toFixed(1)}
+              {(author.averageRating ?? 0).toFixed(1)}
             </Text>
 
             <View style={styles.ventasContainer} />
