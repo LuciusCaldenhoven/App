@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation, MutationCtx, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, MutationCtx, query, action } from "./_generated/server";
+import { api } from "./_generated/api";
 import { getAuthenticatedUser } from "./users";
 
 export const generateUploadUrl = mutation(async (ctx) => {
@@ -37,6 +38,8 @@ export const createPost = mutation({
   handler: async (ctx, args) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
+    const imageUrlsToStore = args.imageUrls.length > 1 ? args.imageUrls.slice(1) : [];
+
     const postId = await ctx.db.insert("posts", {
       tipo: args.tipo,
       userId: currentUser._id,
@@ -48,7 +51,7 @@ export const createPost = mutation({
       location: args.location,
       condition: args.condition,
       currency: args.currency,
-      imageUrls: args.imageUrls,
+      imageUrls: imageUrlsToStore,
       sold: args.sold,
     });
 
@@ -332,5 +335,54 @@ export const markAsSold = mutation({
     if (post.userId !== user._id) throw new Error("No autorizado");
 
     await ctx.db.patch(postId, { sold: true });
+  },
+});
+
+// --- DATA MIGRATION ACTION ---
+// This action is intended to be run once to migrate existing post data.
+// It checks each post to see if the `storageId` (main image) is duplicated
+// as the first element in the `imageUrls` array. If so, it removes the duplicate.
+//
+// How to run this action:
+// 1. Go to your Convex project dashboard.
+// 2. Navigate to the "Functions" tab.
+// 3. Find the "posts:migratePostImageUrls" action.
+// 4. Click the "Run" button (you can leave arguments empty).
+// 5. Check the logs for the output, e.g., "Migration complete. Scanned X posts. Updated Y posts."
+
+export const getAllPostsForMigration = internalQuery({
+  handler: async (ctx) => {
+    return await ctx.db.query("posts").collect();
+  }
+});
+
+export const updatePostImageUrlsInternal = internalMutation({
+  args: { postId: v.id("posts"), newImageUrls: v.array(v.id("_storage")) },
+  handler: async (ctx, { postId, newImageUrls }) => {
+    await ctx.db.patch(postId, { imageUrls: newImageUrls });
+  },
+});
+
+export const migratePostImageUrls = action({
+  handler: async (ctx) => {
+    const allPosts = await ctx.runQuery(api.posts.getAllPostsForMigration);
+
+    let updatedCount = 0;
+    let scannedCount = 0;
+
+    for (const post of allPosts) {
+      scannedCount++;
+      if (post.imageUrls && post.imageUrls.length > 0 && post.storageId === post.imageUrls[0]) {
+        await ctx.runMutation(api.posts.updatePostImageUrlsInternal, { 
+          postId: post._id, 
+          newImageUrls: post.imageUrls.slice(1) 
+        });
+        updatedCount++;
+        console.log(`Updated post: ${post._id}`);
+      }
+    }
+    const message = `Migration complete. Scanned ${scannedCount} posts. Updated ${updatedCount} posts.`;
+    console.log(message);
+    return message;
   },
 });
