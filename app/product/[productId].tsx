@@ -123,6 +123,8 @@ export default function ProductDetail() {
         return <Loader />;
     }
 
+    const allImageIds = [post.storageId, ...post.imageUrls];
+
     return (
         <>
             <StatusBar style="light" backgroundColor="white" />
@@ -145,7 +147,7 @@ export default function ProductDetail() {
 
                     <Animated.FlatList
                         ref={flatListRef}
-                        data={post.imageUrls}
+                        data={allImageIds}
                         horizontal
                         pagingEnabled
                         showsHorizontalScrollIndicator={false}
@@ -161,10 +163,10 @@ export default function ProductDetail() {
                         )}
                     />
 
-                    {post?.imageUrls && (
+                    {allImageIds.length > 0 && (
                         <View style={styles.imageIndicator}>
                             <Text style={styles.imageIndicatorText}>
-                                {currentIndex + 1} / {post.imageUrls.length}
+                                {currentIndex + 1} / {allImageIds.length}
                             </Text>
                         </View>
                     )}

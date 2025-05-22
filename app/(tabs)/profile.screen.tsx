@@ -118,24 +118,22 @@ function Profile() {
           text="Mas"
         />
         {renderMarginBottom(12)}
-        <Text style={styles.title}>Ayuda</Text>
+        <Text style={styles.title}>Soporte</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas"
+          component={<Feather name="help-circle" size={scale(25)} color={COLORS.black} />}
+          text="Preguntas frecuentes"
+          onPress={() => router.push("/soporte/PreguntasFrecuentes")}
         />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas"
+          component={<Feather name="tool" size={scale(24)} color={COLORS.black} />}
+          text="Centro de ayuda"
         />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas"
+          component={<Feather name="mail" size={scale(22)} color={COLORS.black} />}
+          text="Contactar soporte"
         />
-        <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas"
-        />
+
 
         <Button onPress={() => signOut()} text="chau" />
 

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation, MutationCtx, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, MutationCtx, query, action } from "./_generated/server";
+import { api } from "./_generated/api";
 import { getAuthenticatedUser } from "./users";
 
 export const generateUploadUrl = mutation(async (ctx) => {
@@ -37,6 +38,8 @@ export const createPost = mutation({
   handler: async (ctx, args) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
+    const imageUrlsToStore = args.imageUrls.length > 1 ? args.imageUrls.slice(1) : [];
+
     const postId = await ctx.db.insert("posts", {
       tipo: args.tipo,
       userId: currentUser._id,
@@ -48,7 +51,7 @@ export const createPost = mutation({
       location: args.location,
       condition: args.condition,
       currency: args.currency,
-      imageUrls: args.imageUrls,
+      imageUrls: imageUrlsToStore,
       sold: args.sold,
     });
 
@@ -334,3 +337,5 @@ export const markAsSold = mutation({
     await ctx.db.patch(postId, { sold: true });
   },
 });
+
+
