@@ -7,8 +7,8 @@ import { api } from "@/convex/_generated/api";
 
 export default function PostBig({ post, onPressPost }: { post: any; onPressPost: () => void }) {
   const imageUrl = useQuery(api.posts.getImageUrl, {
-    storageId: post.imageUrls?.[0] as Id<"_storage">,
-  });
+            storageId: post.storageId,
+        });
   return (
     <TouchableOpacity onPress={onPressPost}>
       {/* Imagen del producto */}

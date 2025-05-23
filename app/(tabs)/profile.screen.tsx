@@ -16,6 +16,7 @@ import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
 import LoaderPosts from "@/components/loaders/loaderPosts";
 import ReviewComponentVertical from "@/components/ReviewComponentVertical/ReviewComponentVertical";
+import { MessageCircleQuestion } from "lucide-react-native";
 
 function Profile() {
   const { signOut, userId } = useAuth();
@@ -86,22 +87,15 @@ function Profile() {
 
         {renderMarginBottom(12)}
 
-        <View style={styles.rowBetween}>
-          <Text style={styles.title}>Review ({currentUser.reviewCount})</Text>
-          <Pressable onPress={() => setShowAllReviews(true)}>
-            <Text style={{ fontSize: 14, color: COLORS.main, fontFamily:'Medium' }}>Ver más</Text>
-          </Pressable >
-        </View>
-
         {renderMarginTop(8)}
-        <ReviewComponent sellerId={currentUser._id} />
+
 
         {renderMarginBottom(8)}
         <Text style={styles.title}>General</Text>
         {renderMarginBottom(6)}
         <SingleList
           component={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
-          text="Informacion Personal"
+          text="Informacion Personal" 
         />
         <SingleList
           component={<AntDesign name="inbox" size={scale(24)} color={COLORS.black} />}
@@ -115,33 +109,32 @@ function Profile() {
         />
         <SingleList
           component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
-          text="Mas"
+          text="Mis Reviews"
+          onPress={() => router.push("/general/reviews")}
         />
         {renderMarginBottom(12)}
         <Text style={styles.title}>Soporte</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<Feather name="help-circle" size={scale(25)} color={COLORS.black} />}
+          component={<MessageCircleQuestion   size={scale(24)} color={COLORS.black} />}
           text="Preguntas frecuentes"
           onPress={() => router.push("/soporte/PreguntasFrecuentes")}
         />
         <SingleList
           component={<Feather name="tool" size={scale(24)} color={COLORS.black} />}
-          text="Centro de ayuda"
+          text="Reportar un problema"
+          onPress={() => router.push("/soporte/ReportarProblema")}
         />
         <SingleList
           component={<Feather name="mail" size={scale(22)} color={COLORS.black} />}
           text="Contactar soporte"
+          onPress={() => router.push("/soporte/ContactarSoporte")}
         />
 
 
         <Button onPress={() => signOut()} text="chau" />
 
-        <ReviewComponentVertical
-          visible={showAllReviews}
-          onClose={() => setShowAllReviews(false)}
-          sellerId={currentUser._id}
-        />
+  
       </ScrollView>
     </View>
   );

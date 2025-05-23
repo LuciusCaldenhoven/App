@@ -46,7 +46,7 @@ export default function EditPostScreen() {
       setLocation(post.location);
       setCategory(post.category);
       setCondition(post.condition);
-      setSelectedImages(post.imageUrls || []);
+      setSelectedImages([post.storageId, ...(post.imageUrls || [])]);
     }
   }, [post]);
 

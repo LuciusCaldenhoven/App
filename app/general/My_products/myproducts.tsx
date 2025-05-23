@@ -1,7 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
-import styles from "../My_products/myproducts.styles";
+import styles from "./myproducts.styles";
 import { useAuth } from "@clerk/clerk-expo";
 import { useQuery } from "convex/react";
 import { useState } from "react";
@@ -47,6 +47,7 @@ export default function MyProducts() {
           <PostProduct
             post={{
               ...post,
+              isBookmarked: false,
               author: { _id: userId || "", username: "Tú", image: "" },
             }}
           />
@@ -73,6 +74,7 @@ export default function MyProducts() {
           <PostSold
             post={{
               ...post,
+              isBookmarked: false,
               author: { _id: userId || "", username: "Tú", image: "" },
             }}
           />
