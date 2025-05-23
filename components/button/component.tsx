@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, Touchable, TouchableOpacity } from 'react-native';
 import { createStyles } from '@/components/button/button.styles';
 import { IButtonProps } from './IButton.props';
 
@@ -15,14 +15,14 @@ const Button = ({ text, textStyles, buttonStyles, onPress, component }: IButtonP
   };
 
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={handlePress}
       style={[styles.container, buttonStyles]}
       disabled={isDisabled} 
     >
       {component}
       <Text style={[styles.text, textStyles]}>{text}</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

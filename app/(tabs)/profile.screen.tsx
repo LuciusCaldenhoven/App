@@ -16,7 +16,7 @@ import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
 import LoaderPosts from "@/components/loaders/loaderPosts";
 import ReviewComponentVertical from "@/components/ReviewComponentVertical/ReviewComponentVertical";
-import { MessageCircleQuestion } from "lucide-react-native";
+import { LogOut, Mail, MessageCircleQuestion, PackageSearch, Star } from "lucide-react-native";
 
 function Profile() {
   const { signOut, userId } = useAuth();
@@ -55,7 +55,7 @@ function Profile() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 150 }}>
         <Text style={styles.title_first}>Perfil</Text>
         <View style={styles.profileContainer}>
           <TouchableOpacity
@@ -95,20 +95,20 @@ function Profile() {
         {renderMarginBottom(6)}
         <SingleList
           component={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
-          text="Informacion Personal" 
+          text="Informacion Personal"
         />
         <SingleList
-          component={<AntDesign name="inbox" size={scale(24)} color={COLORS.black} />}
+          component={<PackageSearch size={scale(24)} color={COLORS.black} />}
           text="Mis Productos"
-          onPress={() => router.push("/My_products/myproducts")}
+          onPress={() => router.push("/general/My_products/myproducts")}
         />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
+          component={<Star size={scale(24)} color={COLORS.black} />}
           text="Publicitar"
           onPress={() => router.push("/booking.screen/booking/booking")}
         />
         <SingleList
-          component={<Ionicons name="megaphone-outline" size={scale(24)} color={COLORS.black} />}
+          component={<Star size={scale(24)} color={COLORS.black} />}
           text="Mis Reviews"
           onPress={() => router.push("/general/reviews")}
         />
@@ -116,7 +116,7 @@ function Profile() {
         <Text style={styles.title}>Soporte</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<MessageCircleQuestion   size={scale(24)} color={COLORS.black} />}
+          component={<MessageCircleQuestion size={scale(24)} color={COLORS.black} />}
           text="Preguntas frecuentes"
           onPress={() => router.push("/soporte/PreguntasFrecuentes")}
         />
@@ -126,15 +126,20 @@ function Profile() {
           onPress={() => router.push("/soporte/ReportarProblema")}
         />
         <SingleList
-          component={<Feather name="mail" size={scale(22)} color={COLORS.black} />}
+          component={<Mail size={scale(22)} color={COLORS.black} />}
           text="Contactar soporte"
           onPress={() => router.push("/soporte/ContactarSoporte")}
         />
+        <View style={{paddingTop: 10}}>
+          <Button
+            text="Cerrar Sesion"
+            textStyles={styles.outlineButtonText}
+            buttonStyles={styles.iconButtonStyle}
+            component={<LogOut size={scale(20)} />}
+            onPress={() => signOut()}
+          />
+        </View>
 
-
-        <Button onPress={() => signOut()} text="chau" />
-
-  
       </ScrollView>
     </View>
   );

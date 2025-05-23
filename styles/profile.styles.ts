@@ -6,7 +6,7 @@ import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
     backgroundColor: COLORS.background,
   },
   main: {
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: scale(12),
-    
+
   },
   profileImage: {
     height: scale(55),
@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: scale(12),
-    
+
   },
   aic: {
     marginRight: 10,
-    
-    
+
+
   },
-  title_first:{
+  title_first: {
     fontSize: FontSize.FONT_24Px,
     color: COLORS.black,
     fontFamily: "Regular",
@@ -63,8 +63,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: scale(12), // Espaciado inferior opcional
   },
-  
-  
+
+  outlineButtonText: {
+    color: COLORS.black,
+    fontFamily: "Medium",
+    fontSize: 15,
+  },
+  iconButtonStyle: {
+    backgroundColor: COLORS.outlineButtonBg,
+    borderWidth: 1,
+    borderColor: COLORS.btnBorder,
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: scale(8),
+    paddingVertical: scale(10),
+  },
+
 });
 
 export default styles;

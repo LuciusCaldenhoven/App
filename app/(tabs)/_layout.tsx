@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { AntDesign, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme"
+import { Heart, House, MessageCircle, Plus, User } from "lucide-react-native";
 export default function TabLayout() {
   return (
     <Tabs
@@ -35,7 +36,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Explorar",
           tabBarIcon: ({ color, size }) => (
-            <Octicons name="home" size={size} color={color} />
+            <House size={size} color={color} />
           ),
         }}
       />
@@ -45,7 +46,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Favoritos",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cards-heart-outline" size={size + 3} color={color} />
+            <Heart size={size} color={color} />
           ),
         }}
       />
@@ -55,7 +56,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Subir",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-outline" size={size + 3} color={color} />
+            <Plus  size={size } color={color} />
           ),
         }}
       />
@@ -65,7 +66,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Mensajes",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="message-square" size={size} color={color} />
+            <MessageCircle  size={size} color={color} />
           ),
         }}
       />
@@ -75,7 +76,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Perfil",
           tabBarIcon: ({ color, size }) => (
-            <Octicons name="person" size={size} color={color} />
+            <User  size={size} color={color} />
           ),
         }}
       />
