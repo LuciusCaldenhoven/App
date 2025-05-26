@@ -92,7 +92,6 @@ export const updateProfile = mutation({
 });
 
 
-
 export const getUserProfile = query({
     args: { id: v.id("users") },
     handler: async (ctx, args) => {
@@ -103,3 +102,28 @@ export const getUserProfile = query({
     },
 });
 
+
+export const saveLocation = mutation({
+  args: {
+    location: v.optional(v.string()),
+    lat: v.number(),
+    lng: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const currentUser = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    await ctx.db.patch(currentUser._id, {
+      location: args.location,
+      lat: args.lat,
+      lng: args.lng,
+    });
+  },
+});

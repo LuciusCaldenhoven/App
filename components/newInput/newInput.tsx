@@ -1,10 +1,12 @@
 import { Animated, Easing, FlatList, Image, KeyboardTypeOptions, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { min } from 'date-fns';
 import { BottomSheet } from '../bottomSheet/BottomSheet';
 import { COLORS } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 import { Entypo } from '@expo/vector-icons';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 interface NewInputProps {
@@ -19,7 +21,7 @@ interface NewInputProps {
 
 }
 
-const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multiline,onChangeText,value }: NewInputProps) => {
+const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multiline, onChangeText, value }: NewInputProps) => {
 
     const borderWidth = useRef(new Animated.Value(1));
     const transY = useRef(new Animated.Value(0));
@@ -35,7 +37,7 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
         if (currentValue) return;
         animateTransform(0);
         animateBorderWidth(1);
-      };
+    };
 
 
 
@@ -59,13 +61,13 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
 
     const borderColor = borderWidth.current.interpolate({
         inputRange: [0, 2],
-        outputRange: ['black', 'grey'],
+        outputRange: ['black', 'green'],
         extrapolate: 'clamp',
     });
 
     const labelColor = borderWidth.current.interpolate({
         inputRange: [0, 2],
-        outputRange: ['grey', 'black'],
+        outputRange: ['green', 'black'],
         extrapolate: 'clamp',
     });
 
@@ -82,6 +84,15 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
         extrapolate: 'clamp',
     });
 
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+    // callbacks
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+    }, []);
+    const handleSheetChanges = useCallback((index: number) => {
+        console.log('handleSheetChanges', index);
+    }, []);
 
     return (
         <Animated.View style={[styles.container, { borderWidth: borderWidth.current, borderColor: borderColor }]}>
@@ -90,43 +101,52 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
             </Animated.View>
             {data ? (
                 <View>
-                    <Pressable onPress={() => { handleFocus(); setIsVisible(!isVisible) }} style={styles.input} >
-                    <Text style={{ flex: 1, fontFamily: 'Medium', fontSize: 14, color: 'black' }}> {selectedItem?.title} </Text>
+                    <Pressable onPress={() => { handleFocus(); handlePresentModalPress(); }} style={styles.input} >
+                        <Text style={{ flex: 1, fontFamily: 'Medium', fontSize: 14, color: 'black' }}> {selectedItem?.title} </Text>
                     </Pressable>
 
-                    <BottomSheet visible={isVisible} setVisible={setIsVisible}>
-                        <View style={styles.bottomSheet}>
-                            <FlatList
-                                data={data}
-                                keyExtractor={(item, index) => index.toString()}
-                                showsVerticalScrollIndicator={false}
-                                renderItem={({ item }) => (
-                                    <Pressable
-                                        onPress={() => {
-                                            setSelectedItem(item);
-                                            setIsVisible(false);
-                                            onChangeText(item.title);
-                                            handleBlur(item.title);
-                                        }}
-                                        style={styles.itemContainer}
-                                    >
-                                        <Text style={styles.bottomInfo}>{item.title}</Text>
-                                        
-                                        <Text style={[styles.bottomInfo, { fontSize: 12, color: 'grey' }]}>{item.description}</Text>
-                                        
-                                    </Pressable>
-                                )}
+
+                    <BottomSheetModal
+                        ref={bottomSheetModalRef}
+                        onChange={handleSheetChanges}
+                        backdropComponent={(props) => (
+                            <BottomSheetBackdrop
+                                {...props}
+                                appearsOnIndex={0}
+                                disappearsOnIndex={-1}
+                                opacity={0.6} 
+                                pressBehavior="close"
                             />
-                        </View>
-                    </BottomSheet>
+                        )}
+                    >
+                        <BottomSheetScrollView style={styles.bottomSheet} contentContainerStyle={{ paddingBottom: 40 }}>
+                            {data.map((item, index) => (
+                                <Pressable
+                                    key={index}
+                                    onPress={() => {
+                                        setSelectedItem(item);
+                                        bottomSheetModalRef.current?.dismiss();
+                                        onChangeText(item.title);
+                                        handleBlur(item.title);
+                                    }}
+                                    style={styles.itemContainer}
+                                >
+                                    <Text style={styles.bottomInfo}>{item.title}</Text>
+                                    <Text style={[styles.bottomInfo, { fontSize: 12, color: 'grey' }]}>{item.description}</Text>
+                                </Pressable>
+                            ))}
+                        </BottomSheetScrollView>
+                    </BottomSheetModal>
+
                 </View>
             ) : (
                 <TextInput style={[styles.input, { height: minHeight, fontFamily: 'Medium', fontSize: 14, color: 'black' }]}
                     value={value} onChangeText={onChangeText}
                     onFocus={handleFocus} multiline={multiline} onBlur={() => handleBlur(value)}
                     keyboardType={keyboardType} />
-            )}
-        </Animated.View>
+            )
+            }
+        </Animated.View >
     );
 };
 
@@ -136,6 +156,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: '90%',
         justifyContent: 'center',
+    },
+    containerbootm: {
+        flex: 1,
+        padding: 24,
+        justifyContent: 'center',
+        backgroundColor: 'grey',
+    },
+    contentContainer: {
+        flex: 1,
+        alignItems: 'center',
     },
     input: {
         paddingVertical: 20,

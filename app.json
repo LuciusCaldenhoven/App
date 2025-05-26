@@ -36,7 +36,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.elpibeluuu1.Segunda_mano",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM"
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -55,6 +60,13 @@
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Allow $(PRODUCT_NAME) to use your location"
         }
       ]
     ],

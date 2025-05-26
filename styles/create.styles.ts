@@ -62,7 +62,8 @@ export const styles = StyleSheet.create({
   },
   emptyImageText: {
     color: COLORS.grey, // Color del texto
-    fontSize: 16, // Tamaño del texto
+    fontSize: 16, 
+    fontFamily: 'Regular'
   },
   content: {
     flex: 1, // Permite que el contenido crezca dinámicamente

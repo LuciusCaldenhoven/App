@@ -17,6 +17,7 @@ import moneda from "@/assets/precio/precio.data";
 import condicion from "@/assets/condicion/condicion.data";
 import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/ImageCarosel/ImageCarosel";
+import { Images } from "lucide-react-native";
 
 export default function CreateScreen() {
     const router = useRouter();
@@ -93,7 +94,7 @@ export default function CreateScreen() {
             setCondition("");
             setCurrency("");
             
-            router.push("/(tabs)");
+            router.replace("/(tabs)");
         } catch (error) {
             console.log("Error sharing post", error);
         } finally {
@@ -122,16 +123,13 @@ export default function CreateScreen() {
             </View>
 
             {/* Contenido */}
-            <ScrollView
-                contentContainerStyle={{ paddingBottom: 600 }}
-                keyboardShouldPersistTaps="handled"
-            >
+            <ScrollView contentContainerStyle={{ paddingBottom: 600 }} keyboardShouldPersistTaps="handled" >
                 <View style={[styles.content, isSharing && styles.contentDisabled]}>
                     {/* Carrusel de imágenes */}
                     <View style={styles.imageCarousel}>
                         {selectedImages.length === 0 ? (
                             <TouchableOpacity style={styles.emptyImageContainer} onPress={pickImage}>
-                                <Ionicons name="image-outline" size={50} color={COLORS.grey} />
+                                <Images   size={50} color={COLORS.grey} />
                                 <Text style={styles.emptyImageText}>Selecciona imágenes</Text>
                             </TouchableOpacity>
                         ) : (

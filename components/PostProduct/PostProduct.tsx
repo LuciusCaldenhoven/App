@@ -67,7 +67,7 @@ export default function PostProduct({ post }: PostProps) {
 
                     {/* Iconos a la derecha */}
                     <View style={styles.verticalActions}>
-                        <TouchableOpacity onPress={() => router.push({ pathname: "/EditProduct/[editProductId]", params: { editProductId: post._id }, }) } style={styles.iconButton} >
+                        <TouchableOpacity onPress={() => router.push({ pathname: "/general/EditProduct/[editProductId]", params: { editProductId: post._id }, }) } style={styles.iconButton} >
                             <Feather name="edit-3" size={20} color="#4F8EF7" />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setShowModal(true)} style={styles.iconButton}>
