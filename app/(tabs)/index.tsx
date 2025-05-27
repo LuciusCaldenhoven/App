@@ -15,8 +15,9 @@ import { CircleCheck, LocationEdit, MapPin, Search } from "lucide-react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import MapView from 'react-native-maps';
 import CenterMarker from "@/components/CenterMarker/CenterMarker";
-import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import Slider from '@react-native-community/slider';
 
+const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY!;
 
 
 export default function Index() {
@@ -34,28 +35,56 @@ export default function Index() {
     }, []);
 
 
-    const GOOGLE_API_KEY = 'AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM';
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status === 'granted') {
-                const ubicacion = await Location.getCurrentPositionAsync({});
-                setRegion((prev) => ({
-                    ...prev,
-                    latitude: ubicacion.coords.latitude,
-                    longitude: ubicacion.coords.longitude,
-                }));
-            }
-        })();
-    }, []);
 
     const [region, setRegion] = useState({
-        latitude: currentUser?.lat ?? 0,
-        longitude: currentUser?.lng ?? 0,
+        latitude: 0,
+        longitude: 0,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
     });
+
+    // 2. Separate location initialization effect
+    useEffect(() => {
+        const getDeviceLocation = async () => {
+            try {
+                const { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') return false;
+
+                const deviceLocation = await Location.getCurrentPositionAsync({});
+                setRegion(prev => ({
+                    ...prev,
+                    latitude: deviceLocation.coords.latitude,
+                    longitude: deviceLocation.coords.longitude,
+                }));
+                return true;
+            } catch (error) {
+                console.error('Error getting device location:', error);
+                return false;
+            }
+        };
+
+        // Only try to get saved location if device location fails
+        const getSavedLocation = () => {
+            if (
+                typeof currentUser?.lat === "number" &&
+                typeof currentUser?.lng === "number"
+            ) {
+                setRegion(prev => ({
+                    ...prev,
+                    latitude: currentUser.lat as number,
+                    longitude: currentUser.lng as number,
+                }));
+            }
+        };
+
+        // Try device location first, then fallback to saved location
+        getDeviceLocation().then(success => {
+            if (!success) {
+                getSavedLocation();
+            }
+        });
+    }, []);
 
     async function guardarUbicacion({ latitude, longitude }: { latitude: number, longitude: number }) {
         try {
@@ -64,8 +93,7 @@ export default function Index() {
             const data = await response.json();
 
             if (!data.results || data.results.length === 0) {
-                Alert.alert('Error', 'No se pudo determinar la ubicación.');
-                return;
+                return; // No mostrar alerta
             }
 
             const components = data.results[0].address_components;
@@ -83,19 +111,23 @@ export default function Index() {
                 location: `${provincia}, ${departamento}`,
                 lat: latitude,
                 lng: longitude,
+                km: km,
             });
 
-            Alert.alert('Éxito', 'Ubicación actualizada correctamente');
+            // ✅ Cierra el BottomSheet
+            bottomSheetRef.current?.dismiss();
         } catch (error) {
-            Alert.alert('Error', 'Ocurrió un error al guardar la ubicación.');
-            console.error(error);
+            console.error('Error al guardar ubicación:', error);
+            // No mostrar alerta
         }
     }
 
+
     function kmToDelta(km: number) {
-        return km / 111; // 1 grado ≈ 111km
+        return Number((km / 111).toFixed(4));
     }
-    const [km, setKm] = useState(5);
+
+    const [km, setKm] = useState(currentUser?.km || 10);
 
 
 
@@ -132,7 +164,9 @@ export default function Index() {
                     <View style={styles.locationButton2}>
                         <LocationEdit size={16} />
                         <Text style={styles.locationText}>
-                            {currentUser?.location || 'Establecer ubicación'}
+                            {currentUser?.location && currentUser?.km
+                                ? `${currentUser.location} - ${currentUser.km} km`
+                                : 'Establecer ubicación'}
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -150,7 +184,7 @@ export default function Index() {
                 <View style={{ paddingBottom: 10 }}>
 
 
-                    {/* <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 25, paddingBottom: 16, }} >
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 25, paddingBottom: 16, }} >
                         <CategoryBox
                             icon={<Image source={require('@/assets/index/ropa.png')} style={{ width: 100, height: 100 }} />}
                             title="Ropa y Accesorios"
@@ -161,7 +195,7 @@ export default function Index() {
                             textColor="#212121"
                         />
                         <CategoryBox
-                            icon={<Image source={requir e('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
+                            icon={<Image source={require('@/assets/index/electronica.png')} style={{ width: 100, height: 100 }} />}
                             title="Electrónica"
                             backgroundColor={'rgba(0, 230, 118, 0.25)'}
                             onPress={() => router.push(`/search/searchResults?category=Electrónica`)}
@@ -169,7 +203,7 @@ export default function Index() {
                             height={140}
 
                         />
-                    </View> */}
+                    </View>
 
                     <View style={{ paddingVertical: 20 }}>
                         <FlatList
@@ -231,71 +265,82 @@ export default function Index() {
                             onRegionChangeComplete={setRegion}
                             showsUserLocation={true}
                             showsMyLocationButton={true}
+                            zoomEnabled={false}
+
                         />
 
                         <CenterMarker />
 
                     </View>
+                    <View style={styles.containerDown}>
+                        <View style={styles.locationRow}>
+                            <MapPin size={30} strokeWidth={2} color="#111" />
+                            <View style={styles.locationTextContainer}>
+                                <Text style={styles.locationText}>{currentUser?.location}</Text>
+                                <Text style={styles.kmText}>{currentUser?.km} km</Text>
+                            </View>
+                        </View>
+                        <View style={{ paddingHorizontal: 15 }}>
+                            <TouchableOpacity
+                                onPress={async () => {
+                                    const { status } = await Location.requestForegroundPermissionsAsync();
+                                    if (status !== 'granted') {
+                                        Alert.alert('Permiso denegado', 'Se necesita acceso a la ubicación.');
+                                        return;
+                                    }
+                                    const ubicacion = await Location.getCurrentPositionAsync({});
+                                    setRegion((prev) => ({
+                                        ...prev,
+                                        latitude: ubicacion.coords.latitude,
+                                        longitude: ubicacion.coords.longitude,
+                                    }));
+                                }}
+                                style={styles.secondaryButton}
+                            >
+                                <Text style={styles.secondaryButtonText}>Ver ubicación actual</Text>
+                            </TouchableOpacity>
 
-                    <View style={{ width: '95%', alignItems: 'flex-start', paddingVertical: 15, flexDirection: "row", }}>
-                        <MapPin size={30} strokeWidth={2} />
-                        <Text style={{ paddingTop: 5, fontSize: 15, fontFamily: 'Medium' }}> {currentUser?.location}</Text>
+                            <View style={styles.sliderContainer}>
+                                <Slider
+                                    style={styles.slider}
+                                    minimumValue={1}
+                                    maximumValue={100}
+                                    value={km}
+                                    onValueChange={(value: number) => {
+                                        const roundedKm = Number(value.toFixed(0));
+                                        setKm(roundedKm);
+                                        const delta = kmToDelta(value);
+                                        setRegion((prev) => ({
+                                            ...prev,
+                                            latitudeDelta: delta,
+                                            longitudeDelta: delta,
+                                        }));
+                                    }}
+                                    minimumTrackTintColor="#333"
+                                    maximumTrackTintColor="#ccc"
+                                    thumbTintColor="#555"
+                                />
+                            </View>
+
+                            <Text style={styles.kmLabel}>
+                                Radio: <Text style={styles.kmValue}>{km} km</Text>
+                            </Text>
+
+                            <TouchableOpacity
+                                style={styles.primaryButton}
+                                onPress={async () => {
+                                    await guardarUbicacion({
+                                        latitude: region.latitude,
+                                        longitude: region.longitude,
+                                    });
+                                }}
+                            >
+                                <CircleCheck size={20} color="#fff" style={{ marginRight: 6 }} />
+                                <Text style={styles.primaryButtonText}>Guardar cambios</Text>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
-
-
-                    <MultiSlider
-                        values={[km]}
-                        min={1}
-                        max={500}
-                        step={0.1}
-                        onValuesChange={([value]) => setKm(value)}
-                        onValuesChangeFinish={([value]) => {
-                            const delta = kmToDelta(value);
-                            setRegion((prev) => ({
-                                ...prev,
-                                latitudeDelta: delta,
-                                longitudeDelta: delta,
-                            }));
-                        }}
-                    />
-                    <Text style={{ marginTop: 8, fontSize: 14, color: "#333" }}>
-                        Radio: {km.toFixed(1)} km
-                    </Text>
-
-                    <TouchableOpacity
-                        onPress={async () => {
-                            const { status } = await Location.requestForegroundPermissionsAsync();
-                            if (status !== 'granted') {
-                                Alert.alert('Permiso denegado', 'Se necesita acceso a la ubicación.');
-                                return;
-                            }
-                            const ubicacion = await Location.getCurrentPositionAsync({});
-                            // Solo centra el mapa, NO guarda
-                            setRegion((prev) => ({
-                                ...prev,
-                                latitude: ubicacion.coords.latitude,
-                                longitude: ubicacion.coords.longitude,
-                            }));
-                        }}
-                        style={styles.button}
-                    >
-                        <Text style={styles.buttonText}>
-                            Ver ubicación actual
-                        </Text>
-                    </TouchableOpacity>
-
-
-
-                    <TouchableOpacity style={styles.button} onPress={async () => {
-                        await guardarUbicacion({
-                            latitude: region.latitude,
-                            longitude: region.longitude,
-                        });
-                    }}
-                    >
-                        <CircleCheck size={20} color="#fff" />
-                        <Text style={styles.buttonText}>Guardar cambios</Text>
-                    </TouchableOpacity>
 
                 </BottomSheetView>
             </BottomSheetModal>

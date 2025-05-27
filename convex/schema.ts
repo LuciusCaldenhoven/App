@@ -16,7 +16,9 @@ export default defineSchema({
         location: v.optional(v.string()),
         lat: v.optional(v.number()),
         lng: v.optional(v.number()), 
+        km: v.optional(v.number()),
         storageId: v.optional(v.id("_storage")),
+
     }).index("by_clerk_id", ["clerkId"]),
 
     posts: defineTable({

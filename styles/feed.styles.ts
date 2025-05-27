@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 23,
-    paddingBottom: 15
+    paddingBottom: 15,
+
   },
 
   locationButton: {
@@ -43,14 +44,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   locationText: {
-    marginLeft: 6,
     fontSize: 14,
     fontFamily: 'Medium'
   },
-
-
-
-
   titulo: {
     fontFamily: "SemiBold",
     fontSize: SIZES.xLarge,
@@ -73,6 +69,7 @@ const styles = StyleSheet.create({
       height: 1,
     },
 
+
   },
   searchInput: {
     fontFamily: "Medium",
@@ -81,27 +78,84 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     alignSelf: "center",
   },
-  button: {
-    flexDirection: "row",
-    justifyContent: "center",
-    backgroundColor: COLORS.black,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    alignItems: "center",
-    marginTop: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 3,
+  slider: {
+    width: 300,
+    height: 40,
+
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "700",
+  sliderContainer: {
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+  kmLabel: {
+    fontSize: 14,
+    color: '#444',
+    textAlign: 'center',
+  },
+
+  kmValue: {
     fontSize: 16,
-    marginLeft: 8,
+    fontWeight: '600',
+    color: '#111',
   },
+
+  secondaryButton: {
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+
+  secondaryButtonText: {
+    color: '#222',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+
+  primaryButton: {
+    backgroundColor: '#111',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    width: '100%',
+    marginBottom: 40,
+    marginTop: 20,
+  },
+
+  primaryButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  containerDown: {
+    width: '95%',
+    paddingVertical: 10,
+    alignSelf: 'center',
+    gap: 16,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  locationTextContainer: {
+    marginLeft: 10,
+  },
+  kmText: {
+    fontSize: 13,
+    fontFamily: 'Regular',
+    color: '#444',
+    marginTop: 2,
+  },
+
+
 
 });
 

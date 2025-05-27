@@ -9,7 +9,8 @@ import {
   Alert,
 } from 'react-native';
 
-const GOOGLE_API_KEY = 'AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM';
+const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY!;
+
 
 export default function CustomLocationSearch() {
   const [query, setQuery] = useState('');

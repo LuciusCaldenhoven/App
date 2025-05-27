@@ -1,83 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import * as Location from 'expo-location';
+import React from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  Tv, Shirt, Dumbbell, Sofa, BookOpen
+} from 'lucide-react-native'; // Iconos de lucide
 
-export default function UbicacionConDistrito() {
-  const [loading, setLoading] = useState(false);
-  const [ciudad, setCiudad] = useState<string | null>(null);
-  const [distrito, setDistrito] = useState<string | null>(null);
+const categories = [
+  { id: '1', title: 'Electrónica', icon: Tv },
+  { id: '2', title: 'Ropa', icon: Shirt },
+  { id: '3', title: 'Deportes', icon: Dumbbell },
+  { id: '4', title: 'Muebles', icon: Sofa },
+  { id: '5', title: 'Libros', icon: BookOpen },
+];
 
-  const obtenerDistritoDesdeGoogle = async (lat: number, lng: number) => {
-    const apiKey = 'AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM'; // ⬅️ reemplaza esto con tu clave de API real
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
-
-    try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (!data.results || data.results.length === 0) return null;
-
-    let ciudadComp = null;
-    let distritoComp = null;
-
-    for (const result of data.results) {
-      for (const comp of result.address_components) {
-        if (!ciudadComp && comp.types.includes('locality')) {
-          ciudadComp = comp;
-        }
-        if (!distritoComp && comp.types.includes('administrative_area_level_3')) {
-          distritoComp = comp;
-        }
-      }
-    }
-
-    return {
-      ciudad: ciudadComp?.long_name || null,
-      distrito: distritoComp?.long_name || null,
-    };
-  } catch (error) {
-    console.error('Error obteniendo distrito:', error);
-    return null;
-  }
-};
-
-
-  const solicitarUbicacionConDistrito = async () => {
-    setLoading(true);
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permiso denegado', 'Se necesita acceso a la ubicación.');
-      setLoading(false);
-      return;
-    }
-
-    const ubicacion = await Location.getCurrentPositionAsync({});
-    const resultado = await obtenerDistritoDesdeGoogle(
-      ubicacion.coords.latitude,
-      ubicacion.coords.longitude
-    );
-
-    if (resultado) {
-      setCiudad(resultado.ciudad);
-      setDistrito(resultado.distrito);
-    }
-
-    setLoading(false);
-  };
-
+export default function CategoryScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>¿Podemos usar tu ubicación?</Text>
-      <Button title="Sí, obtener ubicación" onPress={solicitarUbicacionConDistrito} />
+      <Text style={styles.title}>Explora por categoría</Text>
 
-      {loading && <ActivityIndicator size="large" color="blue" style={{ marginTop: 20 }} />}
-
-      {ciudad && distrito && (
-        <View style={{ marginTop: 30 }}>
-          <Text style={styles.resultado}>Ciudad: {ciudad}</Text>
-          <Text style={styles.resultado}>Distrito: {distrito}</Text>
-        </View>
-      )}
+      <FlatList
+        data={categories}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.carousel}
+        renderItem={({ item }) => {
+          const Icon = item.icon;
+          return (
+            <TouchableOpacity style={styles.card}>
+              <View style={styles.iconWrapper}>
+                <Icon size={28} color="#111" />
+              </View>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
     </View>
   );
 }
@@ -85,20 +42,43 @@ export default function UbicacionConDistrito() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 100,
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    paddingTop: 60,
+    paddingHorizontal: 16,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#111',
     marginBottom: 20,
-    textAlign: 'center',
   },
-  resultado: {
-    fontSize: 16,
-    marginVertical: 4,
+  carousel: {
+    paddingRight: 16,
+  },
+  card: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 20,
+    width: 90,
+  },
+  iconWrapper: {
+    backgroundColor: '#f3f3f3',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  cardTitle: {
+    fontSize: 13,
+    color: '#222',
+    textAlign: 'center',
     fontWeight: '500',
   },
 });

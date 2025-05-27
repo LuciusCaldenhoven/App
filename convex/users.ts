@@ -108,6 +108,7 @@ export const saveLocation = mutation({
     location: v.optional(v.string()),
     lat: v.number(),
     lng: v.number(),
+    km: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -124,6 +125,7 @@ export const saveLocation = mutation({
       location: args.location,
       lat: args.lat,
       lng: args.lng,
+      km: args.km,
     });
   },
 });
