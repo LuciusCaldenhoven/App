@@ -1,45 +1,59 @@
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useState } from 'react';
-import { useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import  styles  from '../editProfile/editProfile.styles';
+import styles from '../editProfile/editProfile.styles';
 import { COLORS } from '@/constants/theme';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { renderBorderBottom } from '@/constants/ui-utils';
-import * as ImagePicker from "expo-image-picker";
-import SingleList from '@/components/singleList/component';
+import * as ImagePicker from 'expo-image-picker';
 import { scale } from '@/constants/scale';
-import { BottomSheetFix } from '@/components/bottomSheetFix/bottomSheetFix';
-import * as FileSystem from "expo-file-system";
-
+import * as FileSystem from 'expo-file-system';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import ReusableSheet from '@/components/ReusableSheet/ReusableSheet';
+import { useAuth } from '@clerk/clerk-expo';
+import { Id } from '@/convex/_generated/dataModel';
 
 const EditProfile = () => {
-    const { currentUser } = useLocalSearchParams();
-
-    const parsedUser = typeof currentUser === 'string' ? JSON.parse(currentUser) : currentUser;
+    const { userId } = useAuth();
+    const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
 
     const [editedProfile, setEditedProfile] = useState({
-        fullname: parsedUser?.fullname || "",
-        image: parsedUser?.image || "",
+        fullname: currentUser?.fullname || '',
+        phone: currentUser?.phone || '',
+        bio: currentUser?.bio || '',
+        image: currentUser?.image || '',
     });
 
-    const [activeBottomSheet, setActiveBottomSheet] = useState<string | null>(null); // Controla cuál BottomSheet está visible
-
     const updateProfile = useMutation(api.users.updateProfile);
+    const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
 
-    
+    const handleSave = async () => {
+        try {
+            const result = await updateProfile({
+                fullname: editedProfile.fullname,
+                phone: editedProfile.phone,
+                bio: editedProfile.bio,
+                ...(editedProfile.image.startsWith('http') ? {} : { storageId: editedProfile.image as Id<'_storage'> }),
+            });
 
-    const generateUploadUrl = useMutation(api.posts.generateUploadUrl); // puedes moverlo a /users también
-    
+            if (result) {
+                setEditedProfile({ ...editedProfile, image: result }); // Actualiza con URL pública
+            }
+
+            alert('Perfil actualizado correctamente.');
+        } catch (error) {
+            console.error('Error actualizando perfil:', error);
+            alert('Error al actualizar el perfil.');
+        }
+    };
 
     const handlePickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
         if (!permissionResult.granted) {
-            alert("Se requiere acceso a la galería para cambiar la foto de perfil.");
+            alert("Se requiere acceso a la galería.");
             return;
         }
 
@@ -54,142 +68,128 @@ const EditProfile = () => {
             const newImageUri = result.assets[0].uri;
 
             try {
-                // 1. Obtener URL de subida desde Convex
                 const uploadUrl = await generateUploadUrl();
-
-                // 2. Subir la imagen usando FileSystem.uploadAsync
                 const uploadResult = await FileSystem.uploadAsync(uploadUrl, newImageUri, {
                     httpMethod: "POST",
                     uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
                     mimeType: "image/jpeg",
                 });
 
-              
-
-                // 3. Obtener el storageId del resultado de la subida
                 const { storageId } = JSON.parse(uploadResult.body);
 
-                // 4. Actualizar el perfil del usuario con el storageId
-                await updateProfile({
+                const newImageUrl = await updateProfile({
                     fullname: editedProfile.fullname,
                     storageId,
                 });
 
-                // 5. Obtener la URL pública para mostrarla de inmediato
-                const imageUrl = `https://your-storage-service.com/${storageId}`; // Replace with your actual logic to generate the image URL
-                setEditedProfile({ ...editedProfile, image: imageUrl });
+                setEditedProfile({ ...editedProfile, image: newImageUrl });
             } catch (error) {
-                console.error("Error al subir la imagen:", error);
-                alert("Error al subir la imagen. Inténtalo de nuevo.");
+                console.error("Error subiendo imagen:", error);
+                alert("No se pudo subir la imagen.");
             }
         }
     };
 
-
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <View style={styles.top}>
-                    <TouchableOpacity onPress={() => router.back()}>
-                        <AntDesign name="arrowleft" size={25} />
-                    </TouchableOpacity>
+        <View style={styles.container}>
+            <View style={styles.top}>
+                <TouchableOpacity onPress={() => router.back()}>
+                    <AntDesign name="arrowleft" size={25} />
+                </TouchableOpacity>
+            </View>
+
+
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 100 }}>
+                <View style={styles.card}>
+                    <View style={styles.avatarContainer}>
+                        <Image source={{ uri: editedProfile.image }} style={styles.avatar} />
+                        <TouchableOpacity style={styles.addButton} onPress={handlePickImage}>
+                            <View style={styles.addButtonContent}>
+                                <Entypo name="camera" size={15} color={COLORS.black} />
+                                <Text style={styles.addButtonText}>Cambiar</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.title}>{editedProfile.fullname}</Text>
+                    {renderBorderBottom(10)}
                 </View>
 
-                <ScrollView>
-                    <ScrollView contentContainerStyle={[styles.card]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-                        <View style={styles.avatarContainer}>
-                            <Image source={{ uri: editedProfile.image }} style={styles.avatar} />
-                            <TouchableOpacity style={styles.addButton} onPress={handlePickImage}>
-                                <View style={styles.addButtonContent}>
-                                    <Entypo name="camera" size={15} color={COLORS.black} />
-                                    <Text style={styles.addButtonText}>Cambiar</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.title}>{editedProfile.fullname}</Text>
-                        {renderBorderBottom(10)}
-                    </ScrollView>
-                    <View style={styles.cont}>
-                        <Text style={styles.titleProfile}>Tu perfil</Text>
-                        <Text style={styles.titleText}>
-                            La informacion de tu perfil sera usada para ayudar a que los compradores te conozcan y confien en ti.
+                <View style={styles.cont}>
+                    <Text style={styles.titleProfile}>Tu perfil</Text>
+                    <Text style={styles.titleText}>
+                        La información de tu perfil será usada para ayudar a que los compradores te conozcan y confíen en ti.
+                    </Text>
+
+                    {/* Mi nombre */}
+                    <ReusableSheet
+                        icon={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
+                        title="Mi nombre"
+                        onSave={handleSave}
+                    >
+                        <Text style={styles.sheetTitle}>¿Cómo quieres que te llamen?</Text>
+                        <Text style={styles.sheetDescription}>
+                            Este nombre se mostrará en tu perfil y en lo que publiques.
                         </Text>
+                        <BottomSheetTextInput
+                            placeholder="Nombre completo"
+                            placeholderTextColor={COLORS.main}
+                            style={styles.inputField}
+                            value={editedProfile.fullname}
+                            onChangeText={(text) => setEditedProfile({ ...editedProfile, fullname: text })}
 
-                        {/* Mi nombre */}
-                        <SingleList
-                            component={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
-                            text="Mi nombre"
-                            onPress={() => setActiveBottomSheet("fullname")}
                         />
-                        {activeBottomSheet === "fullname" && (
-                            <BottomSheetFix
-                                visible={activeBottomSheet === "fullname"}
-                                setVisible={() => setActiveBottomSheet(null)}
-                                title="¿Cómo quieres que te llamen?"
-                                description="Este nombre se mostrará en tu perfil y en lo que publiques"
+                    </ReusableSheet>
 
-                                placeholder="Nombre completo"
-                                OnPress={() => setActiveBottomSheet(null)}
-                            />
-                        )}
 
-                        {/* Mi número */}
-                        <SingleList
-                            component={<AntDesign name="phone" size={scale(24)} color={COLORS.black} />}
-                            text="Mi número"
-                            onPress={() => setActiveBottomSheet("phone")}
+                    {/* Mi número */}
+                    <ReusableSheet
+                        icon={<AntDesign name="phone" size={scale(24)} color={COLORS.black} />}
+                        title="Mi número"
+                        onSave={handleSave}
+                    >
+                        <Text style={styles.sheetTitle}>Tu número de contacto</Text>
+                        <Text style={styles.sheetDescription}>
+                            Tu número les da seguridad a los que están interesados en tus productos.
+                        </Text>
+                        <BottomSheetTextInput
+                            placeholder="Número de teléfono"
+                            placeholderTextColor={COLORS.main}
+                            style={styles.inputField}
+                            keyboardType="phone-pad"
+                            value={editedProfile.phone}
+                            onChangeText={(text) => setEditedProfile({ ...editedProfile, phone: text })}
+
                         />
-                        {activeBottomSheet === "phone" && (
-                            <BottomSheetFix
-                                visible={activeBottomSheet === "phone"}
-                                setVisible={() => setActiveBottomSheet(null)}
-                                title="Tu número de contacto?"
-                                description="Tu número les da seguridad a los que están interesados en tus productos."
+                    </ReusableSheet>
 
-                                placeholder="Número de teléfono"
-                                OnPress={() => setActiveBottomSheet(null)}
-                            />
-                        )}
+                    {/* Mi biografía */}
+                    <ReusableSheet
+                        icon={<AntDesign name="edit" size={scale(24)} color={COLORS.black} />}
+                        title="Mi biografía"
+                        onSave={handleSave}
+                    >
+                        <Text style={styles.sheetTitle}>Cuéntanos algo sobre ti</Text>
+                        <Text style={styles.sheetDescription}>
+                            Agrega una pequeña bio para conectar mejor con otros compradores.
+                        </Text>
+                        <BottomSheetTextInput
+                            placeholder="Biografía"
+                            placeholderTextColor={COLORS.main}
+                            style={[styles.inputField, { height: 100, textAlignVertical: 'top' }]}
+                            multiline
+                            value={editedProfile.bio}
+                            onChangeText={(text) => setEditedProfile({ ...editedProfile, bio: text })}
 
-                        {/* Mi biografía */}
-                        <SingleList
-                            component={<AntDesign name="edit" size={scale(24)} color={COLORS.black} />}
-                            text="Mi biografía"
-                            onPress={() => setActiveBottomSheet("bio")}
                         />
-                        {activeBottomSheet === "bio" && (
-                            <BottomSheetFix
-                                visible={activeBottomSheet === "bio"}
-                                setVisible={() => setActiveBottomSheet(null)}
-                                title="Cuéntanos algo sobre ti"
-                                description="Agrega una pequeña bio para conectar mejor con otros compradores."
 
-                                placeholder="Biografía"
-                                OnPress={() => setActiveBottomSheet(null)}
-                            />
-                        )}
+                    </ReusableSheet>
 
-                        {/* Mi ubicación */}
-                        <SingleList
-                            component={<Feather name="map-pin" size={scale(24)} color={COLORS.black} />}
-                            text="Mi ubicación"
-                            onPress={() => setActiveBottomSheet("location")}
-                        />
-                        {activeBottomSheet === "location" && (
-                            <BottomSheetFix
-                                visible={activeBottomSheet === "location"}
-                                setVisible={() => setActiveBottomSheet(null)}
-                                title="¿Dónde te encuentras?"
-                                description="Esto se mostrará en tus productos para que sepan desde dónde vendes."
 
-                                placeholder="Ubicación"
-                                OnPress={() => setActiveBottomSheet(null)}
-                            />
-                        )}
-                    </View>
-                </ScrollView>
-            </View>
-        </GestureHandlerRootView>
+
+                </View>
+            </ScrollView>
+
+        </View>
     );
 };
 

@@ -17,7 +17,6 @@ export default defineSchema({
         lat: v.optional(v.number()),
         lng: v.optional(v.number()), 
         km: v.optional(v.number()),
-        storageId: v.optional(v.id("_storage")),
 
     }).index("by_clerk_id", ["clerkId"]),
 
@@ -46,15 +45,11 @@ export default defineSchema({
         receiverId: v.id("users"),
         senderId: v.id("users"),
         type: v.union(
-            v.literal("like"),
-            v.literal("comment"),
-            v.literal("follow"),
             v.literal("favorite"),
             v.literal("review"),
             v.literal("message")
         ),
         postId: v.optional(v.id("posts")),
-        commentId: v.optional(v.id("comments")),
     })
     .index("by_receiver", ["receiverId"])
     .index("by_post", ["postId"]),
@@ -85,7 +80,7 @@ export default defineSchema({
         createdAt: v.number(),
     }).index("by_chat", ["chatId"]),
 
-    // NUEVA TABLA PARA RESEÑAS
+    
     reviews: defineTable({
         fromUserId: v.id("users"),    
         toUserId: v.id("users"),        

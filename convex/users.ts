@@ -69,27 +69,45 @@ export const generateUploadUrl = mutation(async (ctx) => {
 });
 
 export const updateProfile = mutation({
-    args: {
-        fullname: v.string(),
-        storageId: v.optional(v.id("_storage")),
-    },
-    handler: async (ctx, args) => {
-        const currentUser = await getAuthenticatedUser(ctx);
+  args: {
+    fullname: v.string(),
+    storageId: v.optional(v.id('_storage')),
+    phone: v.optional(v.string()),
+    bio: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
 
-        let imageUrl = currentUser.image;
+    let imageUrl = currentUser.image;
 
-        if (args.storageId) {
-            const url = await ctx.storage.getUrl(args.storageId);
-            if (!url) throw new Error("No se pudo obtener la URL de la imagen");
-            imageUrl = url;
-        }
+    if (args.storageId) {
+      const url = await ctx.storage.getUrl(args.storageId);
+      if (!url) throw new Error('No se pudo obtener la URL de la imagen');
+      imageUrl = url;
+    }
 
-        await ctx.db.patch(currentUser._id, {
-            fullname: args.fullname,
-            ...(imageUrl && { image: imageUrl }), // Guardar la URL pública en el campo `image`
-        });
-    },
+    await ctx.db.patch(currentUser._id, {
+      fullname: args.fullname,
+      ...(args.phone && { phone: args.phone }),
+      ...(args.bio && { bio: args.bio }),
+      ...(args.storageId && { image: imageUrl }),
+    });
+
+    return imageUrl;
+  },
 });
+
+export const getImageUrl = query({
+  args: {
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const url = await ctx.storage.getUrl(args.storageId);
+    if (!url) throw new Error("No se pudo obtener la URL de la imagen");
+    return url;
+  },
+});
+
 
 
 export const getUserProfile = query({

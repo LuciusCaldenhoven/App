@@ -4,6 +4,9 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar, } from 'react-native';
 
+const FORMSPREE_URL = process.env.EXPO_PUBLIC_FORMSPREE_URL!;
+
+
 export default function ReportProblemScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -16,7 +19,7 @@ export default function ReportProblemScreen() {
     }
 
     try {
-      const response = await fetch('https://formspree.io/f/xdkgvpor', {
+      const response = await fetch(FORMSPREE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
