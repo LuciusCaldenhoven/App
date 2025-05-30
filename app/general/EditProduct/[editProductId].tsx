@@ -57,6 +57,7 @@ export default function EditPostScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      
       <ScrollView contentContainerStyle={styles.container}>
         <Animated.Text entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
           Editar publicación

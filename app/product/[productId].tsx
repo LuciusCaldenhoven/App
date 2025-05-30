@@ -11,7 +11,6 @@ import { Loader } from "@/components/Loader";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
-import { BottomSheet } from "@/components/bottomSheet/BottomSheet";
 import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
 import { useAuth } from "@clerk/clerk-expo";
 

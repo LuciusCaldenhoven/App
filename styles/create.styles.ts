@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { COLORS } from "@/constants/theme";
+import { scale } from "@/constants/scale";
 
 const { width } = Dimensions.get("window");
 
@@ -7,11 +8,18 @@ export const styles = StyleSheet.create({
 
   contentContainer: {
     flex: 1,
-    backgroundColor: COLORS.white, // Color de fondo
+    backgroundColor: COLORS.white, 
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
   },
   pagerView: {
     flex: 1,
+  },
+  title:{
+    fontSize: 28,
+    fontFamily: "SemiBold",
+    color: COLORS.black,
+    
+    paddingHorizontal: scale(18),
   },
   page: {
     justifyContent: 'center',
@@ -34,17 +42,18 @@ export const styles = StyleSheet.create({
     paddingLeft: 50,
   },
   contentDisabled: {
-    opacity: 0.7, // Reduce la opacidad cuando está deshabilitado
+    opacity: 0.7, 
   },
   shareButton: {
-    paddingHorizontal: 12, // Espaciado dentro del botón
-    paddingVertical: 6, // Espaciado vertical
-    minWidth: 60, // Ancho mínimo del botón
-    alignItems: "center", // Centra el texto dentro del botón
+    paddingHorizontal: 12,
+    
+    minWidth: 60, 
+    alignItems: "center", 
     justifyContent: "center", // Centra el contenido dentro del botón
   },
   shareButtonDisabled: {
-    opacity: 0.5, // Reduce la opacidad cuando el botón está deshabilitado
+    opacity: 0.5, 
+    color: 'red'
   },
   shareText: {
     fontSize: 15, // Tamaño del texto
@@ -204,5 +213,66 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 5,
     zIndex: 1,
+  },
+
+  inputGroup: {
+    marginBottom: 30,
+  },
+  inputs: {
+    flex: 1,
+    fontSize: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    color: '#444',
+  },
+  iconLeft: {
+    marginRight: 8,
+  },
+  iconRight: {
+    marginLeft: 8,
+  },
+  helperText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#999',
+  },
+  inputGrayBorder: {
+    borderColor: '#ddd',
+  },
+  inputBlueBorder: {
+    borderColor: '#0a5fff',
+  },
+  inputRedBorder: {
+    borderColor: '#d94242',
+  },
+  buttonSide: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0a5fff',
+  },
+  separator: {
+    width: 1,
+    height: 20,
+    backgroundColor: '#0a5fff',
+  },
+  label: {
+    fontWeight: '700',
+    fontSize: 14,
+    marginBottom: 6,
+    color: '#222',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    backgroundColor: '#fafafa',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
 });

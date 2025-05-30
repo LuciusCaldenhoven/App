@@ -1,3 +1,4 @@
+import { scale } from "@/constants/scale";
 import { COLORS } from "@/constants/theme";
 import { Platform, StatusBar, StyleSheet } from "react-native";
 
@@ -16,7 +17,13 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 
-
+    title:{
+    fontSize: 28,
+    fontFamily: "SemiBold",
+    color: COLORS.black,
+    paddingTop: 20,
+    paddingHorizontal: scale(18),
+  },
     label: {
         fontSize: 13,
         fontWeight: "600",

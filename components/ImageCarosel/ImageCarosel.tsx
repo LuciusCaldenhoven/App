@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  Image as RNImage,
-} from "react-native";
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image as RNImage, } from "react-native";
 import { Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useQuery } from "convex/react";
@@ -36,8 +29,8 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
         return combined.slice(0, 10);
       });
     }
-  };
-
+  };      
+  
   const editImageAtIndex = async (index: number) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

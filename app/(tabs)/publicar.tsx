@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { FontAwesome5, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { COLORS } from '@/constants/theme';
+import { KeyRound, ShoppingCart, Wrench } from 'lucide-react-native';
 
 export default function OfrecerScreen() {
   return (
@@ -18,21 +19,21 @@ export default function OfrecerScreen() {
         <OptionCard
           title="Venta"
           description="Ofrece tus productos nuevos o usados"
-          iconComponent={<FontAwesome6 name="box" size={20} color="#4F8EF7" />}
+          iconComponent={<ShoppingCart  size={24} strokeWidth={2.5} color="#4F8EF7" />}
           bgColor="#DCEEFF"
         />
 
         <OptionCard
           title="Alquiler"
           description="Alquila tus propiedades o artículos"
-          iconComponent={<FontAwesome5 name="calendar-alt" size={20} color="#30C04F" />}
+          iconComponent={<KeyRound  size={24} strokeWidth={2.25} color="#30C04F" />}
           bgColor="#DFF5E5"
         />
 
         <OptionCard
           title="Servicio"
           description="Ofrece tus habilidades y servicios"
-          iconComponent={<MaterialCommunityIcons name="briefcase-variant" size={20} color="#A86AEF" />}
+          iconComponent={<Wrench  size={24} strokeWidth={2.25} color="#A86AEF" />}
           bgColor="#F0E9FF"
         />
 

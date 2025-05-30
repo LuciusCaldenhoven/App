@@ -18,12 +18,14 @@ interface NewInputProps {
     multiline?: boolean;
     onChangeText: (value: string) => void;
     value: string;
+    onFocus?: () => void;
+    iconComponent?: JSX.Element;
 
 }
 
-const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multiline, onChangeText, value }: NewInputProps) => {
+const NewInput = ({ label, iconComponent, duration = 200, keyboardType, minHeight, data, multiline, onChangeText, value, onFocus }: NewInputProps) => {
 
-    const borderWidth = useRef(new Animated.Value(1));
+    const borderWidth = useRef(new Animated.Value(1.25));
     const transY = useRef(new Animated.Value(0));
     const [isVisible, setIsVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -36,7 +38,7 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
     const handleBlur = (currentValue: string) => {
         if (currentValue) return;
         animateTransform(0);
-        animateBorderWidth(1);
+        animateBorderWidth(1.25);
     };
 
 
@@ -61,13 +63,13 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
 
     const borderColor = borderWidth.current.interpolate({
         inputRange: [0, 2],
-        outputRange: ['black', 'green'],
+        outputRange: ['black', '#0a5fff'],
         extrapolate: 'clamp',
     });
 
     const labelColor = borderWidth.current.interpolate({
         inputRange: [0, 2],
-        outputRange: ['green', 'black'],
+        outputRange: ['grey', 'black'],
         extrapolate: 'clamp',
     });
 
@@ -79,8 +81,8 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
 
 
     const transX = transY.current.interpolate({
-        inputRange: [-40, 0],
-        outputRange: [-20, 0],
+        inputRange: [-10, 0],
+        outputRange: [-10, 0],
         extrapolate: 'clamp',
     });
 
@@ -97,25 +99,34 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
     return (
         <Animated.View style={[styles.container, { borderWidth: borderWidth.current, borderColor: borderColor }]}>
             <Animated.View style={[styles.labelContainer, { transform: [{ translateY: transY.current }, { translateX: transX }] }]} >
-                <Animated.Text style={{ color: labelColor, fontSize, fontFamily: 'Medium' }}>{label}</Animated.Text>
+                <View style={{ flexDirection: 'row', gap: 5 }}>
+                    <View>{iconComponent}</View>
+                    <Animated.Text style={{ color: labelColor, fontSize, fontFamily: 'Medium' }}>{label}</Animated.Text>
+                </View>
             </Animated.View>
             {data ? (
                 <View>
                     <Pressable onPress={() => { handleFocus(); handlePresentModalPress(); }} style={styles.input} >
-                        <Text style={{ flex: 1, fontFamily: 'Medium', fontSize: 14, color: 'black' }}> {selectedItem?.title} </Text>
+                        <Text style={{ flex: 1, fontFamily: 'Medium', fontSize: 14, color: 'black', }}> {selectedItem?.title} </Text>
                     </Pressable>
 
 
                     <BottomSheetModal
                         ref={bottomSheetModalRef}
                         onChange={handleSheetChanges}
+                        onDismiss={() => {
+                            if (!selectedItem) {
+                                handleBlur('');
+                            }
+                        }}
+
                         backdropComponent={(props) => (
                             <BottomSheetBackdrop
                                 {...props}
                                 appearsOnIndex={0}
                                 disappearsOnIndex={-1}
-                                opacity={0.6} 
-                                pressBehavior="close"
+                                opacity={0.6}
+                                pressBehavior="close"   
                             />
                         )}
                     >
@@ -142,8 +153,10 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
             ) : (
                 <TextInput style={[styles.input, { height: minHeight, fontFamily: 'Medium', fontSize: 14, color: 'black' }]}
                     value={value} onChangeText={onChangeText}
-                    onFocus={handleFocus} multiline={multiline} onBlur={() => handleBlur(value)}
-                    keyboardType={keyboardType} />
+                    onFocus={() => { handleFocus(); if (onFocus) onFocus(); }} multiline={multiline}
+                    onBlur={() => handleBlur(value)}
+                    keyboardType={keyboardType}
+                />
             )
             }
         </Animated.View >
@@ -152,11 +165,12 @@ const NewInput = ({ label, duration = 200, keyboardType, minHeight, data, multil
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        backgroundColor: '#FFFFFF',
         borderRadius: 10,
         width: '90%',
         justifyContent: 'center',
     },
+
     containerbootm: {
         flex: 1,
         padding: 24,
@@ -168,32 +182,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     input: {
-        paddingVertical: 20,
+        paddingVertical: 15,
         paddingHorizontal: 10,
-    },
-    labelContainer: {
-        position: 'absolute',
-        paddingLeft: 20,
-        top: 20,
-    },
-    bottomSheet: {
-        backgroundColor: COLORS.white,
-        flex: 0.80,
-        borderRadius: scale(12),
-        paddingTop: scale(12),
-    },
-    itemContainer: {
-
-        paddingVertical: scale(15),
-        paddingHorizontal: scale(12),
+        justifyContent: 'center',
+        color: '#1A1A1A', // texto principal
     },
     bottomInfo: {
         paddingLeft: scale(12),
         fontFamily: 'Medium',
         fontSize: 14,
-        color: 'black',
+        color: '#111827', // gris oscuro
         textAlign: 'left'
-    }
+    },
+    itemContainer: {
+        paddingVertical: scale(15),
+        paddingHorizontal: scale(12),
+    },
+    bottomSheet: {
+        backgroundColor: '#FFFFFF',
+        flex: 0.80,
+        borderRadius: scale(12),
+        paddingTop: scale(12),
+    },
+    labelContainer: {
+        position: 'absolute',
+        paddingLeft: 10,
+        top: 16,
+    },
+
 });
 
 export default NewInput;

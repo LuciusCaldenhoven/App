@@ -162,7 +162,7 @@ const EditProfile = () => {
                         />
                     </ReusableSheet>
 
-                    {/* Mi biografía */}
+                    
                     <ReusableSheet
                         icon={<AntDesign name="edit" size={scale(24)} color={COLORS.black} />}
                         title="Mi biografía"
