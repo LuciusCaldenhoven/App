@@ -1,5 +1,5 @@
 import { Animated, Easing, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, FlatList } from 'react-native';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons';
 
 const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY!;
@@ -15,26 +15,25 @@ interface NewInputProps {
     value: string;
     onFocus?: () => void;
     iconComponent?: JSX.Element;
+    onLocationSelected?: (info: { description: string; lat: number; lng: number }) => void;
+
 }
 
-const NewInputt = ({
-    label,
-    iconComponent,
-    duration = 200,
-    keyboardType,
-    minHeight,
-    data,
-    multiline,
-    onChangeText,
-    value,
-    onFocus,
-}: NewInputProps) => {
+const InputLocation = ({ label, iconComponent, duration = 200, keyboardType, minHeight, data, multiline, onChangeText, value, onFocus, onLocationSelected }: NewInputProps) => {
     const borderWidth = useRef(new Animated.Value(1.25));
     const transY = useRef(new Animated.Value(0));
 
-    const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [selectedPlace, setSelectedPlace] = useState<any>(null);
+    const [query, setQuery] = useState(value);
+
+    useEffect(() => {
+        if (value?.trim() !== '') {
+            animateTransform(-40);
+            animateBorderWidth(2);
+            setQuery(value);
+        }
+    }, []);
 
     const handleFocus = () => {
         animateTransform(-40);
@@ -99,9 +98,7 @@ const NewInputt = ({
             return;
         }
 
-        const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
-            text
-        )}&language=es&components=country:pe&key=${GOOGLE_API_KEY}`;
+        const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&language=es&components=country:pe&key=${GOOGLE_API_KEY}`;
 
         try {
             const response = await fetch(url);
@@ -121,13 +118,16 @@ const NewInputt = ({
 
             if (json.result?.geometry?.location) {
                 const location = json.result.geometry.location;
-                setSelectedPlace({
+                const locationInfo = {
                     description,
                     lat: location.lat,
                     lng: location.lng,
-                });
+                };
                 setSuggestions([]);
                 setQuery(description);
+                onChangeText(description);
+                onLocationSelected?.(locationInfo);
+                handleFocus();
             } else {
                 Alert.alert('Error', 'No se pudo obtener detalles de la ubicación.');
             }
@@ -147,15 +147,14 @@ const NewInputt = ({
 
             {/* Search input for location */}
             <TextInput
-                placeholder="Buscar ubicación"
-                style={styles.input}
+                style={[styles.input, { height: minHeight, fontFamily: 'Medium', fontSize: 14, color: 'black' }]}
                 value={query}
                 onChangeText={fetchSuggestions}
-                onFocus={handleFocus}
-                onBlur={() => handleBlur(query)}
+                onFocus={() => { handleFocus(); if (onFocus) onFocus(); }}
+                onBlur={() => handleBlur(value)}
             />
 
-            {/* Suggestions list */}
+
             {suggestions.length > 0 && (
                 <View style={styles.suggestionsContainer}>
                     {suggestions.map((item, index) => (
@@ -164,7 +163,7 @@ const NewInputt = ({
                             style={styles.item}
                             onPress={() => fetchPlaceDetails(item.place_id, item.description)}
                         >
-                            <Text>{item.description}</Text>
+                            <Text style={{ fontFamily: 'Regular' }}>{item.description}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -182,31 +181,28 @@ const styles = StyleSheet.create({
     },
     labelContainer: {
         position: 'absolute',
-        top: 14,
-        left: 12,
-        backgroundColor: '#fff',
-        paddingHorizontal: 4,
-        zIndex: 10,
+        paddingLeft: 10,
+        top: 16,
     },
     input: {
         paddingVertical: 15,
         paddingHorizontal: 10,
         justifyContent: 'center',
-        color: '#1A1A1A', // texto principal
+        color: '#1A1A1A',
     },
     suggestionsContainer: {
-    paddingHorizontal: 10,
-    maxHeight: 200, // Limit the height of the suggestions
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    position: 'absolute',
-    width: '100%',
-    zIndex: 10,
-    marginTop: 12, // Ensure suggestions appear below the input
-    top: 45, // Adjust this to change the distance between the input and the suggestions
-  },
+        paddingHorizontal: 10,
+        maxHeight: 300,
+        backgroundColor: 'white',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        position: 'relative',
+        width: '100%',
+        zIndex: 10,
+
+
+    },
     item: {
         paddingVertical: 12,
         borderBottomWidth: 1,
@@ -214,4 +210,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default NewInputt;
+export default InputLocation;

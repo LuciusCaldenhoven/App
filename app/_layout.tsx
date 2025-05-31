@@ -9,6 +9,9 @@ import { Platform, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "@/components/ToastConfig/ToastConfig";
+
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -48,6 +51,7 @@ export default function RootLayout() {
               {/* Configura el StatusBar global */}
               <StatusBar style="dark" backgroundColor="white" />
               <InitialLayout />
+              <Toast config={toastConfig} />
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

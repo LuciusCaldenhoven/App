@@ -24,7 +24,7 @@ export const getImageUrl = query({
 export const createPost = mutation({
   args: {
     tipo: v.string(),
-    caption: v.optional(v.string()),
+    caption: v.string(),
     storageId: v.id("_storage"),
     title: v.string(),
     price: v.number(),
@@ -34,6 +34,8 @@ export const createPost = mutation({
     condition: v.string(),
     imageUrls: v.array(v.id("_storage")),
     sold: v.boolean(),
+    lat: v.float64(),
+    lng: v.float64()
   },
   handler: async (ctx, args) => {
     const currentUser = await getAuthenticatedUser(ctx);
@@ -53,6 +55,8 @@ export const createPost = mutation({
       currency: args.currency,
       imageUrls: imageUrlsToStore,
       sold: args.sold,
+      lat:args.lat,
+      lng:args.lng,
     });
 
     await ctx.db.patch(currentUser._id, {

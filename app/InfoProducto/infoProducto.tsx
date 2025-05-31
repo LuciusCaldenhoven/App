@@ -16,25 +16,30 @@ import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/ImageCarosel/ImageCarosel";
 import { Banknote, ChevronLeft, DollarSign, FileSliders, FileText, Images, MapPinCheck, Pencil, Tag } from "lucide-react-native";
 import { useAuth } from "@clerk/clerk-expo";
-import NewInputt from "@/components/NewInput";
+import InputLocation from "@/components/InputLocation/InputLocation";
+import Toast from "react-native-toast-message";
 
 export default function CreateScreen() {
+
+    const { userId } = useAuth();
+    const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+
     const router = useRouter();
     const [caption, setCaption] = useState("");
     const [isSharing, setIsSharing] = useState(false);
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
-    
+
     const [condition, setCondition] = useState("");
     const [currency, setCurrency] = useState("");
     const [sold, setSold] = useState(false);
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
     const { tipo } = useLocalSearchParams();
 
-    const { userId } = useAuth();
-    const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
     const [location, setLocation] = useState(currentUser?.location || "");
+    const [lat, setLat] = useState<number>(currentUser?.lat ?? 0);
+    const [lng, setLng] = useState<number>(currentUser?.lng ?? 0);
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -52,11 +57,34 @@ export default function CreateScreen() {
         }
     };
 
+
     const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
     const createPost = useMutation(api.posts.createPost);
 
     const handleShare = async () => {
-        if (selectedImages.length === 0) return;
+        const requiredFields = [
+            { value: selectedImages.length > 0, name: "imágenes" },
+            { value: title.trim(), name: "título" },
+            { value: price.trim(), name: "precio" },
+            { value: currency.trim(), name: "moneda" },
+            { value: category.trim(), name: "categoría" },
+            { value: location.trim(), name: "ubicación" },
+            { value: condition.trim(), name: "condición" },
+            { value: caption.trim(), name: "descripción" },
+        ];
+
+        const emptyField = requiredFields.find(field => !field.value);
+
+        if (emptyField) {
+            Toast.show({
+                type: "warning",
+                position: "top",
+                visibilityTime: 3000,
+                text1: `Falta completar: ${emptyField.name}`,
+                text2: "Por favor completa todos los campos requeridos.",
+            });
+            return;
+        }
 
         try {
             setIsSharing(true);
@@ -80,14 +108,17 @@ export default function CreateScreen() {
                 imageUrls: uploadedImages,
                 caption,
                 title,
-                price: parseFloat(price),
+                price: parseFloat(price.replace(/,/g, "")),
                 category,
                 location,
                 condition,
                 currency,
                 sold,
+                lat: Number(lat),
+                lng: Number(lng),
             });
 
+            // limpiar campos
             setSelectedImages([]);
             setCaption("");
             setTitle("");
@@ -97,13 +128,27 @@ export default function CreateScreen() {
             setCondition("");
             setCurrency("");
 
+            Toast.show({
+                type: "success",
+                position: "top",
+                text1: "¡Producto publicado!",
+                text2: "Tu publicación se ha guardado con éxito.",
+            });
+
             router.replace("/(tabs)");
         } catch (error) {
             console.log("Error sharing post", error);
+            Toast.show({
+                type: "error",
+                position: "top",
+                text1: "Error al publicar",
+                text2: "Intenta nuevamente más tarde.",
+            });
         } finally {
             setIsSharing(false);
         }
     };
+
 
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -136,7 +181,7 @@ export default function CreateScreen() {
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={styles.title}>Nuevo Producto</Text>
-                    <TouchableOpacity style={[styles.shareButton, isSharing && styles.shareButtonDisabled]} disabled={isSharing || selectedImages.length === 0} onPress={handleShare} >
+                    <TouchableOpacity style={[styles.shareButton, isSharing && styles.shareButtonDisabled]} disabled={isSharing} onPress={handleShare} >
                         {isSharing ? (
                             <ActivityIndicator size="small" color={COLORS.primary} />
                         ) : (
@@ -186,32 +231,26 @@ export default function CreateScreen() {
                 <View style={styles.inputSection}>
                     <NewInput label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} data={products} />
                 </View>
-                
+
 
                 <View style={styles.inputSection}>
-                    <NewInputt label="Ubicacion" iconComponent={<MapPinCheck  size={20} />} value={location} onChangeText={setLocation}  />
+                    <InputLocation
+                        label="Ubicación"
+                        iconComponent={<MapPinCheck size={20} />}
+                        value={location}
+                        onChangeText={setLocation}
+                        onFocus={() => handleFocus(400)}
+                        onLocationSelected={({ description, lat: newLat, lng: newLng }) => {
+                            console.log('Location selected:', { description, newLat, newLng }); // Debug log
+                            setLocation(description);
+                            setLat(Number(newLat));
+                            setLng(Number(newLng));
+                        }}
+                    />
+
                 </View>
 
-                <View style={{ paddingHorizontal: 20, marginBottom: 10 }}>
-                    {currentUser?.location ? (
-                        <>
-                            <Text style={{ fontSize: 16, color: '#111827', fontFamily: 'Medium' }}>
-                                Ubicación: {currentUser.location}
-                            </Text>
-                            <TouchableOpacity onPress={() => {/* lógica para editar */ }}>
-                                <Text style={{ color: '#3B82F6', fontSize: 14, marginTop: 4 }}>
-                                    Editar ubicación
-                                </Text>
-                            </TouchableOpacity>
-                        </>
-                    ) : (
-                        <TouchableOpacity onPress={() => {/* lógica para ingresar ubicación */ }}>
-                            <Text style={{ color: '#9CA3AF', fontSize: 16, fontFamily: 'Medium' }}>
-                                Ingresa tu ubicación
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
+
 
 
 
@@ -220,9 +259,9 @@ export default function CreateScreen() {
                 </View>
 
                 <View style={styles.inputSection}>
-                    <NewInput label="Descripción" minHeight={120} iconComponent={<FileText size={18} />} multiline={true} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(400)} />
+                    <NewInput label="Descripción" minHeight={120} iconComponent={<FileText size={18} />} multiline={true} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(500)} />
                 </View>
-                
+
             </ScrollView>
         </View>
 

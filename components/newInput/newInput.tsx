@@ -1,4 +1,4 @@
-import { Animated, Easing, FlatList, Image, KeyboardTypeOptions, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, FlatList, Image, Keyboard, KeyboardTypeOptions, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
 import { min } from 'date-fns';
 import { BottomSheet } from '../bottomSheet/BottomSheet';
@@ -90,6 +90,7 @@ const NewInput = ({ label, iconComponent, duration = 200, keyboardType, minHeigh
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
+        Keyboard.dismiss(); 
         bottomSheetModalRef.current?.present();
     }, []);
     const handleSheetChanges = useCallback((index: number) => {

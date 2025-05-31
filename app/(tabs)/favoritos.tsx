@@ -8,6 +8,7 @@ import { useState } from "react";
 import PostFav from "@/components/PostFav/PostFav";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function Bookmarks() {
   const bookmarkedPosts = useQuery(api.bookmarks.getBookmarkedPosts);

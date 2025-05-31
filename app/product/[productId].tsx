@@ -8,11 +8,10 @@ import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
 import { Loader } from "@/components/Loader";
-import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
-import { setStatusBarStyle, StatusBar } from "expo-status-bar";
-import SellerBottomSheet from "@/components/SellerBottomSheet/SellerBottomSheet";
+import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@clerk/clerk-expo";
+import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -20,40 +19,47 @@ const IMG_HEIGHT = 380;
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [showBottomSheet, setShowBottomSheet] = useState(false);
 
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
     const flatListRef = useAnimatedRef<Animated.FlatList<any>>();
 
-    const imageAnimatedStyle = useAnimatedStyle(() => ({
-        transform: [
-            {
-                translateY: interpolate(
-                    scrollOffset.value,
-                    [-IMG_HEIGHT, 0, IMG_HEIGHT, IMG_HEIGHT],
-                    [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-                ),
-            },
-            {
-                scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
-            },
-        ],
-    }));
+    const imageAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    translateY: interpolate(
+                        scrollOffset.value,
+                        [-IMG_HEIGHT, 0, IMG_HEIGHT, IMG_HEIGHT],
+                        [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+                    ),
+                },
+                {
+                    scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+                },
+            ],
+        };
+    });
+
 
     const headerAnimatedStyle = useAnimatedStyle(() => {
-        const opacity = interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]);
-
-        if (opacity >= 1) {
-            runOnJS(setStatusBarStyle)("dark");
-        } else {
-            runOnJS(setStatusBarStyle)("light");
-        }
-
         return {
-            opacity,
+            opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]),
         };
     }, []);
+
+    const formatPrice = (price: number, currency: string) => {
+        const formatter = new Intl.NumberFormat('es-PE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+
+        const formattedPrice = formatter.format(price);
+
+        return currency.toLowerCase() === 'soles'
+            ? `S/${formattedPrice}`
+            : `$${formattedPrice}`;
+    };
 
     const post = useQuery(
         api.posts.getBookmarkedPostById,
@@ -61,11 +67,6 @@ export default function ProductDetail() {
     );
 
     const author = useQuery(api.users.getUserProfile, post?.userId ? { id: post.userId } : "skip");
-
-    const posts = useQuery(
-        api.posts.getPostsByUser,
-        author?._id ? { userId: author._id } : "skip"
-    );
 
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
 
@@ -169,55 +170,28 @@ export default function ProductDetail() {
                             </Text>
                         </View>
                     )}
-                    <View style={styles.details}>
-                        <View style={styles.titleRow}>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 10, }}>
-                                <Text style={styles.title}>{post.title}</Text>
-                                {post.condition && (
-                                    <View style={styles.conditionTag}>
-                                        <Text style={styles.conditionText}>{post.condition}</Text>
-                                    </View>
-                                )}
-                            </View>
 
 
-                        </View>
-                        <View style={styles.descriptionWrapper}>
-                            <Text style={styles.description}>Descripción</Text>
-                            <Text style={styles.descText}>{post.caption}</Text>
-                        </View>
-                        {renderMarginBottom(12)}
-                        {renderBorderBottom(2)}
-                        {renderMarginTop(18)}
-                        <TouchableOpacity style={styles.profile} onPress={() => setShowBottomSheet(true)}>
-                            <View style={styles.cg14}>
-                                <Image
-                                    source={{ uri: author.image }}
-                                    style={styles.person}
-                                    contentFit="cover"
-                                    transition={200}
-                                    cachePolicy="memory-disk"
-                                />
-                                <Text style={styles.ownerName}>{author.fullname}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+
+                    <ProductSellerInfo post={post} author={author} />
+
+
                 </Animated.ScrollView>
                 <View style={styles.footer}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View style={styles.footerText}>
-
-                            <Text style={styles.price}>${post.price}</Text>
-
+                            <Text style={styles.price}>
+                                {formatPrice(post.price, post.currency)}
+                            </Text>
                         </View>
                         <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat}>
                             <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-                {renderBorderBottom(6)}
 
-                <SellerBottomSheet author={author} posts={posts || []} visible={showBottomSheet} onClose={() => setShowBottomSheet(false)} />
+
+
 
 
             </View>
@@ -231,14 +205,16 @@ function ProductImageItem({ storageId, animatedStyle, }: { storageId: Id<"_stora
     if (!imageUrl) return null;
 
     return (
-        <Animated.View style={[styles.image, animatedStyle]}>
-            <Image
-                source={{ uri: imageUrl }}
-                style={styles.image}
-                contentFit="cover"
-                transition={200}
-                cachePolicy="memory-disk"
-            />
-        </Animated.View>
+        <TouchableOpacity activeOpacity={1}>
+            <Animated.View style={[styles.image, animatedStyle]}>
+                <Image
+                    source={{ uri: imageUrl }}
+                    style={styles.image}
+                    contentFit="cover"
+                    transition={200}
+                    cachePolicy="memory-disk"
+                />
+            </Animated.View>
+        </TouchableOpacity>
     );
 }
