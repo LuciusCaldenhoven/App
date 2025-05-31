@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
   toastBox: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    paddingHorizontal: 15,
+     paddingVertical: 5,
     borderRadius: 25,
     marginHorizontal: 20,
     marginTop: 15,

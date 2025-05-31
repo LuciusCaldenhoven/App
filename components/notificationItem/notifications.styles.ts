@@ -62,6 +62,23 @@ export const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+
+  absoluteTrashContainer: {
+  position: "absolute",
+  top: 0,
+  bottom: 0,
+  right: 20,
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: -1,
+},
+
+trashIcon: {
+  width: 30,
+  height: 30,
+  tintColor: "#e74c3c",
+},
+
   item: {
     alignItems: 'center',
     width: '100%',
@@ -111,12 +128,15 @@ timeContainer:{
   flexDirection: 'row',
   justifyContent: 'space-between',
 },
-delete :{
-  height: 70,
-  width: 70,
-  right: '10%',
-  justifyContent  : 'center', 
-  alignItems : 'center',
-}
+delete: {
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  right: 20,
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: -1,
+},
+
   
 });
