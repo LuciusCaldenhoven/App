@@ -45,16 +45,17 @@ export default defineSchema({
 
     notifications: defineTable({
         receiverId: v.id("users"),
-        senderId: v.id("users"),
+        senderId: v.optional(v.id("users")),
         type: v.union(
-            v.literal("favorite"),
             v.literal("review"),
-            v.literal("message")
+            v.literal("message"),
+            v.literal("app")
         ),
-        postId: v.optional(v.id("posts")),
+        text: v.string(),
+
     })
-        .index("by_receiver", ["receiverId"])
-        .index("by_post", ["postId"]),
+        .index("by_receiver", ["receiverId"]),
+
 
     bookmarks: defineTable({
         userId: v.id("users"),

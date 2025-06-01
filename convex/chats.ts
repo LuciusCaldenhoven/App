@@ -38,6 +38,14 @@ export const createChat = mutation({
       lastMessage: undefined,
     });
 
+    await ctx.db.insert("notifications", {
+      receiverId: sellerId,
+      senderId: currentUser._id,
+      type: "message",
+      text: `Te ha enviado un mensaje para comenzar una conversación sobre uno de tus productos.`,
+    });
+
+
     return chatId;
   },
 });

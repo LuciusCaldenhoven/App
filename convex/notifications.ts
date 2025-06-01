@@ -1,4 +1,5 @@
-import { query } from "./_generated/server";
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./users";
 
 export const getNotifications = query({
@@ -12,30 +13,35 @@ export const getNotifications = query({
 
         const notificationsWithInfo = await Promise.all(
             notifications.map(async (notification) => {
-                const sender = (await ctx.db.get(notification.senderId))!;
-                let post = null;
-                let comment = null;
+                let senderInfo = null;
 
-                if (notification.postId) {
-                    post = await ctx.db.get(notification.postId);
+                if (notification.senderId) {
+                    const sender = await ctx.db.get(notification.senderId);
+                    if (sender) {
+                        senderInfo = {
+                            _id: sender._id,
+                            fullname: sender.fullname,
+                            image: sender.image,
+                        };
+                    }
                 }
-
-           
 
                 return {
                     ...notification,
-                    sender: {
-                        _id: sender._id,
-                        username: sender.username,
-                        image: sender.image,
-                    },
-                    
-                    
+                    sender: senderInfo,
                 };
-
             })
         );
 
         return notificationsWithInfo;
     },
+});
+
+export const deleteNotification = mutation({
+  args: {
+    notificationId: v.id("notifications"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.notificationId);
+  },
 });

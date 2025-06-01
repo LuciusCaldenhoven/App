@@ -3,69 +3,77 @@ import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 
 export const createUser = mutation({
-    args: {
-        username: v.string(),
-        fullname: v.string(),
-        image: v.string(),
-        email: v.string(),
-        clerkId: v.string(),
-    },
-    handler: async (ctx, args) => {
-        // create a user in db
-        const existingUser = await ctx.db.query("users")
-            .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-            .first();
+  args: {
+    username: v.string(),
+    fullname: v.string(),
+    image: v.string(),
+    email: v.string(),
+    clerkId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // create a user in db
+    const existingUser = await ctx.db.query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first();
 
-        if (existingUser) return;
+    if (existingUser) return;
 
-        // create a user in db
-        await ctx.db.insert("users", {
-            username: args.username,
-            fullname: args.fullname,
-            email: args.email,
-            image: args.image,
-            clerkId: args.clerkId,
-            posts: 0,
-            reviewCount: 0,
-            averageRating: 0,
-        });
-    }
+    // create a user in db
+    const userId = await ctx.db.insert("users", {
+      username: args.username,
+      fullname: args.fullname,
+      email: args.email,
+      image: args.image,
+      clerkId: args.clerkId,
+      posts: 0,
+      reviewCount: 0,
+      averageRating: 0,
+    });
+
+    await ctx.db.insert("notifications", {
+      receiverId: userId,
+      type: "app",
+      text: "¡Bienvenido a ReVende! Explora y empieza a vender o comprar desde hoy.",
+    });
+  }
+
+
 });
 
 
 export const getUserByClerkId = query({
-    args: { clerkId: v.string() },
-    handler: async (ctx, args) => {
-        const user = await ctx.db
-            .query("users")
-            .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-            .unique();
+  args: { clerkId: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .unique();
 
-        return user;
-    },
+    return user;
+  },
 });
 
 
 
 export async function getAuthenticatedUser(ctx: QueryCtx | MutationCtx) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Unauthorized");
 
-    const currentUser = await ctx.db
-        .query("users")
-        .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-        .first();
+  const currentUser = await ctx.db
+    .query("users")
+    .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+    .first();
 
-    if (!currentUser) throw new Error("User not found");
+  if (!currentUser) throw new Error("User not found");
 
-    return currentUser;
+  return currentUser;
 }
 
 export const generateUploadUrl = mutation(async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Unauthorized");
 
-    return await ctx.storage.generateUploadUrl();
+  return await ctx.storage.generateUploadUrl();
 });
 
 export const updateProfile = mutation({
@@ -111,13 +119,13 @@ export const getImageUrl = query({
 
 
 export const getUserProfile = query({
-    args: { id: v.id("users") },
-    handler: async (ctx, args) => {
-        const user = await ctx.db.get(args.id);
-        if (!user) throw new Error("User not found");
+  args: { id: v.id("users") },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.id);
+    if (!user) throw new Error("User not found");
 
-        return user;
-    },
+    return user;
+  },
 });
 
 

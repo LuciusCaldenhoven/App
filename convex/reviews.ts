@@ -41,7 +41,14 @@ export const addReview = mutation({
     });
 
     // Crear notificación
-    
+    await ctx.db.insert("notifications", {
+      receiverId: args.sellerId,
+      senderId: currentUser._id,
+      type: "review",
+      text: args.content,
+    });
+
+
     return reviewId;
   },
 });

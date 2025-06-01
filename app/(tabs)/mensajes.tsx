@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Loader } from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
@@ -20,6 +20,15 @@ export default function NotificationsAndMessages() {
   const chats = useQuery(api.chats.getChats);
   const { userId } = useAuth();
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+  const deleteNotification = useMutation(api.notifications.deleteNotification);
+
+
+
+
+  const formattedNotifications = notifications?.map((n) => ({
+    ...n,
+    _creationTime: new Date(n._creationTime),
+  }));
 
   const renderContent = () => {
     if (selectedTab === "notifications") {
@@ -27,11 +36,18 @@ export default function NotificationsAndMessages() {
       return (
         <FlatList
           style={{ flex: 1 }}
-          data={notifications}
+          data={formattedNotifications}
           renderItem={({ item }) => (
             <NotificationItem
-              item={{ ...item, _creationTime: new Date(item._creationTime) }}
-              onDelete={(notification) => console.log("Eliminar:", notification)}
+              item={item}
+              onDelete={async (notification) => {
+                try {
+                  await deleteNotification({ notificationId: notification._id });
+                } catch (err) {
+                  console.error("Error al eliminar notificación:", err);
+                }
+              }}
+
             />
           )}
           keyExtractor={(item) => item._id}
@@ -119,10 +135,10 @@ function NoNotificationsFound() {
       </Text>
 
       <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24 }}>
-        Aún no tienes actividad reciente. 
+        Aún no tienes actividad reciente.
       </Text>
 
-      
+
     </View>
   );
 
