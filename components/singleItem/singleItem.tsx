@@ -41,7 +41,7 @@ const SingleItem = ({ chat, currentUserId }: ISingleItemProps) => {
       <Image
         source={{ uri: otherUser?.image || 'https://via.placeholder.com/150' }}
         style={styles.person}
-        cachePolicy="memory-disk"
+        cachePolicy="none"
       />
       
       {/* Información del mensaje */}

@@ -12,7 +12,6 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/ToastConfig/ToastConfig";
 
-
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "JetBrainsMono-Medium": require("../assets/fonts/JetBrainsMono-Medium.ttf"),
@@ -32,7 +31,7 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-
+  
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -51,6 +50,7 @@ export default function RootLayout() {
               {/* Configura el StatusBar global */}
               <StatusBar style="dark" backgroundColor="white" />
               <InitialLayout />
+              
               <Toast config={toastConfig} />
             </View>
           </BottomSheetModalProvider>

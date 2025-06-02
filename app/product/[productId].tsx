@@ -12,6 +12,7 @@ import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useSc
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
+import LoaderPosts from "@/components/loaders/loaderPosts";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -19,7 +20,7 @@ const IMG_HEIGHT = 380;
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
     const [currentIndex, setCurrentIndex] = useState(0);
-
+    
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
     const flatListRef = useAnimatedRef<Animated.FlatList<any>>();
@@ -95,7 +96,7 @@ export default function ProductDetail() {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
         const index = Math.round(contentOffsetX / width);
         setCurrentIndex(index);
-    };
+    }; 
 
     const handleChat = async () => {
         try {
@@ -120,7 +121,7 @@ export default function ProductDetail() {
     };
 
     if (!post || !author || !currentUser) {
-        return <Loader />;
+        return <LoaderPosts />;
     }
 
     const allImageIds = [post.storageId, ...post.imageUrls];
@@ -212,7 +213,7 @@ function ProductImageItem({ storageId, animatedStyle, }: { storageId: Id<"_stora
                     style={styles.image}
                     contentFit="cover"
                     transition={200}
-                    cachePolicy="memory-disk"
+                    cachePolicy="none"
                 />
             </Animated.View>
         </TouchableOpacity>

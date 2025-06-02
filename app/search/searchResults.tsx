@@ -9,16 +9,16 @@ import Post from "@/components/Post";
 import { api } from "@/convex/_generated/api";
 import Filter from "./filter";
 import Search from "@/components/search";
-
+import Fuse from 'fuse.js';
 export default function SearchPage() {
   const { query, category } = useLocalSearchParams(); // Obtén la categoría de los parámetros
   const [searchKey, setSearchKey] = useState(query ? String(query) : "");
   const [filterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({
-    category: category || "", // Usa la categoría recibida como filtro inicial
+    category: category || "",
     type: "",
     condition: [],
-    priceRange: [0, 1500],
+    priceRange: [0, 15000],
     date: "",
   });
 
@@ -26,17 +26,25 @@ export default function SearchPage() {
   const filteredPosts = useQuery(api.posts.getFilteredPosts, {
     category: Array.isArray(filters.category) ? filters.category.join(",") : filters.category,
     type: filters.type,
-    condition: filters.condition.join(","), 
+    condition: filters.condition.join(","),
     priceRange: filters.priceRange,
     date: filters.date,
   });
 
   // Filtrar los resultados de búsqueda por el término de búsqueda
-  const searchResults = filteredPosts
-    ? filteredPosts.filter((post) =>
-        post.title.toLowerCase().includes(searchKey.toLowerCase())
-      )
-    : [];
+  const searchResults = (() => {
+    if (!filteredPosts) return [];
+
+    const fuse = new Fuse(filteredPosts, {
+      keys: ['title'],
+      threshold: 0.3, // 0 = muy preciso, 1 = muy flexible
+    });
+
+    if (!searchKey) return filteredPosts;
+
+    return fuse.search(searchKey).map(res => res.item);
+  })();
+
 
   return (
     <View style={styles.container}>
@@ -44,7 +52,7 @@ export default function SearchPage() {
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
         <View>
           <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={20} style={{ marginRight: 20,paddingLeft: 20  }} />
+            <Ionicons name="arrow-back" size={20} style={{ marginRight: 20, paddingLeft: 20 }} />
           </TouchableOpacity>
         </View>
         <View style={{ flex: 1 }}>
@@ -69,7 +77,7 @@ export default function SearchPage() {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <Post
-              post={ item }
+              post={item}
             />
           )}
         />

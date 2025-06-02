@@ -1,5 +1,4 @@
 import { Tabs } from "expo-router";
-import { AntDesign, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme"
 import { Heart, House, MessageCircle, Plus, User } from "lucide-react-native";
 export default function TabLayout() {

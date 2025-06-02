@@ -51,6 +51,7 @@ export default function PostProduct({ post }: PostProps) {
                         source={{ uri: imageUrl }}
                         style={styles.image}
                         contentFit="cover"
+                        cachePolicy="none"
                     />
 
                     {/* Información */}
