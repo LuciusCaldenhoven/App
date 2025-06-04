@@ -61,4 +61,21 @@ const products = [
   },
 ];
 
-export default products;
+const topProducts = [
+  {
+    id: 1,
+    icon: require('./cocheMoto.png'),
+    title: 'Vehículos',
+    description: 'Carros, motos y transporte en general',
+  },
+  {
+    id: 2,
+    icon: require('./electrodomesticos.png'),
+    title: 'Electrodomésticos',
+    description: 'Cocina, limpieza y tecnología para el hogar',
+  },
+]
+
+const product = {products, topProducts};
+
+export default product ;

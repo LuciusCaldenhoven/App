@@ -136,9 +136,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onDelete }) =
                     }}
                   >
                     {item.type === "review" ? (
-                      <FontAwesome name="star" size={15} color="#FFD700" /> 
+                      <FontAwesome name="star" size={15} color="#FFD700" />
                     ) : (
-                      <Ionicons name="chatbubble" size={15} color="#007AFF" /> 
+                      <Ionicons name="chatbubble" size={15} color="#007AFF" />
                     )}
                   </View>
                 )}
@@ -150,7 +150,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onDelete }) =
           {/* TEXTO */}
           <View style={styles.textContainer}>
             <View style={styles.timeContainer}>
-              <Text style={styles.title}>
+              <Text numberOfLines={1} style={styles.title} ellipsizeMode="tail">
                 {item.type === "app" ? "ReVende App" : item.sender?.fullname}
               </Text>
               <Text numberOfLines={1} style={styles.time}>
@@ -221,12 +221,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 12,
     color: "black",
-    fontFamily: 'Medium'
+    fontFamily: 'Medium',
+    flexShrink: 1,
+    flexGrow: 1,
+    maxWidth: "75%",
   },
   description: {
     fontSize: 12,
     color: "grey",
-    fontFamily: 'Medium',  
+    fontFamily: 'Medium',
     marginTop: 5,
   },
   textContainer: {
@@ -238,9 +241,13 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 10,
     color: "grey",
-    fontFamily: 'Medium',  
+    fontFamily: 'Medium',
+    flexShrink: 0,
+    flexGrow: 0,
   },
   timeContainer: {
+    gap: 8,
+    
     flexDirection: "row",
     justifyContent: "space-between",
   },

@@ -23,7 +23,7 @@ export default function LoaderProductDetail() {
         <Circle cx={screenWidth - 90} cy="20" r="12" />
         <Circle cx={screenWidth - 50} cy="20" r="12" />
 
-        {/* Título */}
+        {/* Título */}  
         <Rect x="0" y="240" rx="6" ry="6" width="60%" height="22" />
 
         {/* Estado (nuevo/usado) */}

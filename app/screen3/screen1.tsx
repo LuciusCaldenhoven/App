@@ -1,85 +1,82 @@
+import React, { useState } from 'react';
+import { View, Dimensions, Text, StyleSheet } from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
 
+const { width } = Dimensions.get('window');
 
-import { View, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
-import { useRouter } from 'expo-router';
+const colors = ['#FFA07A', '#8FBC8F', '#87CEFA', '#FFDEAD', '#DDA0DD'];
 
-const categories = [
-  {
-    id: '1',
-    title: 'Ropa',
-    icon: require('@/assets/index/ropa.png'),
-    bgColor: '#E6F4EA',
-  },
-  {
-    id: '2',
-    title: 'Electrónica',
-    icon: require('@/assets/index/electronica.png'),
-    bgColor: '#E0F7FA',
-  },
-
-  {
-    id: '3',
-    title: 'Deportes',
-    icon: require('@/assets/index/deporte.png'),
-    bgColor: '#F3E5F5',
-  },
-];
-
-const CategoryGrid = () => {
-  const router = useRouter();
-  const screenWidth = Dimensions.get('window').width;
-  const itemSize = (screenWidth - 60) / 2;
-
-  type Category = {
-    id: string;
-    title: string;
-    icon: any;
-    bgColor: string;
-  };
-
-  const renderItem = ({ item }: { item: Category }) => (
-    <TouchableOpacity
-      style={{
-        backgroundColor: item.bgColor,
-        borderRadius: 16,
-        padding: 16,
-        width: itemSize,
-        height: 160,
-        marginBottom: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 4,
-      }}
-      onPress={() =>
-        router.push(`/search/searchResults?category=${item.title}`)
-      }
-    >
-      <Image
-        source={item.icon}
-        style={{ width: 60, height: 60, marginBottom: 12 }}
-        resizeMode="contain"
-      />
-      <Text style={{ fontWeight: '600', fontSize: 16, color: '#333' }}>
-        {item.title}
-      </Text>
-    </TouchableOpacity>
-  );
+const CarouselWithDots = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <FlatList
-      data={categories}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      numColumns={2}
-      columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 20 }}
-      contentContainerStyle={{ paddingTop: 20, paddingBottom: 40 }}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={styles.container}>
+      <Carousel
+        width={width}
+        height={200}
+        data={colors}
+        autoPlay
+        loop
+        autoPlayInterval={6000}
+        scrollAnimationDuration={300}
+        onSnapToItem={(index) => setActiveIndex(index)}
+        renderItem={({ index, item }) => (
+          <View style={[styles.item, { backgroundColor: item }]}>
+            <Text style={styles.text}>Slide {index + 1}</Text>
+          </View>
+        )}
+      />
+
+      {/* Dots */}
+      <View style={styles.dotsContainer}>
+        {colors.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.dot,
+              activeIndex === index && styles.activeDot,
+            ]}
+          />
+        ))}
+      </View>
+    </View>
   );
 };
 
-export default CategoryGrid;
+export default CarouselWithDots;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  item: {
+    flex: 1,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  text: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ccc',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#333',
+    width: 10,
+    height: 10,
+  },
+});

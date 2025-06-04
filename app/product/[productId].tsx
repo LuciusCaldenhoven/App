@@ -121,7 +121,7 @@ export default function ProductDetail() {
     };
 
     if (!post || !author || !currentUser) {
-        return <LoaderPosts />;
+        return <Loader />;
     }
 
     const allImageIds = [post.storageId, ...post.imageUrls];

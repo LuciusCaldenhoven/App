@@ -27,6 +27,7 @@
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "convex": "^1.20.0",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "expo": "^53.0.9",
     "expo-auth-session": "~6.1.5",
@@ -46,7 +47,7 @@
     "expo-location": "~18.1.5",
     "expo-maps": "~0.10.0",
     "expo-navigation-bar": "~4.2.4",
-    "expo-notifications": "~0.31.1",
+    "expo-notifications": "~0.31.2",
     "expo-router": "~5.0.6",
     "expo-secure-store": "^14.0.1",
     "expo-splash-screen": "~0.30.8",
@@ -54,6 +55,7 @@
     "expo-symbols": "~0.4.4",
     "expo-system-ui": "~5.0.7",
     "expo-web-browser": "~14.1.6",
+    "express": "^5.1.0",
     "framer-motion": "^12.12.1",
     "fuse.js": "^7.1.0",
     "lucide-react-native": "^0.511.0",
@@ -70,6 +72,7 @@
     "react-native-pager-view": "6.7.1",
     "react-native-paper": "^5.14.5",
     "react-native-reanimated": "~3.17.4",
+    "react-native-reanimated-carousel": "^4.0.2",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-svg": "15.11.2",
@@ -78,7 +81,9 @@
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
     "svix": "^1.61.3",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "expo-device": "~7.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

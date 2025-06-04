@@ -2,14 +2,14 @@ import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/create.styles";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
 import React from 'react';
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import NewInput from "@/components/newInput/newInput";
-import products from "@/assets/index/data";
+import product from "@/assets/index/data";
 import moneda from "@/assets/precio/precio.data";
 import condicion from "@/assets/condicion/condicion.data";
 import { useLocalSearchParams } from "expo-router";
@@ -18,6 +18,8 @@ import { Banknote, ChevronLeft, DollarSign, FileSliders, FileText, Images, MapPi
 import { useAuth } from "@clerk/clerk-expo";
 import InputLocation from "@/components/InputLocation/InputLocation";
 import Toast from "react-native-toast-message";
+import InputSelect from "@/components/InputSelect";
+import InputText from "@/components/InputText";
 
 export default function CreateScreen() {
 
@@ -215,21 +217,21 @@ export default function CreateScreen() {
 
                 {/* Inputs */}
                 <View style={styles.inputSection}>
-                    <NewInput label="Título del producto" iconComponent={<Pencil size={20} />} value={title} onChangeText={setTitle} onFocus={() => handleFocus(100)} />
+                    <InputText label="Título del producto" iconComponent={<Pencil size={20} />} value={title} onChangeText={setTitle} onFocus={() => handleFocus(100)} />
+                    
                 </View>
 
                 <View style={[styles.inputSection, { flexDirection: "row", paddingLeft: 20, paddingRight: 10 }]}>
                     <View style={{ flex: 2.5 }}>
-                        <NewInput label="Precio" iconComponent={<Banknote size={20} />} keyboardType="numeric" value={price} onChangeText={handlePriceChange} />
-
+                        <InputText label="Precio" iconComponent={<Banknote size={20} />} keyboardType="numeric" value={price} onChangeText={handlePriceChange} />
                     </View>
                     <View style={{ flex: 1.7 }}>
-                        <NewInput label="Moneda" iconComponent={<DollarSign size={18} />} value={currency} onChangeText={setCurrency} data={moneda} onFocus={() => handleFocus(100)} />
+                        <InputSelect label="Moneda" iconComponent={<DollarSign size={18} />} value={currency} onChangeText={setCurrency} data={moneda} onFocus={() => handleFocus(100)} />
                     </View>
                 </View>
 
                 <View style={styles.inputSection}>
-                    <NewInput label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} data={products} />
+                    <InputSelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} data={product.products} />
                 </View>
 
 
@@ -255,11 +257,11 @@ export default function CreateScreen() {
 
 
                 <View style={styles.inputSection}>
-                    <NewInput label="Condición" value={condition} iconComponent={<FileSliders size={18} />} onChangeText={setCondition} data={condicion} />
+                    <InputSelect label="Condición" iconComponent={<FileSliders size={18} />} value={condition} onChangeText={setCondition} data={condicion} />
                 </View>
 
                 <View style={styles.inputSection}>
-                    <NewInput label="Descripción" minHeight={120} iconComponent={<FileText size={18} />} multiline={true} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(500)} />
+                    <InputText label="Descripción" iconComponent={<FileText size={18} />} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(500)} minHeight={120} multiline />
                 </View>
 
             </ScrollView>

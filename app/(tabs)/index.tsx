@@ -7,7 +7,7 @@ import Post from "@/components/Post";
 import React, { useCallback, useRef, useState } from "react";
 import { CategoryBox } from "@/components/categoryBox/categoryBox";
 import { renderMarginBottom } from "@/constants/ui-utils";
-import products from "@/assets/index/data"
+import product from "@/assets/index/data"
 import { Link, useRouter } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
 import { LocationEdit, Search } from "lucide-react-native";
@@ -98,7 +98,7 @@ export default function Index() {
 
                     <View style={{ paddingVertical: 20 }}>
                         <FlatList
-                            data={products}
+                            data={product.products}
                             renderItem={({ item }) => (
                                 <CategoryBox
                                     icon={<Image source={item.icon} style={{ width: 70, height: 70 }} />}

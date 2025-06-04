@@ -27,7 +27,7 @@ export default function TabLayout() {
         fontSize: 9,
         fontFamily: "Regular",
       },
-
+      animation:'shift'
       }}
     >
       <Tabs.Screen
