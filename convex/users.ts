@@ -1,6 +1,7 @@
 import { Id } from "./_generated/dataModel";
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
+import { internalQuery } from "./_generated/server";
 
 export const createUser = mutation({
   args: {
@@ -53,6 +54,14 @@ export const getUserByClerkId = query({
   },
 });
 
+export const getById = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId);
+  },
+});
 
 
 export async function getAuthenticatedUser(ctx: QueryCtx | MutationCtx) {

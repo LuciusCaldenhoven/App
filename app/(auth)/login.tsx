@@ -16,28 +16,7 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const handleLogin = async () => {
-    try {
-      if (!signIn) {
-        Alert.alert("Error", "No se pudo iniciar sesión. Intenta de nuevo más tarde.");
-        return;
-      }
-      const result = await signIn.create({ identifier: email, password });
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-        router.replace("/(tabs)");
-      }
-    } catch (err: any) {
-      const code = err?.errors?.[0]?.code;
-      if (code === "form_identifier_not_found") {
-        Alert.alert("Cuenta no encontrada", "Este correo no está registrado.");
-      } else if (code === "form_password_incorrect") {
-        Alert.alert("Contraseña incorrecta", "La contraseña ingresada no es válida.");
-      } else {
-        Alert.alert("Error", err?.errors?.[0]?.message || "Error al iniciar sesión.");
-      }
-    }
-  };
+ 
   
 
   const handleEmailContinue = async () => {

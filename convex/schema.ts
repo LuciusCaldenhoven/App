@@ -17,7 +17,7 @@ export default defineSchema({
         lat: v.optional(v.float64()),
         lng: v.optional(v.float64()),
         km: v.optional(v.number()),
-
+        pushToken: v.optional(v.string()),
     }).index("by_clerk_id", ["clerkId"]),
 
     posts: defineTable({

@@ -3,7 +3,7 @@ import { Modal, View, Text, FlatList, Pressable, Image, TouchableOpacity, TextIn
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { Id } from '@/convex/_generated/dataModel';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, useAction } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Loader } from '../Loader';
 import { styles } from './ReviewComponent.styles';
@@ -20,8 +20,9 @@ export default function ReviewComponentVertical({ visible, onClose, sellerId }: 
     const reviews = useQuery(api.reviews.getReviewsByUser, { userId: sellerId, });
     const { userId } = useAuth();
     const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+    const createReview = useMutation(api.reviews.addReview); 
 
-    const createReview = useMutation(api.reviews.addReview);
+    const seller = useQuery(api.users.getById, { userId: sellerId });
 
     const [rating, setRating] = useState(0);
     const [content, setComment] = useState('');
@@ -29,13 +30,34 @@ export default function ReviewComponentVertical({ visible, onClose, sellerId }: 
 
     const handleSendReview = async () => {
         if (!rating || !content.trim()) return;
+
         try {
             setSubmitting(true);
+
+            // Paso 1: Guardar reseña
             await createReview({
                 content,
-                sellerId: sellerId,
+                sellerId,
                 rating,
             });
+
+            // Paso 2: Mandar push si existe token
+            if (seller?.pushToken) {
+                await fetch("https://exp.host/--/api/v2/push/send", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        to: seller.pushToken,
+                        title: "⭐ Nueva reseña",
+                        body: content,
+                    }),
+                });
+            }
+
+            // Limpieza
             setRating(0);
             setComment('');
         } finally {
@@ -43,17 +65,18 @@ export default function ReviewComponentVertical({ visible, onClose, sellerId }: 
         }
     };
 
+
     if (!reviews) return <Loader />;
 
     return (
         <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose} >
-              <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }} keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0} >
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }} keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0} >
                 <View style={styles.modalContainer}>
                     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                         <AntDesign name="close" size={22} color="black" />
                     </TouchableOpacity>
 
-                    
+
 
                     {reviews.length === 0 ? (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -103,7 +126,7 @@ export default function ReviewComponentVertical({ visible, onClose, sellerId }: 
                             </View>
 
                             {/* Campo de texto */}
-                            <TextInput placeholder="Escribe algo sobre tu experiencia..." value={content} onChangeText={setComment} multiline style={ styles.input } placeholderTextColor="#999" />
+                            <TextInput placeholder="Escribe algo sobre tu experiencia..." value={content} onChangeText={setComment} multiline style={styles.input} placeholderTextColor="#999" />
 
                             {/* Botón enviar */}
                             <TouchableOpacity

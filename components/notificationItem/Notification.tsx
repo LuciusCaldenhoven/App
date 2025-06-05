@@ -10,7 +10,7 @@ import { Id } from "@/convex/_generated/dataModel";
 
 const ITEM_HEIGHT = 80;
 const { width } = Dimensions.get("window");
-const SWIPE_THRESHOLD = -width * 0.3;
+const SWIPE_THRESHOLD = -width * 0.15;
 
 interface Notification {
   _id: Id<"notifications">;
@@ -247,7 +247,6 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     gap: 8,
-    
     flexDirection: "row",
     justifyContent: "space-between",
   },

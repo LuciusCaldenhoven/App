@@ -1,13 +1,4 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
-  ImageBackground,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, ImageBackground, Alert, } from "react-native";
 import { useState } from "react";
 import { BlurView } from "expo-blur";
 import { styles } from "@/app/(auth)/auth.styles";

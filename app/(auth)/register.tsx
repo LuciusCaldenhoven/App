@@ -1,17 +1,7 @@
 import { styles } from "@/app/(auth)/auth.styles";
 import { useSignUp } from "@clerk/clerk-expo";
-import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
-  ImageBackground,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, ImageBackground, Alert, } from "react-native";
 import { useState } from "react";
 import { BlurView } from "expo-blur";
 

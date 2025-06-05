@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthenticatedUser } from "./users";
 
+
 export const addReview = mutation({
   args: {
     content: v.string(),
@@ -16,7 +17,7 @@ export const addReview = mutation({
     }
 
     // Verificar si ya dejó una reseña para este producto
-    
+
 
     const reviewId = await ctx.db.insert("reviews", {
       fromUserId: currentUser._id,
@@ -48,8 +49,11 @@ export const addReview = mutation({
       text: args.content,
     });
 
+    
+    
 
     return reviewId;
+    
   },
 });
 

@@ -1,7 +1,20 @@
 import { Tabs } from "expo-router";
-import { COLORS } from "@/constants/theme"
+import { useEffect } from "react";
+import { COLORS } from "@/constants/theme";
 import { Heart, House, MessageCircle, Plus, User } from "lucide-react-native";
+import { usePushRegistration } from "@/lib/usePushRegistration";
+import { useAuth } from "@clerk/clerk-expo";
+
 export default function TabLayout() {
+  const { registerPush } = usePushRegistration();
+  const { isSignedIn } = useAuth();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      registerPush(); // solo si ya estás autenticado
+    }
+  }, [isSignedIn]);
+
   return (
     <Tabs
       screenOptions={{
@@ -11,23 +24,23 @@ export default function TabLayout() {
         tabBarInactiveTintColor: COLORS.black,
         tabBarStyle: {
           position: "absolute",
-          right: 10, // Espaciado para bordes redondeados
-          left: 10,  // Espaciado para bordes redondeados
+          right: 10,
+          left: 10,
           borderTopWidth: 0,
-          elevation: 5, // Sombra en Android
+          elevation: 5,
           height: 90,
-          backgroundColor: COLORS.white, // Fondo blanco
-          borderRadius: 30, // Bordes redondeados
-          shadowColor: "#000", // Sombra en iOS
-          shadowOffset: { width: 0, height: 5 }, // Dirección de la sombra
-          shadowOpacity: 0.25, // Opacidad de la sombra
-          shadowRadius: 5, // Radio de la sombra
+          backgroundColor: COLORS.white,
+          borderRadius: 30,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.25,
+          shadowRadius: 5,
         },
-      tabBarLabelStyle: {
-        fontSize: 9,
-        fontFamily: "Regular",
-      },
-      animation:'shift'
+        tabBarLabelStyle: {
+          fontSize: 9,
+          fontFamily: "Regular",
+        },
+        animation: 'shift',
       }}
     >
       <Tabs.Screen
@@ -39,7 +52,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="favoritos"
         options={{
@@ -49,33 +61,30 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="publicar"
         options={{
           tabBarLabel: "Subir",
           tabBarIcon: ({ color, size }) => (
-            <Plus  size={size } color={color} />
+            <Plus size={size} color={color} />
           ),
         }}
       />
-
       <Tabs.Screen
         name="mensajes"
         options={{
           tabBarLabel: "Mensajes",
           tabBarIcon: ({ color, size }) => (
-            <MessageCircle  size={size} color={color} />
+            <MessageCircle size={size} color={color} />
           ),
         }}
       />
-
       <Tabs.Screen
         name="profile.screen"
         options={{
           tabBarLabel: "Perfil",
           tabBarIcon: ({ color, size }) => (
-            <User  size={size} color={color} />
+            <User size={size} color={color} />
           ),
         }}
       />
