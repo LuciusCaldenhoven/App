@@ -13,11 +13,13 @@ interface ISingleItemProps {
       _id: Id<"users"> | null;
       fullname: string;
       image: string | null;
+      pushToken: string | null;
     };
     seller: {
       _id: Id<"users"> | null;
       fullname: string;
       image: string | null;
+      pushToken: string | null;
     };
     _creationTime: number;
     lastMessage?: string | undefined;

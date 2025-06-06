@@ -12,7 +12,6 @@ import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 import styles from '../chat/chats.styles';
-import { BottomSheet } from '@/components/bottomSheet/BottomSheet';
 import SellerBottomSheet from '@/components/SellerBottomSheet/SellerBottomSheet';
 import LoaderChats from '@/components/loaders/loaderChats';
 
@@ -32,7 +31,7 @@ const ChatPage = () => {
     const isSeller = chat?.seller?._id === currentUser?._id;
     const otherUser = isSeller ? chat?.buyer : chat?.seller;
     const posts = useQuery(api.posts.getPostsByUser, otherUser?._id ? { userId: otherUser._id } : "skip");
-    
+
     const [showBottomSheet, setShowBottomSheet] = useState(false);
 
     useEffect(() => {
@@ -44,25 +43,39 @@ const ChatPage = () => {
     const handleSendMessage = async () => {
         Keyboard.dismiss();
 
-        if (selectedImage) {
-            setUploading(true);
-            const response = await fetch(selectedImage);
-            const blob = await response.blob();
-            
-            await sendMessage({
-                chatId: chatid as Id<'chats'>,
-                content: newMessage,
-            });
-            setSelectedImage(null);
-            setNewMessage('');
-            setUploading(false);
-        } else {
+        if (!newMessage.trim() && !selectedImage) return;
+
+
+
+        try {
             await sendMessage({
                 chatId: chatid as Id<'chats'>,
                 content: newMessage,
                 file: undefined,
             });
+
+            // Enviar push desde el cliente
+            if (otherUser?.pushToken?.startsWith('ExponentPushToken')) {
+                await fetch("https://exp.host/--/api/v2/push/send", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        to: otherUser.pushToken,
+                        title: currentUser?.fullname || "Nuevo mensaje",
+                        body: newMessage,
+                    }),
+                });
+            }
+
             setNewMessage('');
+            setSelectedImage(null);
+        } catch (err) {
+            console.error('Error enviando mensaje o notificación:', err);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -81,6 +94,16 @@ const ChatPage = () => {
     if (!currentUser || !chats || !messages) {
         return <LoaderChats />;
     }
+
+    useEffect(() => {
+        const showSub = Keyboard.addListener('keyboardDidShow', () => {
+            listRef.current?.scrollToEnd({ animated: true });
+        });
+
+        return () => {
+            showSub.remove();
+        };
+    }, []);
 
     return (
         <View style={styles.container}>

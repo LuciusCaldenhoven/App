@@ -79,11 +79,13 @@ export const getChats = query({
             _id: buyer?._id ?? null,
             fullname: buyer?.fullname ?? "Usuario desconocido",
             image: buyer?.image ?? null,
+            pushToken: buyer?.pushToken ?? null,
           },
           seller: {
             _id: seller?._id ?? null,
             fullname: seller?.fullname ?? "Usuario desconocido",
             image: seller?.image ?? null,
+            pushToken: seller?.pushToken ?? null,
           }
         };
       })
