@@ -7,20 +7,19 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F8F8F8',
     },
-    icon:{
+    icon: {
         marginHorizontal: 8,
         marginTop: 23,
     },
     main: {
         flex: 1,
         paddingHorizontal: scale(18),
-        paddingVertical: scale(8),
     },
 
     headerContent: {
         flexDirection: 'row',
         alignItems: 'center',
-       
+
         paddingRight: 115,
     },
     header: {
@@ -47,23 +46,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
     },
-    textInput: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        minHeight: 40,
-        backgroundColor: '#fff',
-        paddingTop: 10,
-    },
-    sendButton: {
-        backgroundColor: '#EEA217',
-        borderRadius: 5,
-        padding: 10,
-        marginLeft: 10,
-        alignSelf: 'flex-end',
-    },
+
     sendButtonText: {
         color: 'white',
         textAlign: 'center',
@@ -101,13 +84,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     sendMessageContainer: {
-        
+
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: scale(8),
+        paddingBottom: 15,
         columnGap: scale(10),
         paddingRight: scale(9),
-        paddingLeft: scale(18),
+        paddingLeft: scale(10),
     },
     image: {
         width: 37,
@@ -123,7 +106,84 @@ const styles = StyleSheet.create({
         color: COLORS.black,
         marginTop: 23,
     },
-    
+    inputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: scale(12),
+        paddingBottom: scale(8),
+    },
+
+    inputBox: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 25,
+        paddingVertical: 8,
+        paddingHorizontal: 5,
+        marginRight: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+
+    textInput: {
+        flex: 1,
+        fontSize: 16,
+        paddingVertical: 4,
+        paddingHorizontal: 4,
+        color: '#000',
+        fontFamily: 'Regular'
+    },
+
+    sendButton: {
+        width: 45,
+        height: 45,
+        borderRadius: 19,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    previewContainer: {
+        width: 200,
+        height: 200,
+        borderRadius: 12,
+        marginVertical: 10,
+        alignSelf: 'flex-start',
+        overflow: 'hidden',
+        position: 'relative',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+
+    previewImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 12,
+    },
+
+    previewCloseButton: {
+        position: 'absolute',
+        top: 5,
+        right: 5,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 12,
+        width: 24,
+        height: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    previewCloseText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
+
 });
 
 export default styles;

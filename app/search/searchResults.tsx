@@ -1,6 +1,6 @@
-import { View, FlatList, Text, TouchableOpacity, Image, ActivityIndicator } from "react-native";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
-import { useQuery } from "convex/react";
+import { View, FlatList, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { usePaginatedQuery } from "convex/react";
 import { styles } from "@/components/search/search.styles";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
@@ -9,11 +9,13 @@ import Post from "@/components/Post";
 import { api } from "@/convex/_generated/api";
 import Filter from "./filter";
 import Search from "@/components/search";
-import Fuse from 'fuse.js';
+import Fuse from "fuse.js";
+
 export default function SearchPage() {
-  const { query, category } = useLocalSearchParams(); // Obtén la categoría de los parámetros
+  const { query, category } = useLocalSearchParams();
   const [searchKey, setSearchKey] = useState(query ? String(query) : "");
   const [filterVisible, setFilterVisible] = useState(false);
+  
   const [filters, setFilters] = useState({
     category: category || "",
     type: "",
@@ -22,49 +24,59 @@ export default function SearchPage() {
     date: "",
   });
 
-  // Consulta los posts filtrados directamente desde Convex
-  const filteredPosts = useQuery(api.posts.getFilteredPosts, {
-    category: Array.isArray(filters.category) ? filters.category.join(",") : filters.category,
-    type: filters.type,
-    condition: filters.condition.join(","),
-    priceRange: filters.priceRange,
-    date: filters.date,
-  });
+  const {
+    results: filteredPosts,
+    loadMore,
+    status,
+    isLoading,
+  } = usePaginatedQuery(
+    api.posts.getFilteredPosts,
+    {
+      category: Array.isArray(filters.category) ? filters.category[0] : filters.category || undefined,
+      type: filters.type || undefined,
+      condition: filters.condition.length > 0 ? filters.condition.join(",") : undefined,
+      priceRange: filters.priceRange,
+      date: filters.date || undefined,
+      // order: filters.order,
+      // location: filters.location,
+    },
+    {
+      initialNumItems: 10,
+    }
+  );
 
-  // Filtrar los resultados de búsqueda por el término de búsqueda
   const searchResults = (() => {
-    if (!filteredPosts) return [];
+    if (!filteredPosts || !Array.isArray(filteredPosts)) return [];
 
     const fuse = new Fuse(filteredPosts, {
-      keys: ['title'],
-      threshold: 0.3, // 0 = muy preciso, 1 = muy flexible
+      keys: ["title"],
+      threshold: 0.3,
     });
 
-    if (!searchKey) return filteredPosts;
-
-    return fuse.search(searchKey).map(res => res.item);
+    return searchKey.trim()
+      ? fuse.search(searchKey).map((res) => res.item)
+      : filteredPosts;
   })();
-
 
   return (
     <View style={styles.container}>
-      {/* Barra de búsqueda y botón de filtros */}
+      {/* Barra superior */}
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
-        <View>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={20} style={{ marginRight: 20, paddingLeft: 20 }} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={20} style={{ marginRight: 20, paddingLeft: 20 }} />
+        </TouchableOpacity>
+
         <View style={{ flex: 1 }}>
           <Search shouldRedirect={false} />
         </View>
+
         <TouchableOpacity onPress={() => setFilterVisible(true)}>
           <FontAwesome6 name="sliders" size={20} style={{ marginHorizontal: 10 }} />
         </TouchableOpacity>
       </View>
 
-      {/* Mostrar estado de carga o resultados */}
-      {filteredPosts === undefined ? (
+      {/* Contenido principal */}
+      {isLoading ? (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <ActivityIndicator size="large" color={COLORS.main} />
         </View>
@@ -75,29 +87,25 @@ export default function SearchPage() {
           data={searchResults}
           numColumns={2}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <Post
-              post={item}
-            />
-          )}
+          renderItem={({ item }) => <Post post={item} />}
+          onEndReached={() => {
+            if (status === "CanLoadMore") loadMore(10);
+          }}
+          onEndReachedThreshold={0.5}
         />
       )}
 
-      {/* Componente de filtros */}
+      {/* Modal de filtros */}
       <Filter
         visible={filterVisible}
         onClose={() => setFilterVisible(false)}
         onApplyFilters={(appliedFilters) => {
-          console.log("Filtros aplicados:", appliedFilters);
           setFilters(appliedFilters);
         }}
       />
     </View>
   );
 }
-
-
-
 
 function NoSearchResults() {
   return (
@@ -108,11 +116,9 @@ function NoSearchResults() {
         color={COLORS.main}
         style={{ marginBottom: 20 }}
       />
-
       <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
         No se encontraron resultados
       </Text>
-
       <Text style={{ fontSize: 16, color: "#888", textAlign: "center" }}>
         Intenta modificar tu búsqueda o revisar los filtros aplicados.
       </Text>

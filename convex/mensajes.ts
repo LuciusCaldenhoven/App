@@ -7,7 +7,7 @@ export const sendMessage = mutation({
   args: {
     content: v.string(),
     chatId: v.id('chats'),
-    file: v.optional(v.string()), // Archivo opcional
+    file: v.optional(v.id("_storage")),  // Archivo opcional
   },
   handler: async (ctx, { content, chatId, file }) => {
     const currentUser = await getAuthenticatedUser(ctx);
@@ -17,7 +17,7 @@ export const sendMessage = mutation({
       chatId,
       senderId: currentUser._id,
       content,
-      file: file || undefined,
+      file,
       createdAt: Date.now(),
     });
 
@@ -54,4 +54,8 @@ export const getMessages = query({
       })
     );
   },
+});
+
+export const generateUploadUrl = mutation(async (ctx) => {
+  return await ctx.storage.generateUploadUrl();
 });

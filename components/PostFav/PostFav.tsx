@@ -56,7 +56,7 @@ export default function PostFav({ post }: PostProps) {
                 source={{ uri: imageUrl }}
                 style={styles.image}
                 contentFit="cover"
-                cachePolicy="none"
+                cachePolicy="memory"
             />
 
             {/* Información */}

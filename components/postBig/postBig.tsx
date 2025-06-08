@@ -17,7 +17,7 @@ export default function PostBig({ post, onPressPost }: { post: any; onPressPost:
         style={styles.imageLarge}
         contentFit="cover"
         transition={200}
-        cachePolicy="none"
+        cachePolicy="memory"
       />
 
       {/* Título del producto */}

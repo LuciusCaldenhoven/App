@@ -45,7 +45,7 @@ export const createStyles = (isHighlighted?: boolean) =>
     },
     name: {
       fontSize: FontSize.FONT_15Px,
-      fontFamily: "Bold",
+      fontFamily: "SemiBold",
       color: COLORS.black,
     },
     message: {

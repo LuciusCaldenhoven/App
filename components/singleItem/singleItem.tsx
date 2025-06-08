@@ -5,6 +5,8 @@ import { Id } from '@/convex/_generated/dataModel';
 import { router } from 'expo-router';
 
 import { Image } from 'expo-image';
+import { format, formatDistanceToNow, isThisWeek, isThisYear, isToday } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface ISingleItemProps {
   chat: {
@@ -26,26 +28,44 @@ interface ISingleItemProps {
     badge?: number;
     lastTime?: number;
   };
-  currentUserId: Id<"users">; // ID del usuario actual
+  currentUserId: Id<"users">;
 }
 
 const SingleItem = ({ chat, currentUserId }: ISingleItemProps) => {
-  
+
   const isSeller = chat.seller._id === currentUserId;
   const otherUser = isSeller ? chat.buyer : chat.seller;
 
   const bool = !!(chat.badge && chat.badge > 0); // Corrige la lógica aquí
   const styles = createStyles(bool);
+
+  function formatearFechaMensaje(timestamp: number): string {
+    const fecha = new Date(timestamp);
+
+    if (isToday(fecha)) {
+      return format(fecha, 'HH:mm'); // 24h, ej: 14:23
+    } else if (isThisWeek(fecha, { weekStartsOn: 1 })) {
+      return format(fecha, 'EEEE', { locale: es }); // ej: martes
+    } else if (isThisYear(fecha)) {
+      return format(fecha, 'dd/MM'); // ej: 05/06
+    } else {
+      return format(fecha, 'dd/MM/yyyy'); // ej: 05/06/2023
+    }
+  }
+
+
+
+
   return (
-    
+
     <TouchableOpacity style={styles.singleItem} onPress={() => router.push({ pathname: "/chat/[chatid]", params: { chatid: chat._id } })}>
       {/* Imagen del otro usuario */}
       <Image
         source={{ uri: otherUser?.image || 'https://via.placeholder.com/150' }}
         style={styles.person}
-        cachePolicy="none"
+        cachePolicy="memory"
       />
-      
+
       {/* Información del mensaje */}
       <View style={styles.messageContainer}>
         <Text numberOfLines={1} style={styles.name}>
@@ -63,9 +83,13 @@ const SingleItem = ({ chat, currentUserId }: ISingleItemProps) => {
             <Text style={styles.badgeText}>{chat.badge}</Text>
           </View>
         )}
-        <Text style={styles.time}>
-          {new Date(chat.lastTime || 0).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </Text>
+        {chat.lastTime && (
+          <Text style={styles.time}>
+            {formatearFechaMensaje(chat.lastTime || 0)}
+          </Text>
+        )}
+
+
       </View>
     </TouchableOpacity>
   );

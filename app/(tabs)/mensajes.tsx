@@ -66,7 +66,7 @@ export default function NotificationsAndMessages() {
             containerStyle={styles.input}
           />
           <FlatList
-            data={chats || []}
+            data={[...(chats || [])].sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0))}
             renderItem={({ item: chat }) =>
               currentUser ? <SingleItem chat={chat} currentUserId={currentUser._id} /> : null
             }

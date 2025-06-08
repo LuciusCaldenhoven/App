@@ -17,13 +17,13 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 
-    title:{
-    fontSize: 28,
-    fontFamily: "SemiBold",
-    color: COLORS.black,
-    paddingTop: 20,
-    paddingHorizontal: scale(18),
-  },
+    title: {
+        fontSize: 28,
+        fontFamily: "SemiBold",
+        color: COLORS.black,
+        paddingTop: 20,
+        paddingHorizontal: scale(18),
+    },
     label: {
         fontSize: 13,
         fontWeight: "600",
@@ -78,5 +78,12 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 4,
-    }
+    },
+    inputSection: {
+        paddingVertical: 17,
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+
+    },
 });

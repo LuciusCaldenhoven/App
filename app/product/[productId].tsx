@@ -213,7 +213,8 @@ function ProductImageItem({ storageId, animatedStyle, }: { storageId: Id<"_stora
                     style={styles.image}
                     contentFit="cover"
                     transition={200}
-                    cachePolicy="none"
+                    cachePolicy="memory"
+
                 />
             </Animated.View>
         </TouchableOpacity>

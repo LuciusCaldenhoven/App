@@ -5,78 +5,155 @@ import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16;
 
+const HEADER_HEIGHT = 160;
 const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: "#F5F5F5",
   },
-  header: {
-    width: '100%',
-    height: 170,
-    backgroundColor: COLORS.white,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 6,
-    zIndex: 999,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
+  containerCarousel: {
+    paddingTop: 20,
+    alignItems: "center",
+  },
+  SectionContainer: {
+    paddingHorizontal: 20,
+    
+    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: 'Medium',
+    color: "#111",
+  },
+
+  iconWrapper2: {
+    alignItems: 'center',
+    backgroundColor: "#F5F5F5",
+    padding: 8,
+    borderRadius: 999,
+    width: 45,
+  },
+
+  item: {
+    width: "100%",
+    height: 160,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
   searchContainer: {
-    paddingHorizontal: 23,
-    paddingBottom: 15,
+    flexDirection: "row",
+    backgroundColor: "#F5F7FA",
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    alignItems: "center",
+
+    marginVertical: 10,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: "#000",
+    fontFamily: 'Regular'
+  },
+
+  iconWrapper: {
+    backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 999,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 2,
+    elevation: 2, // para Android
 
   },
 
-  locationButton: {
-    width: '100%',
-    paddingHorizontal: 16,
-    paddingBottom: 15,
-    alignItems: 'flex-end',
+  topSection: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 60,
+    backgroundColor: "#F5F5F5", // gris claro
+    justifyContent: "flex-end",
+    paddingBottom: 20,
+    zIndex: 10,
+
   },
-  locationButton2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F0F0F0',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
-  locationText: {
-    fontSize: 14,
+  title: {
+   
+    fontSize: 16,
+    color: "#111",
     fontFamily: 'Medium'
   },
-  titulo: {
-    fontFamily: "SemiBold",
-    fontSize: SIZES.xLarge,
-    paddingHorizontal: 8,
+  subtitle: {
+    fontSize: 13,
+    color: "#666",
+    fontFamily: 'Regular'
   },
-  searchBtn: {
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    gap: 10,
-    padding: 20,
-    alignItems: 'center',
-    width: "100%",
-    borderRadius: 30,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
-
-
+  dot: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#007AFF",
   },
-  searchInput: {
-    fontFamily: "Medium",
-    width: "80%",
-    height: "100%",
-    paddingHorizontal: 0,
-    alignSelf: "center",
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    marginTop: -HEADER_HEIGHT / 2,
+    paddingVertical: 20,
+  },
+  scrollText: {
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  HorizontalContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  tab: {
+    backgroundColor: "#F5F7FA",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    marginRight: 10,
+  },
+  activeTab: {
+    backgroundColor: "#041B2D", // azul oscuro
+  },
+  tabText: {
+    fontSize: 14,
+    color: "#222",
+
+    fontFamily: 'Medium'
+  },
+  activeTabText: {
+    color: "#fff",
+    fontWeight: "500",
   },
   slider: {
     width: 300,
@@ -84,10 +161,10 @@ const styles = StyleSheet.create({
 
   },
   sliderContainer: {
-  width: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
-},
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   kmLabel: {
     fontSize: 14,
     color: '#444',
@@ -154,7 +231,10 @@ const styles = StyleSheet.create({
     color: '#444',
     marginTop: 2,
   },
-
+  locationText: {
+    fontSize: 14,
+    fontFamily: 'Medium'
+  },
 
 
 });

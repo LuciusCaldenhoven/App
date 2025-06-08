@@ -79,7 +79,7 @@ export default defineSchema({
         chatId: v.id("chats"),
         senderId: v.id("users"),
         content: v.string(),
-        file: v.optional(v.string()),
+        file: v.optional(v.id("_storage")),
         createdAt: v.number(),
     }).index("by_chat", ["chatId"]),
 

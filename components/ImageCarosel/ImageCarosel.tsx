@@ -126,7 +126,7 @@ function ResolvedImage({ item }: { item: string | Id<"_storage"> }) {
       }}
       contentFit="cover"
       transition={200}
-      cachePolicy="none"
+      cachePolicy="memory"
     />
   );
 }

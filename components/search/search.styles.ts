@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         
         backgroundColor: COLORS.background,
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40 
+        paddingTop: 50
     },
     searchImage: {
         width: 200,

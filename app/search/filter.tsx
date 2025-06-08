@@ -12,17 +12,17 @@ import Button from "@/components/button/component";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { Dropdown } from "react-native-element-dropdown";
 import AnimatedSelectableBox from "@/components/tagSelector/tagSelector";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+
 
 
 type FilterProps = {
   visible: boolean;
   onClose: () => void;
   onApplyFilters: (filters: any) => void;
+  category?: string;
 };
 
-export default function Filter({ visible, onClose, onApplyFilters }: FilterProps) {
+export default function Filter({ visible, onClose, onApplyFilters, category }: FilterProps) {
   const screenWidth = Dimensions.get('window').width;
   const [filters, setFilters] = useState<{
     category: string;
@@ -31,27 +31,23 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
     priceRange: number[];
     date: string;
   }>({
-    category: "",
+    category: category || "",
     type: "",
     condition: [],
     priceRange: [0, 1500],
     date: "",
   });
 
-  // Consulta el número de productos filtrados
-  const productCount = useQuery(api.posts.getFilteredPosts, {
-    ...filters,
-    condition: filters.condition.join(","),
-  });
+
 
   const handleApplyFilters = () => {
     onApplyFilters(filters);
     onClose();
-  };   
+  };
 
   const handleClearAll = () => {
     setFilters({
-      category: "",
+      category: category || "",
       type: "",
       condition: [],
       priceRange: [0, 1500],
@@ -73,7 +69,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
 
 
   return (
-    <Modal visible={visible} animationType="slide"  presentationStyle="pageSheet" onRequestClose={() => {onClose()}} >
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => { onClose() }} >
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.header}>
@@ -83,11 +79,7 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
             </TouchableOpacity>
           </View>
 
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ paddingHorizontal: 16 }}
-            contentContainerStyle={{ paddingBottom: 100 }}
-          >
+          <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 16 }} contentContainerStyle={{ paddingBottom: 100 }} >
             {renderMarginBottom(16)}
             <Text style={styles.label}>Ordenar por</Text>
             {renderMarginBottom(16)}
@@ -215,23 +207,14 @@ export default function Filter({ visible, onClose, onApplyFilters }: FilterProps
             <TouchableOpacity onPress={handleClearAll}>
               <Text style={styles.clearAll}>Limpiar todo</Text>
             </TouchableOpacity>
-            <View>
-              {productCount === undefined ? (
-                <Button
-                  text={`Cargando ...`}
-                  textStyles={styles.btnTextStyle}
-                  buttonStyles={styles.btnContainerStyle}
-                />
-              ) : (
-                <TouchableOpacity onPress={handleApplyFilters}>
-                  <Button
-                    text={`Mostrar ${productCount.length || 0} productos`}
-                    textStyles={styles.btnTextStyle}
-                    buttonStyles={styles.btnContainerStyle}
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
+            <TouchableOpacity onPress={handleApplyFilters}>
+              <Button
+                text="Aplicar filtros"
+                textStyles={styles.btnTextStyle}
+                buttonStyles={styles.btnContainerStyle}
+              />
+            </TouchableOpacity>
+
           </View>
         </View>
       </View>

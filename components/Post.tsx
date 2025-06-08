@@ -12,8 +12,8 @@ type PostProps = {
         tipo: string;
         _id: Id<"posts">;
         userId: Id<"users">;
-        storageId: Id<"_storage">; // ✅ ID de imagen principal
-        imageUrls: Id<"_storage">[]; // ✅ Array de storageId
+        storageId: Id<"_storage">; 
+        imageUrls: Id<"_storage">[]; 
         caption?: string;
         title: string;
         price: number;
@@ -22,12 +22,11 @@ type PostProps = {
         location: string;
         condition: string;
         _creationTime: number;
+        lat: number;
+        lng: number;
         isBookmarked: boolean;
-        author: {
-            _id: string;
-            username: string;
-            image: string;
-        };
+        sold: boolean;
+        
     };
 };
 
@@ -76,7 +75,7 @@ export default function Post({ post }: PostProps) {
                         style={styles.image}
                         contentFit="cover"
                         transition={200}
-                        cachePolicy="none"
+                        cachePolicy="memory"
                     />
                 </View>
                 <View style={styles.details}>

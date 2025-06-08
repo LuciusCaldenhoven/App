@@ -41,12 +41,15 @@ interface SellerInfoProps {
 
 const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
     const [showBottomSheet, setShowBottomSheet] = useState(false);
+    const [textLines, setTextLines] = useState(0);
+
     const posts = useQuery(
         api.posts.getPostsByUser,
         author?._id ? { userId: author._id } : "skip"
     );
     const [showAll, setShowAll] = useState(false);
-    const shouldShowMore = post.caption.length > 250;
+    const shouldShowMore = textLines > 10;
+
 
     return (
         <View style={styles.details}>
@@ -84,9 +87,24 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
             <View style={styles.line} />
             <View style={styles.descriptionWrapper}>
                 <Text style={styles.description}>Descripción</Text>
-                <Text style={styles.descText} numberOfLines={showAll ? undefined : 10} >
-                    {post.caption}
-                </Text>
+                <View>
+                    <Text
+                        style={[styles.descText, { position: 'absolute', opacity: 0, zIndex: -1 }]}
+                        onTextLayout={(e) => setTextLines(e.nativeEvent.lines.length)}
+                    >
+                        {post.caption}
+                    </Text>
+
+                    <Text
+                        style={styles.descText}
+                        numberOfLines={showAll ? undefined : 10}
+                    >
+                        {post.caption}
+                    </Text>
+                </View>
+
+
+
 
                 {shouldShowMore && (
                     <View style={styles.toggleContainer}>
@@ -147,7 +165,7 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
                     fillColor="rgba(0, 102, 204, 0.2)"
                 />
             </MapView>
-            
+
 
 
             <SellerBottomSheet author={author} posts={posts || []} visible={showBottomSheet} onClose={() => setShowBottomSheet(false)} />
@@ -191,7 +209,7 @@ const styles = StyleSheet.create({
         fontFamily: "Regular",
         fontSize: 13,
         color: 'grey',
-        
+
         paddingTop: 2,
     },
     infoTagsRow: {
