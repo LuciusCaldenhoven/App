@@ -63,7 +63,7 @@ export default function Index() {
                 scrollEventThrottle={16}
                 contentContainerStyle={{
                     paddingTop: HEADER_HEIGHT + 230,
-                    paddingBottom: 50,
+                    paddingBottom: 100,
                 }}
             >
                 <View style={styles.scrollContent}>
@@ -93,8 +93,8 @@ export default function Index() {
                     <HorizontalPostSection title="Cine, libros y música" category="Cine, libros y música" />
                 </View>
 
-                {/* <Button title="Ver más" onPress={() => router.push('/screen3/screen3')} />
-                <Button title="Ver más" onPress={() => router.push('/screen3/screen1')} /> */}
+                <Button title="Ver más" onPress={() => router.push('/screen3/screen3')} />
+                <Button title="Ver más" onPress={() => router.push('/screen3/screen1')} />
             </Animated.ScrollView>
 
             <LocationPickerModal

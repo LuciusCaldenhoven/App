@@ -11,10 +11,11 @@ import { Loader } from "../Loader";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import ReviewComponentVertical from "../ReviewComponentVertical/ReviewComponentVertical";
+import { Doc } from "@/convex/_generated/dataModel";
 
 type SellerBottomSheetProps = {
-  author: any;
-  posts: any[];
+  author: Doc<"users">;
+  posts: Doc<"posts">[];
   visible: boolean;
   onClose: () => void;
 };
@@ -27,6 +28,8 @@ export default function SellerBottomSheet({ author, posts, visible, onClose }: S
 
 
   if (!author || !posts) return <Loader />; // Manejo de errores
+  const displayName = (typeof author.fullname === 'string' && author.fullname.length > 0) ? (author.fullname.includes(' ') ? author.fullname.split(' ')[0] : author.fullname) : 'User';
+
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -59,7 +62,7 @@ export default function SellerBottomSheet({ author, posts, visible, onClose }: S
         {/* Información del autor */}
         <View style={styles.card}>
           {author && <Image source={{ uri: author.image }} style={styles.avatar} />}
-          <Text style={styles.textName}>{author && author.fullname.split(" ")[0]}</Text>
+          <Text style={styles.textName}>{displayName}</Text>
           {author.location && (
             <View style={styles.locationContainer}>
               <Ionicons name="location" size={22} color="grey" />
@@ -89,7 +92,7 @@ export default function SellerBottomSheet({ author, posts, visible, onClose }: S
 
         {/* Reseñas */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingRight: 20, marginTop: 24, marginBottom: 12 }}>
-          <Text style={styles.textReview}>Reseñas de {author && author.fullname.split(" ")[0]}</Text>
+          <Text style={styles.textReview}>Reseñas de {displayName}</Text>
           <Pressable onPress={() => setShowAllReviews(true)}>
             <Text style={{ fontSize: 14, color: "#007AFF", fontWeight: "500" }}>Ver más</Text>
           </Pressable >
@@ -101,16 +104,13 @@ export default function SellerBottomSheet({ author, posts, visible, onClose }: S
 
 
         {/* Posts del vendedor */}
-        <Text style={styles.textReview}>Productos de {author && author.fullname.split(" ")[0]}</Text>
+         <Text style={styles.textReview}>Productos de {displayName}</Text>
 
         <FlatList
           data={posts}
           renderItem={({ item }) => (
             <PostBig
-              post={{
-                ...item,
-                author: { username: "Unknown", image: "", _id: "" },
-              }}
+              post={item}
               onPressPost={() => {
                 onClose();
                 router.push(`/product/${item._id}`);

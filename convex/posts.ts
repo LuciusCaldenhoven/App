@@ -2,6 +2,7 @@ import { v, VAny, VFloat64 } from "convex/values";
 import { internalMutation, internalQuery, mutation, MutationCtx, query, action } from "./_generated/server";
 import { api } from "./_generated/api";
 import { getAuthenticatedUser } from "./users";
+import Fuse from "fuse.js";
 
 import { paginationOptsValidator } from "convex/server";
 
@@ -119,32 +120,150 @@ export const getFeedPosts = query({
 
 
 function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371; // Earth radius
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * (Math.PI / 180)) *
-    Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLon / 2) ** 2;
+    const R = 6371; // Earth radius
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) ** 2;
 
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
 export const getFilteredPosts = query({
+    args: {
+        title: v.optional(v.string()),
+        category: v.optional(v.string()),
+        type: v.optional(v.string()),
+        condition: v.optional(v.string()),
+        priceRange: v.optional(v.array(v.number())),
+        date: v.optional(v.string()),
+        order: v.optional(
+            v.union(
+                v.literal("recientes"),
+                v.literal("precio_asc"),
+                v.literal("precio_desc")
+            )
+        ),
+        location: v.optional(
+            v.object({
+                lat: v.number(),
+                lng: v.number(),
+                km: v.number(),
+            })
+        ),
+        paginationOpts: paginationOptsValidator,
+    },
+
+    handler: async (ctx, args) => {
+        const currentUser = await getAuthenticatedUser(ctx);
+        let q = ctx.db.query("posts");
+
+        // Aplicar otros filtros primero
+        if (args.category) {
+            q = q.filter((q) => q.eq(q.field("category"), args.category));
+        }
+
+        if (args.type) {
+            q = q.filter((q) => q.eq(q.field("tipo"), args.type));
+        }
+
+        if (args.condition) {
+            const conditions = args.condition.split(",");
+            q = q.filter((q) =>
+                q.or(...conditions.map((c) => q.eq(q.field("condition"), c)))
+            );
+        }
+
+        if (args.priceRange) {
+            const [min, max] = args.priceRange;
+            q = q.filter((q) =>
+                q.and(q.gte(q.field("price"), min), q.lte(q.field("price"), max))
+            );
+        }
+
+        if (args.date) {
+            const now = Date.now();
+            const days = {
+                "Ultimas 24 horas": 1,
+                "Ultimos 7 dias": 7,
+                "Ultimos 30 dias": 30,
+            }[args.date];
+
+            if (days) {
+                const limit = now - days * 24 * 60 * 60 * 1000;
+                q = q.filter((q) => q.gte(q.field("_creationTime"), limit));
+            }
+        }
+        
+
+        // Obtener los resultados con paginación
+        const { page, isDone, continueCursor } = await q.paginate(args.paginationOpts);
+
+        // Aplicar búsqueda por título usando Fuse.js si hay un título
+        let filteredPage = page;
+        if (args.title) {
+            const fuseOptions = {
+                keys: ['title'],
+                threshold: 0.4, // Ajusta este valor entre 0 y 1 (0 = coincidencia exacta, 1 = coincidencia más flexible)
+                includeScore: true
+            };
+            const fuse = new Fuse(filteredPage, fuseOptions);
+            const searchResults = fuse.search(args.title);
+            filteredPage = searchResults.map(result => result.item);
+        }
+
+        // Filtrar por ubicación si es necesario
+        if (args.location) {
+            const { lat, lng, km } = args.location;
+            filteredPage = filteredPage.filter((post) => {
+                if (post.lat === undefined || post.lng === undefined) return false;
+                return distanceKm(lat, lng, post.lat, post.lng) <= km;
+            });
+        }
+
+        // Enriquecer con información de autor y bookmarks
+        const postsWithInfo = await Promise.all(
+            filteredPage.map(async (post) => {
+                const postAuthor = await ctx.db.get(post.userId);
+                const bookmark = await ctx.db
+                    .query("bookmarks")
+                    .withIndex("by_user_and_post", (q) =>
+                        q.eq("userId", currentUser._id).eq("postId", post._id)
+                    )
+                    .first();
+
+                return {
+                    ...post,
+                    author: {
+                        _id: postAuthor?._id,
+                        username: postAuthor?.username,
+                        image: postAuthor?.image,
+                    },
+                    isBookmarked: !!bookmark,
+                };
+            })
+        );
+
+        return {
+            page: postsWithInfo,
+            isDone,
+            continueCursor,
+        };
+    },
+});
+
+
+export const getFilteredStats = query({
   args: {
+    title: v.optional(v.string()),
     category: v.optional(v.string()),
     type: v.optional(v.string()),
     condition: v.optional(v.string()),
     priceRange: v.optional(v.array(v.number())),
     date: v.optional(v.string()),
-    order: v.optional(
-      v.union(
-        v.literal("recientes"),
-        v.literal("precio_asc"),
-        v.literal("precio_desc")
-      )
-    ),
     location: v.optional(
       v.object({
         lat: v.number(),
@@ -152,15 +271,10 @@ export const getFilteredPosts = query({
         km: v.number(),
       })
     ),
-    paginationOpts: paginationOptsValidator,
   },
-
   handler: async (ctx, args) => {
-    const currentUser = await getAuthenticatedUser(ctx);
-
     let q = ctx.db.query("posts");
 
-    // Filtros
     if (args.category) {
       q = q.filter((q) => q.eq(q.field("category"), args.category));
     }
@@ -190,60 +304,122 @@ export const getFilteredPosts = query({
         "Ultimos 7 dias": 7,
         "Ultimos 30 dias": 30,
       }[args.date];
-
       if (days) {
         const limit = now - days * 24 * 60 * 60 * 1000;
         q = q.filter((q) => q.gte(q.field("_creationTime"), limit));
       }
     }
 
-    // Ordenamiento
-   
+    let posts = await q.collect();
 
-    // Paginado
-    const { page, isDone, continueCursor } = await q.paginate(args.paginationOpts);
-
-    // Filtrado por ubicación
-    let filteredPage = page;
+    if (args.title) {
+      const fuse = new Fuse(posts, {
+        keys: ['title'],
+        threshold: 0.4,
+        includeScore: true
+      });
+      posts = fuse.search(args.title).map(result => result.item);
+    }
 
     if (args.location) {
       const { lat, lng, km } = args.location;
-      filteredPage = page.filter((post) => {
-        if (post.lat === undefined || post.lng === undefined) return false;
-        return distanceKm(lat, lng, post.lat, post.lng) <= km;
-      });
+      posts = posts.filter(post =>
+        post.lat !== undefined &&
+        post.lng !== undefined &&
+        distanceKm(lat, lng, post.lat, post.lng) <= km
+      );
     }
 
-    // Enriquecer con autor y bookmark
-    const postsWithInfo = await Promise.all(
-      filteredPage.map(async (post) => {
-        const postAuthor = await ctx.db.get(post.userId);
-        const bookmark = await ctx.db
-          .query("bookmarks")
-          .withIndex("by_user_and_post", (q) =>
-            q.eq("userId", currentUser._id).eq("postId", post._id)
-          )
-          .first();
+    return {
+      totalPosts: posts.length
+    };
+  }
+});
 
-        return {
-          ...post,
-          author: {
-            _id: postAuthor?._id,
-            username: postAuthor?.username,
-            image: postAuthor?.image,
-          },
-          isBookmarked: !!bookmark,
-        };
+export const getFilteredPrices = query({
+  args: {
+    title: v.optional(v.string()),
+    category: v.optional(v.string()),
+    type: v.optional(v.string()),
+    condition: v.optional(v.string()),
+    priceRange: v.optional(v.array(v.number())),
+    date: v.optional(v.string()),
+    location: v.optional(
+      v.object({
+        lat: v.number(),
+        lng: v.number(),
+        km: v.number(),
       })
-    );
+    ),
+  },
+  handler: async (ctx, args) => {
+    let q = ctx.db.query("posts");
+
+    if (args.category) {
+      q = q.filter((q) => q.eq(q.field("category"), args.category));
+    }
+
+    if (args.type) {
+      q = q.filter((q) => q.eq(q.field("tipo"), args.type));
+    }
+
+    if (args.condition) {
+      const conditions = args.condition.split(",");
+      q = q.filter((q) =>
+        q.or(...conditions.map((c) => q.eq(q.field("condition"), c)))
+      );
+    }
+
+    if (args.priceRange) {
+      const [min, max] = args.priceRange;
+      q = q.filter((q) =>
+        q.and(q.gte(q.field("price"), min), q.lte(q.field("price"), max))
+      );
+    }
+
+    if (args.date) {
+      const now = Date.now();
+      const days = {
+        "Ultimas 24 horas": 1,
+        "Ultimos 7 dias": 7,
+        "Ultimos 30 dias": 30,
+      }[args.date];
+      if (days) {
+        const limit = now - days * 24 * 60 * 60 * 1000;
+        q = q.filter((q) => q.gte(q.field("_creationTime"), limit));
+      }
+    }
+
+    let posts = await q.collect();
+
+    if (args.title) {
+      const fuse = new Fuse(posts, {
+        keys: ['title'],
+        threshold: 0.4,
+        includeScore: true
+      });
+      posts = fuse.search(args.title).map(result => result.item);
+    }
+
+    if (args.location) {
+      const { lat, lng, km } = args.location;
+      posts = posts.filter(post =>
+        post.lat !== undefined &&
+        post.lng !== undefined &&
+        distanceKm(lat, lng, post.lat, post.lng) <= km
+      );
+    }
+
+    const prices = posts.map(post => post.price);
+    const highestPrice = prices.length > 0 ? Math.max(...prices) : 0;
 
     return {
-      page: postsWithInfo,
-      isDone,
-      continueCursor,
+      prices,
+      highestPrice
     };
-  },
+  }
 });
+
 
 export const deletePost = mutation({
     args: { postId: v.id("posts") },

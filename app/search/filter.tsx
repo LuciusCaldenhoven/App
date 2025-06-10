@@ -12,6 +12,8 @@ import Button from "@/components/button/component";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { Dropdown } from "react-native-element-dropdown";
 import AnimatedSelectableBox from "@/components/tagSelector/tagSelector";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 
 
@@ -20,33 +22,61 @@ type FilterProps = {
   onClose: () => void;
   onApplyFilters: (filters: any) => void;
   category?: string;
+  title?: string;
 };
 
-export default function Filter({ visible, onClose, onApplyFilters, category }: FilterProps) {
+export default function Filter({ visible, onClose, onApplyFilters, category, title }: FilterProps) {
   const screenWidth = Dimensions.get('window').width;
   const [filters, setFilters] = useState<{
+    title: string,
     category: string;
     type: string;
     condition: string[];
     priceRange: number[];
     date: string;
   }>({
+    title: title || "",
     category: category || "",
     type: "",
     condition: [],
-    priceRange: [0, 1500],
+    priceRange: [0, 15000],
     date: "",
   });
 
+  const stats = useQuery(api.posts.getFilteredStats, {
+    title: filters.title || undefined,
+    category: filters.category || undefined,
+    type: filters.type || undefined,
+    condition: filters.condition.length > 0 ? filters.condition.join(",") : undefined,
+    priceRange: filters.priceRange,
+    date: filters.date || undefined,
+    location: undefined,
+  });
 
+  const prices = useQuery(api.posts.getFilteredPrices, {
+    title: filters.title || undefined,
+    category: filters.category || undefined,
+    type: filters.type || undefined,
+    condition: filters.condition.length > 0 ? filters.condition.join(",") : undefined,
+    priceRange: filters.priceRange,
+    date: filters.date || undefined,
+    location: undefined,
+  });
 
+  console.log(`Total posts: ${stats?.totalPosts}`);
+  console.log(`Highest price: ${prices?.highestPrice}`);
+  console.log(`Highest price: ${prices?.prices}`);
+
+  
   const handleApplyFilters = () => {
     onApplyFilters(filters);
     onClose();
+    
   };
 
   const handleClearAll = () => {
     setFilters({
+      title: title || "",
       category: category || "",
       type: "",
       condition: [],
@@ -80,7 +110,7 @@ export default function Filter({ visible, onClose, onApplyFilters, category }: F
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 16 }} contentContainerStyle={{ paddingBottom: 100 }} >
-            {renderMarginBottom(16)}
+            {/* {renderMarginBottom(16)}
             <Text style={styles.label}>Ordenar por</Text>
             {renderMarginBottom(16)}
             <Dropdown
@@ -109,20 +139,16 @@ export default function Filter({ visible, onClose, onApplyFilters, category }: F
                   <Text style={styles.itemText}>{item.label}</Text>
                 </View>
               )}
-            />
+            /> */}
             {renderMarginBottom(16)}
             <TabSwitcher
               title="Tipos"
               data={exportData.data}
               onPress={(selectedType) => {
-                console.log("Tipo seleccionado:", selectedType);
                 setFilters((prev) => ({ ...prev, type: String(selectedType) }));
               }}
             />
-
-            {renderBorderBottom(0)}
-            {renderMarginBottom(16)}
-
+            <View style={styles.line} />
             <View style={styles.frsb}>
               <Text style={styles.text}>Rango de precio</Text>
             </View>

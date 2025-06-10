@@ -2,10 +2,16 @@ import { styles } from "@/components/postBig/postBig.styles";
 import { TouchableOpacity, Text } from "react-native";
 import { Image } from "expo-image";
 import { useQuery } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 
-export default function PostBig({ post, onPressPost }: { post: any; onPressPost: () => void }) {
+interface PostBigProps {
+  post: Doc<"posts">;
+  onPressPost: () => void;
+}
+
+
+export default function PostBig({ post, onPressPost }: PostBigProps) {
   const imageUrl = useQuery(api.posts.getImageUrl, {
             storageId: post.storageId,
         });

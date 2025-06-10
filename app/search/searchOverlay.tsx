@@ -32,7 +32,7 @@ export default function SearchOverlay() {
       ]);
       router.push({
         pathname: "/search/searchResults",
-        params: { query: newSearch },
+        params: { title: newSearch },
       });
     }
   };
@@ -87,8 +87,8 @@ export default function SearchOverlay() {
             <TouchableOpacity
               key={item.id}
               style={styles.itemContainer}
-              onPress={() => router.push(`/search/searchResults?category=${item.title}`)}
-            >
+              onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: item.title }, }) } >
+                
               <Image source={item.icon} style={styles.icon} />
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>
@@ -102,8 +102,7 @@ export default function SearchOverlay() {
             <TouchableOpacity
               key={item.id}
               style={styles.itemContainer}
-              onPress={() => router.push(`/search/searchResults?category=${item.title}`)}
-            >
+              onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: item.title }, }) } >
               <Image source={item.icon} style={styles.icon} />
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>

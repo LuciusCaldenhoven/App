@@ -1,22 +1,22 @@
-import { View, FlatList, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, FlatList, Text, TouchableOpacity, ActivityIndicator, TextInput } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { usePaginatedQuery } from "convex/react";
-import { styles } from "@/components/search/search.styles";
+
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { useState } from "react";
 import Post from "@/components/Post";
 import { api } from "@/convex/_generated/api";
 import Filter from "./filter";
-import Search from "@/components/search";
-import Fuse from "fuse.js";
+import SearchBar from "@/components/SearchBar";
+
 
 export default function SearchPage() {
-  const { query, category } = useLocalSearchParams();
-  const [searchKey, setSearchKey] = useState(query ? String(query) : "");
+  const { title, category } = useLocalSearchParams();
   const [filterVisible, setFilterVisible] = useState(false);
-  
+
   const [filters, setFilters] = useState({
+    title: title || "",
     category: category || "",
     type: "",
     condition: [],
@@ -32,6 +32,7 @@ export default function SearchPage() {
   } = usePaginatedQuery(
     api.posts.getFilteredPosts,
     {
+      title: Array.isArray(filters.title) ? filters.title[0] : filters.title || undefined,
       category: Array.isArray(filters.category) ? filters.category[0] : filters.category || undefined,
       type: filters.type || undefined,
       condition: filters.condition.length > 0 ? filters.condition.join(",") : undefined,
@@ -45,21 +46,9 @@ export default function SearchPage() {
     }
   );
 
-  const searchResults = (() => {
-    if (!filteredPosts || !Array.isArray(filteredPosts)) return [];
-
-    const fuse = new Fuse(filteredPosts, {
-      keys: ["title"],
-      threshold: 0.3,
-    });
-
-    return searchKey.trim()
-      ? fuse.search(searchKey).map((res) => res.item)
-      : filteredPosts;
-  })();
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: COLORS.background, paddingTop: 50 }}>
       {/* Barra superior */}
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
         <TouchableOpacity onPress={() => router.back()}>
@@ -67,8 +56,17 @@ export default function SearchPage() {
         </TouchableOpacity>
 
         <View style={{ flex: 1 }}>
-          <Search shouldRedirect={false} />
+          <SearchBar
+            initialQuery={Array.isArray(filters.title) ? filters.title[0] : filters.title}
+            onSearch={(newTitle) =>
+              setFilters((prev) => ({
+                ...prev,
+                title: newTitle,
+              }))
+            }
+          />
         </View>
+
 
         <TouchableOpacity onPress={() => setFilterVisible(true)}>
           <FontAwesome6 name="sliders" size={20} style={{ marginHorizontal: 10 }} />
@@ -80,11 +78,11 @@ export default function SearchPage() {
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <ActivityIndicator size="large" color={COLORS.main} />
         </View>
-      ) : searchResults.length === 0 ? (
+      ) : filteredPosts.length === 0 ? (
         <NoSearchResults />
       ) : (
         <FlatList
-          data={searchResults}
+          data={filteredPosts}
           numColumns={2}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <Post post={item} />}
@@ -99,9 +97,8 @@ export default function SearchPage() {
       <Filter
         visible={filterVisible}
         onClose={() => setFilterVisible(false)}
-        onApplyFilters={(appliedFilters) => {
-          setFilters(appliedFilters);
-        }}
+        onApplyFilters={(appliedFilters) => { setFilters(appliedFilters); }}
+        title={Array.isArray(title) ? title[0] : title}
       />
     </View>
   );

@@ -5,7 +5,7 @@ import { COLORS, SIZES } from "@/constants/theme";
 import SellerBottomSheet from "../SellerBottomSheet/SellerBottomSheet";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { scale } from "@/constants/scale";
 import MapView, { Circle, Marker } from "react-native-maps";
 import { formatDistanceToNow } from "date-fns";
@@ -13,30 +13,8 @@ import { es } from "date-fns/locale";
 import DiscountInfo from "../DiscountInfo/DiscountInfo ";
 
 interface SellerInfoProps {
-    author: {
-        _id: Id<"users">;
-        fullname: string;
-        image: string;
-        bio?: string;
-        posts: number;
-        averageRating: number;
-        reviewCount: number;
-        phone?: string;
-        location?: string;
-    };
-    post: {
-        caption: string;
-        condition: string;
-        location: string;
-        category: string;
-        currency: string;
-        price: number;
-        title: string;
-        lat: number;
-        lng: number;
-        tipo: string;
-        _creationTime: number;
-    };
+    author: Doc<"users">;
+    post: Doc<"posts"> & { isBookmarked: boolean };
 }
 
 const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {

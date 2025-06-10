@@ -42,7 +42,6 @@ export default defineSchema({
 
 
 
-
     notifications: defineTable({
         receiverId: v.id("users"),
         senderId: v.optional(v.id("users")),
