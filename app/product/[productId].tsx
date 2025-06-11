@@ -13,6 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
 import LoaderPosts from "@/components/loaders/loaderPosts";
+import LoaderProductDetail from "@/components/loaders/loaderPosts";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -121,7 +122,7 @@ export default function ProductDetail() {
     };
 
     if (!post || !author || !currentUser) {
-        return <Loader />;
+        return <LoaderProductDetail />;
     }
 
     const allImageIds = [post.storageId, ...post.imageUrls];

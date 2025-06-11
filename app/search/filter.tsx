@@ -1,20 +1,19 @@
 // app/search/filter.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, ScrollView, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/filter.styles";
 import { COLORS, SIZES } from "@/constants/theme";
 import TabSwitcher from "@/components/tabSwitcher/component";
 import { renderBorderBottom, renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
-import InputComponent from "@/components/input/component";
 import exportData from "./filter.data";
 import Button from "@/components/button/component";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import { Dropdown } from "react-native-element-dropdown";
 import AnimatedSelectableBox from "@/components/tagSelector/tagSelector";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
+import PriceRangeInput from "@/components/PriceRangeInput";
+import WaveDotsLoader from "@/components/loaders/WaveDotsLoader";
 
 
 type FilterProps = {
@@ -27,6 +26,10 @@ type FilterProps = {
 
 export default function Filter({ visible, onClose, onApplyFilters, category, title }: FilterProps) {
   const screenWidth = Dimensions.get('window').width;
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [highestPrice, setHighestPrice] = useState<number | null>(null);
+
+
   const [filters, setFilters] = useState<{
     title: string,
     category: string;
@@ -53,25 +56,37 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
     location: undefined,
   });
 
-  const prices = useQuery(api.posts.getFilteredPrices, {
-    title: filters.title || undefined,
-    category: filters.category || undefined,
-    type: filters.type || undefined,
-    condition: filters.condition.length > 0 ? filters.condition.join(",") : undefined,
-    priceRange: filters.priceRange,
-    date: filters.date || undefined,
-    location: undefined,
+
+  const filteredPrices = useQuery(api.posts.getFilteredPrices, {
+    title: title || undefined,
+    category: category || undefined,
   });
 
-  console.log(`Total posts: ${stats?.totalPosts}`);
-  console.log(`Highest price: ${prices?.highestPrice}`);
-  console.log(`Highest price: ${prices?.prices}`);
+  useEffect(() => {
+    if (visible && filteredPrices) {
+      setHighestPrice(filteredPrices.highestPrice || 0);
+    }
+  }, [visible, filteredPrices]);
 
-  
+  useEffect(() => {
+    if (
+      visible &&
+      highestPrice !== null &&
+      filters.priceRange[1] === 15000
+    ) {
+      setFilters((prev) => ({
+        ...prev,
+        priceRange: [prev.priceRange[0], highestPrice],
+      }));
+    }
+  }, [highestPrice, visible]);
+
+
+
   const handleApplyFilters = () => {
     onApplyFilters(filters);
     onClose();
-    
+
   };
 
   const handleClearAll = () => {
@@ -97,9 +112,8 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
 
 
 
-
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => { onClose() }} >
+    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => { onClose() }} >
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.header}>
@@ -109,125 +123,98 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
             </TouchableOpacity>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 16 }} contentContainerStyle={{ paddingBottom: 100 }} >
-            {/* {renderMarginBottom(16)}
-            <Text style={styles.label}>Ordenar por</Text>
-            {renderMarginBottom(16)}
-            <Dropdown
-              data={exportData.ordenarPorData}
-              labelField="label"
-              valueField="value"
-              value={filters.type}
-              onChange={(item) =>
-                setFilters((prev) => ({ ...prev, type: item.value }))
-              }
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholder}
-              selectedTextStyle={styles.selectedText}
-              containerStyle={styles.dropdownContainer}
-              itemTextStyle={styles.itemText}
-              renderRightIcon={() => (
-                <Ionicons name="chevron-down" size={20} color={COLORS.primary} />
-              )}
-              renderItem={(item, selected) => (
-                <View
-                  style={[
-                    styles.item,
-                    selected ? styles.itemSelected : null,
-                  ]}
-                >
-                  <Text style={styles.itemText}>{item.label}</Text>
-                </View>
-              )}
-            /> */}
-            {renderMarginBottom(16)}
-            <TabSwitcher
-              title="Tipos"
-              data={exportData.data}
-              onPress={(selectedType) => {
-                setFilters((prev) => ({ ...prev, type: String(selectedType) }));
-              }}
-            />
-            <View style={styles.line} />
-            <View style={styles.frsb}>
-              <Text style={styles.text}>Rango de precio</Text>
-            </View>
-            <View style={{ paddingHorizontal: 25 }}>
-              <MultiSlider
-                values={filters.priceRange}
-                min={0}
-                max={1500}
-                step={1}
-                sliderLength={screenWidth - 85}
-                onValuesChange={(values) =>
-                  setFilters((prev) => ({ ...prev, priceRange: values }))
-                }
-                selectedStyle={{ backgroundColor: COLORS.black }}
-                unselectedStyle={{ backgroundColor: '#ddd' }}
-                markerStyle={{ backgroundColor: COLORS.white }}
-              />
-            </View>
+          <ScrollView scrollEnabled={scrollEnabled} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 16 }} contentContainerStyle={{ paddingBottom: 100 }} >
 
-            <View style={styles.frsb}>
-              <InputComponent
-                keyboardType="numeric"
-                value={filters.priceRange[0].toString()}
-                onChangeText={(e) => {
-                  const value = Number(e);
-                  if (!isNaN(value)) setFilters((prev) => ({ ...prev, priceRange: [value, prev.priceRange[1]] }));
+
+
+            <View style={styles.box}>
+              <TabSwitcher
+                title="Tipos"
+                data={exportData.data}
+                onPress={(selectedType) => {
+                  setFilters((prev) => ({ ...prev, type: String(selectedType) }));
                 }}
-                placeholder="Mínimo"
-                containerStyle={styles.inputContainer}
-              />
-
-              <InputComponent
-                keyboardType="numeric"
-                value={filters.priceRange[1].toString()}
-                onChangeText={(e) => {
-                  const value = Number(e);
-                  if (!isNaN(value)) setFilters((prev) => ({ ...prev, priceRange: [prev.priceRange[0], value] }));
-                }}
-                placeholder="Máximo"
-                containerStyle={styles.inputContainer}
               />
             </View>
+            <View style={styles.box}>
+              <View style={styles.frsb}>
+                <Text style={styles.text}>Rango de precio</Text>
+              </View>
 
-            {renderMarginTop(16)}
-            {renderBorderBottom(10)}
-            {renderMarginBottom(16)}
+              <View style={{ padding: 25, alignItems: 'center' }}>
+                <MultiSlider
+                  values={filters.priceRange}
+                  min={0}
+                  max={highestPrice || 2000}
+                  step={1}
+                  sliderLength={screenWidth - 85}
+                  onValuesChange={(values) =>
+                    setFilters((prev) => ({ ...prev, priceRange: values }))
+                  }
+                  onValuesChangeStart={() => setScrollEnabled(false)}
+                  onValuesChangeFinish={() => setScrollEnabled(true)}
 
-            <View style={styles.frsb}>
-              <Text style={styles.text}>Condicion</Text>
-            </View>
+                  selectedStyle={{ backgroundColor: COLORS.black }}
+                  unselectedStyle={{ backgroundColor: '#ddd' }}
+                  markerStyle={styles.mark}
+                  pressedMarkerStyle={styles.pressed}
+                  touchDimensions={{
+                    height: 600,
+                    width: 600,
+                    borderRadius: 300,
+                    slipDisplacement: 1000,
+                  }}
 
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 16 }}>
-              {exportData.condicionData.map((item) => (
-                <AnimatedSelectableBox
-                  key={item.id}
-                  label={item.label}
-                  isSelected={filters.condition.includes(item.value)}
-                  onToggle={() => toggleSeleccion(item.value)}
                 />
-              ))}
-            </View>
-            <View style={styles.frsb}>
-              <Text style={styles.text}>Fecha de publicacion</Text>
-            </View>
 
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 16 }}>
-              {exportData.fecha.map((item) => (
-                <AnimatedSelectableBox
-                  key={item.id}
-                  label={item.label}
-                  isSelected={filters.date === item.value}
-                  onToggle={() => setFilters((prev) => ({ ...prev, date: item.value }))}
+              </View>
+              <View style={styles.frsb}>
+                <PriceRangeInput
+                  value={[filters.priceRange[0] ?? 0, filters.priceRange[1] ?? 0]}
+                  onChange={(range) =>
+                    setFilters((prev) => ({ ...prev, priceRange: [range[0], range[1]] }))
+                  }
                 />
-              ))}
+              </View>
             </View>
 
+            <View style={styles.box}>
+              <View style={styles.frsb}>
+                <Text style={styles.text}>Condicion</Text>
+              </View>
+
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingVertical: 16 }}>
+                {exportData.condicionData.map((item) => (
+                  <AnimatedSelectableBox
+                    key={item.id}
+                    label={item.label}
+                    isSelected={filters.condition.includes(item.value)}
+                    onToggle={() => toggleSeleccion(item.value)}
+                  />
+                ))}
+              </View>
+            </View>
+            <View style={styles.box}>
+              <View style={styles.frsb}>
+                <Text style={styles.text}>Fecha de publicacion</Text>
+              </View>
+
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingVertical: 14 }}>
+                {exportData.fecha.map((item) => (
+                  <AnimatedSelectableBox
+                    key={item.id}
+                    label={item.label}
+                    isSelected={filters.date === item.value}
+                    onToggle={() => setFilters((prev) => ({ ...prev, date: item.value }))}
+                  />
+                ))}
+              </View>
+            </View>
 
           </ScrollView>
         </View>
+
+
         <View style={styles.footer}>
           <View style={styles.frsb}>
             <TouchableOpacity onPress={handleClearAll}>
@@ -235,7 +222,18 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
             </TouchableOpacity>
             <TouchableOpacity onPress={handleApplyFilters}>
               <Button
-                text="Aplicar filtros"
+                text={
+                  stats?.totalPosts !== undefined
+                    ? `Mostrar ${stats.totalPosts} productos`
+                    : ""
+                }
+                component={
+                  stats?.totalPosts === undefined ? (
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 20 }}>
+                      <WaveDotsLoader />
+                    </View>
+                  ) : undefined
+                }
                 textStyles={styles.btnTextStyle}
                 buttonStyles={styles.btnContainerStyle}
               />
@@ -243,8 +241,8 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
 
           </View>
         </View>
-      </View>
-    </Modal>
+      </View >
+    </Modal >
   );
 }
 

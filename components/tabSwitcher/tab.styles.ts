@@ -1,53 +1,65 @@
 import { COLORS, SIZES, } from "@/constants/theme";
 import { Dimensions, Platform, StyleSheet } from "react-native";
-import {scale} from '@/constants/scale';
+import { scale } from '@/constants/scale';
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16; // 🔹 Ajusta el ancho de los posts en una vista de dos columnas
 
 
 export const styles = StyleSheet.create({
-    
-    typeView: {
-      paddingVertical: scale(12),
-    },
-    tabContainer: {
-      
-      flexDirection: 'row',
-      columnGap: scale(12),
-      justifyContent: 'space-between',
-      borderWidth: 1,
-      borderColor: COLORS.btnBorder,
-      marginVertical: scale(12),
-      borderRadius : scale(30),
-    },
-    
-    tab: {
-      paddingHorizontal: scale(20),
-      paddingVertical: scale(12),
-      borderRadius : scale(30),
-    },
-    activeTab: {
-      backgroundColor: COLORS.main,
-    },
 
-    tabText: {
-      fontSize: SIZES.small + 2,
-      color: COLORS.black,
-      fontFamily: "Medium",
-    },
-    text: {
-      fontFamily: "Medium",
-      fontSize: SIZES.medium + 4,
-      color : COLORS.black,
-    },
-    contentContainerStyle: {
-      justifyContent: 'space-between',
-      flex : 1,
-    },
-    tabTextActive: {
-      color: COLORS.white,
-    }
-    
-  });
-  
+  typeView: {
+    marginVertical: 10,
+
+  },
+  text: {
+    fontSize: 22,
+    fontFamily: "Medium",
+    marginBottom: 8,
+
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    position: 'relative',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    overflow: 'hidden',
+    backgroundColor: '#fff', // blanco, sin gris
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  tabText: {
+    color: '#444',
+    fontSize: 15,
+    fontFamily: "Medium"
+  },
+  tabTextActive: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  indicator: {
+    position: 'absolute',
+    top: 2,
+    bottom: 2,
+    backgroundColor: '#000',
+    borderRadius: 10,
+    marginHorizontal: 2,
+    zIndex: 0,
+  },
+  divider: {
+    width: 1.5,
+    backgroundColor: '#ccc',
+    opacity: 0.7,
+    alignSelf: 'center',
+    height: '80%',
+  },
+
+
+
+});

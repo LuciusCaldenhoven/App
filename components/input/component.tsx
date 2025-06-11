@@ -18,7 +18,7 @@ const InputComponent = ({
   leftAction,
 }: IInputProps) => {
   const styles = createStyles();
-  const {eye} = assets;
+  
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -33,11 +33,7 @@ const InputComponent = ({
         onChangeText={onChangeText}
         keyboardType={keyboardType}
       />
-      {isSecure && (
-        <Pressable onPress={onSecurePress}>
-          <Image source={eye} style={styles.eye} resizeMode="contain" />
-        </Pressable>
-      )}
+      
     </View>
   );
 };

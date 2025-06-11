@@ -9,6 +9,7 @@ import Post from "@/components/Post";
 import { api } from "@/convex/_generated/api";
 import Filter from "./filter";
 import SearchBar from "@/components/SearchBar";
+import ProductSkeleton from "@/components/loaders/ProductSkeleton";
 
 
 export default function SearchPage() {
@@ -75,9 +76,14 @@ export default function SearchPage() {
 
       {/* Contenido principal */}
       {isLoading ? (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <ActivityIndicator size="large" color={COLORS.main} />
-        </View>
+        <FlatList
+          data={Array.from({ length: 8 })}
+          numColumns={2}
+          keyExtractor={(_, index) => `skeleton-${index}`}
+          renderItem={() => <ProductSkeleton />}
+          columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: 12, marginBottom: 16 }}
+          contentContainerStyle={{ paddingTop: 20 }}
+        />
       ) : filteredPosts.length === 0 ? (
         <NoSearchResults />
       ) : (

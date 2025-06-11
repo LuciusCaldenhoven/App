@@ -6,44 +6,54 @@ import { api } from "@/convex/_generated/api";
 import Post from "@/components/Post";
 import styles from "@/styles/feed.styles";
 import { router } from "expo-router";
+import ProductSkeleton from "../loaders/ProductSkeleton";
 
 type Props = {
   title: string;
-  category: string; 
+  category: string;
   initialItems?: number;
 };
 
 const HorizontalPostSection = ({ title, category = "", initialItems = 8 }: Props) => {
   const {
-      results: filteredPosts,
-      loadMore,
-      status,
-      isLoading,
-    } = usePaginatedQuery(
-      api.posts.getFilteredPosts, {category: category}, { initialNumItems: initialItems });
+    results: filteredPosts,
+    loadMore,
+    status,
+    isLoading,
+  } = usePaginatedQuery(
+    api.posts.getFilteredPosts, { category: category }, { initialNumItems: initialItems });
 
 
-  if (filteredPosts.length === 0) return null;
+
 
   return (
     <View>
       <View style={styles.SectionContainer}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity style={styles.iconWrapper2} onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: category }, }) } >
+        <TouchableOpacity style={styles.iconWrapper2} onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: category }, })} >
 
           <Ionicons name="chevron-forward" size={18} color="#111" />
         </TouchableOpacity>
       </View>
 
       <FlatList
-        data={filteredPosts}
+        data={isLoading ? Array.from({ length: 4 }) : filteredPosts}
         horizontal
-        renderItem={({ item }) => <Post post={item} />}
-        keyExtractor={(item) => item._id}
+        renderItem={({ item, index }) => {
+          if (isLoading) {
+            return <ProductSkeleton key={index} />;
+          }
+
+          // Asegura que item tiene el tipo correcto
+          return <Post post={item as any} />;
+        }}
+        keyExtractor={(item, index) =>
+          isLoading ? `skeleton-${index}` : (item as any)._id
+        }
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 12, gap: 12 }}
         ListFooterComponent={
-          status === "CanLoadMore" ? (
+          !isLoading && status === "CanLoadMore" ? (
             <TouchableOpacity
               onPress={() => loadMore(initialItems)}
               style={{
@@ -64,6 +74,7 @@ const HorizontalPostSection = ({ title, category = "", initialItems = 8 }: Props
           ) : null
         }
       />
+
     </View>
   );
 };

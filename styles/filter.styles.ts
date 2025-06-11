@@ -1,82 +1,49 @@
-import { COLORS, FontSize, SIZES, } from "@/constants/theme";
-import { Dimensions, Platform, StyleSheet } from "react-native";
-import { scale } from '@/constants/scale';
+import { StyleSheet, Dimensions } from "react-native";
+import { COLORS, FontSize, SIZES } from "@/constants/theme";
+import { scale } from "@/constants/scale";
 
 const { width } = Dimensions.get("window");
-const ITEM_WIDTH = width / 2 - 16; // 🔹 Ajusta el ancho de los posts en una vista de dos columnas
-
 
 export const styles = StyleSheet.create({
+  // --- Layout base del modal ---
   overlay: {
     flex: 1,
-    backgroundColor: COLORS.red,
+    backgroundColor: '#F4F4F8',
     justifyContent: "flex-end",
+    paddingTop: 30,
   },
   sheet: {
-    
-
     maxHeight: "100%",
   },
+
+  // --- Header del modal ---
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.2,
-    borderBottomColor: COLORS.gray,
+    paddingTop: 20,
+    paddingBottom: 10,
   },
-  line: {
-    marginVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.btnBorder,
-    
-  },
-    title: {
+  title: {
     flex: 1,
     textAlign: "center",
-    fontSize: 18,
-    fontFamily: "Medium",
+    fontSize: 21,
+    fontFamily: "SemiBold",
     color: "black",
     paddingLeft: 30,
   },
   closeButton: {
-    paddingLeft: 5,
+    paddingRight: 10,
   },
 
-  option: {
-    paddingHorizontal: SIZES.medium,
-
-
-  },
-  applyBtn: {
-    marginTop: 20,
-    backgroundColor: COLORS.black,
-    padding: 12,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  applyBtnText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  text: {
-    fontFamily: "Medium",
-    fontSize: SIZES.medium + 4,
-    color: COLORS.black,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: COLORS.grey,
-    marginHorizontal: 2,
-    marginTop: 8,
-
-    opacity: 0.9,
-  },
-  slider: {
-    width: '100%',
-    height: scale(40),
+  // --- Contenedores ---
+  box: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 20,
   },
   frsb: {
     flexDirection: 'row',
@@ -84,9 +51,43 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     columnGap: scale(12),
   },
+
+  // --- Texto y etiquetas ---
+  text: {
+    fontFamily: "Medium",
+    fontSize: SIZES.medium + 4,
+    color: COLORS.black,
+  },
+  label: {
+    fontFamily: "Medium",
+    fontSize: SIZES.medium + 4,
+    color: COLORS.black,
+  },
+
+  // --- Input personalizado ---
   inputContainer: {
     flex: 1,
   },
+
+  // --- Slider ---
+  mark: {
+    height: 26,
+    width: 26,
+    borderRadius: 13,
+    borderColor: COLORS.black,
+    borderWidth: 2,
+    backgroundColor: COLORS.white,
+  },
+  pressed: {
+    height: 32,
+    width: 32,
+    borderRadius: 16,
+    borderColor: COLORS.black,
+    borderWidth: 2,
+    backgroundColor: COLORS.white,
+  },
+
+  // --- Tab Switcher estilos externos ---
   tabContainerStyle: {
     borderWidth: 1,
   },
@@ -99,26 +100,33 @@ export const styles = StyleSheet.create({
     fontFamily: "Medium",
     fontSize: FontSize.FONT_12Px,
   },
+
+  // --- Botones ---
+  btnContainerStyle: {
+ 
+    height: 48,
+    width: 170,
+    backgroundColor: COLORS.main,
+    borderRadius: scale(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+
+  },
+  btnTextStyle: {
+    fontSize: FontSize.FONT_12Px,
+    fontFamily: "SemiBold",
+    color: COLORS.white,
+    width: 135,
+    height: 23,
+    textAlign: "center",
+  },
   clearAll: {
     color: COLORS.black,
     fontSize: 14,
     fontFamily: "Medium",
   },
 
-  btnContainerStyle: {
-    paddingVertical: 16,
-    paddingHorizontal: scale(12),
-    backgroundColor: COLORS.main,
-    borderRadius: scale(10),
-  },
-
-  btnTextStyle: {
-    fontSize: FontSize.FONT_12Px,
-    fontFamily: "SemiBold",
-    color: COLORS.white,
-    width: 135,
-    textAlign: "center",
-  },
+  // --- Footer ---
   footer: {
     position: "absolute",
     height: 100,
@@ -131,52 +139,4 @@ export const styles = StyleSheet.create({
     borderTopColor: COLORS.grey,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
-  label: {
-
-    fontFamily: "Medium",
-    fontSize: SIZES.medium + 4,
-    color: COLORS.black,
-
-  },
-  dropdown: {
-    height: 50,
-    borderWidth: 1.5,
-    borderColor: COLORS.primary,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-  },
-  placeholder: {
-    fontSize: 14,
-    color: "#aaa",
-  },
-  selectedText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#222",
-  },
-  dropdownContainer: {
-    borderRadius: 10,
-    paddingVertical: 4,
-    backgroundColor: "#fff",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  item: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  itemSelected: {
-    backgroundColor: "#f0f0f0",
-  },
-  itemText: {
-    fontSize: 14,
-    color: "#333",
-  },
-
-
 });
