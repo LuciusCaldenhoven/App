@@ -65,7 +65,7 @@ export default function SearchPage() {
 
             {isLoading ? (
                 <FlatList
-                    data={Array.from({ length: 8 })} 
+                    data={Array.from({ length: 8 })}
                     numColumns={2}
                     keyExtractor={(_, index) => `skeleton-${index}`}
                     renderItem={() => <ProductSkeleton />}
@@ -83,7 +83,9 @@ export default function SearchPage() {
                     onEndReached={() => {
                         if (status === "CanLoadMore") loadMore(10);
                     }}
+                    columnWrapperStyle={{ justifyContent: "space-between", }}
                     onEndReachedThreshold={0.5}
+                    contentContainerStyle={{ paddingHorizontal: 12, }}
                 />
             )}
 

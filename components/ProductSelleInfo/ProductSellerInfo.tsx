@@ -21,10 +21,7 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
     const [showBottomSheet, setShowBottomSheet] = useState(false);
     const [textLines, setTextLines] = useState(0);
 
-    const posts = useQuery(
-        api.posts.getPostsByUser,
-        author?._id ? { userId: author._id } : "skip"
-    );
+    const posts = useQuery( api.posts.getPostsByUser, author?._id ? { userId: author._id } : "skip" );
     const [showAll, setShowAll] = useState(false);
     const shouldShowMore = textLines > 10;
 

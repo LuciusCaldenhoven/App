@@ -12,6 +12,10 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import ReviewComponentVertical from "../ReviewComponentVertical/ReviewComponentVertical";
 import { Doc } from "@/convex/_generated/dataModel";
+import { EllipsisVertical, MapPin } from "lucide-react-native";
+import { TabSwitcherr } from "../TabSwitcherr";
+import ProductSkeleton from "../loaders/ProductSkeleton";
+import Post from "../Post";
 
 type SellerBottomSheetProps = {
   author: Doc<"users">;
@@ -25,110 +29,122 @@ export default function SellerBottomSheet({ author, posts, visible, onClose }: S
   const scrollOffset = useSharedValue(0);
   const postsSold = useQuery(api.posts.getSoldPostsByUser, {});
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [activeTab, setActiveTab] = useState('Productos');
+  
 
-
-  if (!author || !posts) return <Loader />; // Manejo de errores
+  if (!author || !posts) return <Loader />;
   const displayName = (typeof author.fullname === 'string' && author.fullname.length > 0) ? (author.fullname.includes(' ') ? author.fullname.split(' ')[0] : author.fullname) : 'User';
 
 
-  const headerAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(scrollOffset.value, [0, 100], [0, 1]),
-    };
-  });
-
-  const handleScroll = (event: any) => {
-    scrollOffset.value = event.nativeEvent.contentOffset.y;
-  };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => { onClose() }} >
-      <View style={styles.headerButtonsContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <AntDesign name="close" size={22} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.shareButton} onPress={onClose}>
-          <Feather name="share" size={22} color="black" />
-        </TouchableOpacity>
-      </View>
-      {/* Header animado */}
-      <Animated.View style={[styles.header, headerAnimatedStyle]}>
-      </Animated.View>
-
-      {/* Contenido principal */}
-      <ScrollView style={styles.bottomContainer} contentContainerStyle={{ paddingBottom: 100 }} onScroll={handleScroll} scrollEventThrottle={16} >
+    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => { onClose() }} >
 
 
-        {/* Información del autor */}
-        <View style={styles.card}>
-          {author && <Image source={{ uri: author.image }} style={styles.avatar} />}
-          <Text style={styles.textName}>{displayName}</Text>
-          {author.location && (
-            <View style={styles.locationContainer}>
-              <Ionicons name="location" size={22} color="grey" />
-              <Text style={styles.textLocation}> {author.location}</Text>
-            </View>)}
-          <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
-            <AntDesign name="star" size={16} color="#FF5A5F" style={{ marginRight: 4 }} />
-            <Text style={{ fontSize: 15, fontWeight: "500", color: "#333" }}>
-              {(author.averageRating ?? 0).toFixed(1)}
-            </Text>
 
-            <View style={styles.ventasContainer} />
-            <Text style={{ fontSize: 15, color: "#555" }}>
-              {postsSold?.length} ventas
-            </Text>
+
+      <View style={styles.overlay}>
+        <View style={styles.sheet}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={onClose}>
+              <Ionicons name="close" size={24} style={styles.closeButton} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Perfil</Text>
+            <TouchableOpacity onPress={onClose}>
+              <EllipsisVertical size={24} style={styles.closeButton} />
+            </TouchableOpacity>
           </View>
-        </View>
 
-        {author.bio && (
-          <View style={{ marginTop: 12, paddingHorizontal: 20 }}>
-            <Text style={styles.bioText} >
-              {author.bio}
-            </Text>
+
+
+          <View style={[styles.card, { flexDirection: "row", alignItems: "center" }]}>
+            {/* Avatar + Rating a la izquierda */}
+            <View style={{ alignItems: "center", marginRight: 16 }}>
+              <View style={styles.avatarContainer}>
+                {author?.image && (
+                  <Image source={{ uri: author.image }} style={styles.avatar} />
+                )}
+                <View style={styles.ratingBadge}>
+                  <Text style={styles.ratingText}>
+                    {(author.averageRating ?? 0).toFixed(1)}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Info textual a la derecha */}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.textName}>{displayName}</Text>
+
+              {author.location && (
+                <View style={[styles.locationContainer, { marginTop: 4 }]}>
+                  <MapPin size={20} color="black" strokeWidth={2.2}/>
+                  <Text style={styles.textLocation}> {author.location}</Text>
+                </View>
+              )}
+
+              {/* <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
+                <View style={styles.ventasContainer} />
+                <Text style={{ fontSize: 15, color: "#555" }}>
+                  {postsSold?.length} ventas
+                </Text>
+              </View> */}
+            </View>
           </View>
-        )}
 
 
-        {/* Reseñas */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingRight: 20, marginTop: 24, marginBottom: 12 }}>
-          <Text style={styles.textReview}>Reseñas de {displayName}</Text>
-          <Pressable onPress={() => setShowAllReviews(true)}>
-            <Text style={{ fontSize: 14, color: "#007AFF", fontWeight: "500" }}>Ver más</Text>
-          </Pressable >
-        </View>
+          <View style={{alignItems:'center', paddingBottom:10 }}>
+            <TabSwitcherr activeTab={activeTab} setActiveTab={setActiveTab} />
+          </View>
 
 
-        {author && <ReviewComponent sellerId={author._id} />}
-
-
-
-        {/* Posts del vendedor */}
-         <Text style={styles.textReview}>Productos de {displayName}</Text>
-
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => (
-            <PostBig
-              post={item}
-              onPressPost={() => {
-                onClose();
-                router.push(`/product/${item._id}`);
-              }}
-            />
+          {activeTab === 'Productos' ? (
+            !posts ? (
+              <FlatList
+                data={Array.from({ length: 8 })}
+                numColumns={2}
+                keyExtractor={(_, index) => `skeleton-${index}`}
+                renderItem={() => <ProductSkeleton />}
+                columnWrapperStyle={{
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 12,
+                  marginBottom: 16,
+                }}
+                contentContainerStyle={{ paddingTop: 20 }}
+              />
+            ) : posts.length === 0 ? (
+              <Text> no hay </Text>
+            ) : (
+              <FlatList
+                data={posts}
+                numColumns={2}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => <Post post={item} isBookmarked={false} />}
+                columnWrapperStyle={{ justifyContent: "space-between", }}
+                onEndReachedThreshold={0.5}
+                contentContainerStyle={{ paddingHorizontal: 12, }}
+              />
+            )
+          ) : (
+             author && <ReviewComponent sellerId={author._id} />
           )}
-          keyExtractor={(item) => item._id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
 
 
-        <ReviewComponentVertical
-          visible={showAllReviews}
-          onClose={() => setShowAllReviews(false)}
-          sellerId={author._id}
-        />
-      </ScrollView>
+
+        </View >
+
+
+      </View >
+
+
+
+
+
+
+
+
+
+
     </Modal>
   );
 }

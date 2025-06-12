@@ -1,72 +1,84 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  StyleSheet,
-  Pressable,
-  ViewStyle,
-} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, ViewStyle, TouchableOpacity, } from 'react-native';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { FontAwesome } from '@expo/vector-icons';
-import { COLORS } from '@/constants/theme';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Loader } from '../Loader';
 import { styles } from './review.styles';
-
 interface Props {
   sellerId: Id<'users'>;
   containerStyle?: ViewStyle;
 }
+const formatDateShort = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2); // últimos 2 dígitos
+  return `${day} - ${month} - ${year}`;
+};
 
 const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
   const reviews = useQuery(api.reviews.getReviewsByUser, {
     userId: sellerId,
   });
-
-  if (!reviews) {
-    return <Loader />;
-  }
+  const sortedReviews = reviews ? [...reviews].sort(
+    (a, b) => b._creationTime - a._creationTime
+  ) : [];
+  if (!reviews) return <Loader />;
 
   return (
-    <FlatList
-      data={reviews}
-      keyExtractor={(item) => item._id}
-      renderItem={({ item }) => (
-        <View style={[styles.cardContainer, containerStyle]}>
-          <Pressable style={styles.card}>
-            {/* Cabecera */}
-            <View style={styles.headerRow}>
-              <View style={styles.userInfo}>
-                <Image source={{ uri: item.user.image }} style={styles.avatar} />
-                <View style={{ marginLeft: 8 }}>
-                  <Text style={styles.username}>{item.user.fullname.split(' ')[0]}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                    <FontAwesome
-                      name="star"
-                      size={12}
-                      color={COLORS.star}
-                      style={{ marginRight: 4 }}
-                    />
-                    <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
+    <View>
+
+
+      <FlatList
+        data={sortedReviews}
+        keyExtractor={(item) => item._id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 16 }}
+        renderItem={({ item }) => (
+          <View style={[styles.card, containerStyle]}>
+            {/* Header row: avatar + name + stars | date */}
+            <View style={styles.header}>
+              <View style={styles.avatarNameSection}>
+                <View style={styles.avatarWrapper}>
+                  <Image source={{ uri: item.user.image }} style={styles.avatar} />
+
+                </View>
+                <View>
+                  <Text style={styles.username}>{item.user.fullname}</Text>
+                  <View style={styles.starsRow}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <FontAwesome
+                        key={index}
+                        name="star"
+                        size={14}
+                        color={index < item.rating ? '#E8B179' : '#E0E0E0'}
+                        style={{ marginRight: 2 }}
+                      />
+                    ))}
                   </View>
                 </View>
               </View>
+              <Text style={styles.dateText}>
+                {formatDateShort(item._creationTime)}
+              </Text>
             </View>
 
-            {/* Comentario */}
-            <View style={styles.commentContainer}>
-              <Text style={styles.comment}>{item.comment}</Text>
+            {/* Comment */}
+            <View style={{ paddingLeft: 50 }}>
+              <Text numberOfLines={2} style={styles.comment}>
+                {item.comment}
+              </Text>
             </View>
-          </Pressable>
-        </View>
-      )}
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 10 }}
-    />
+
+          </View>
+        )}
+      />
+      <TouchableOpacity style={styles.fab}>
+        <Ionicons name="add" size={28} color="#fff" />
+      </TouchableOpacity>
+    </View>
   );
 };
 

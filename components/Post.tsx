@@ -2,33 +2,16 @@ import { styles } from "@/styles/ProductCard.styles";
 import { router } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
 
-type PostProps = {
-    post: {
-        tipo: string;
-        _id: Id<"posts">;
-        userId: Id<"users">;
-        storageId: Id<"_storage">; 
-        imageUrls: Id<"_storage">[]; 
-        caption?: string;
-        title: string;
-        price: number;
-        currency: string;
-        category: string;
-        location: string;
-        condition: string;
-        _creationTime: number;
-        lat: number;
-        lng: number;
-        isBookmarked: boolean;
-        sold: boolean;
-        
-    };
-};
+
+interface PostProps {
+  post: Doc<"posts">;
+  isBookmarked?: boolean;
+}
 
 
 export default function Post({ post }: PostProps) {

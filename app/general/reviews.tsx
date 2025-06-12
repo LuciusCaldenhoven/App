@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    TouchableOpacity,
-    Image,
-    StatusBar,
-    Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar, Platform, } from 'react-native';
 import { ThumbsUp, MessageCircle, Loader } from 'lucide-react-native';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';

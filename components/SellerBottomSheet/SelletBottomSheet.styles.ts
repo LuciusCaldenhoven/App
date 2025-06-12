@@ -5,15 +5,37 @@ import { scale } from "@/constants/scale";
 
 export const styles = StyleSheet.create({
   bottomContainer: {
-    backgroundColor: COLORS.white,
-    paddingTop: 40,
+    backgroundColor: '#F4F4F8',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: '#F4F4F8',
+
+    paddingTop: 30,
+  },
+  sheet: {
+    maxHeight: "100%",
+  },
+
+  // --- Header del modal ---
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  title: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 21,
+    fontFamily: "SemiBold",
+    color: "black",
+
   },
   closeButton: {
-    position: "relative",
-    top: 3,
-    left: 8,
-    zIndex: 20,
-    padding: 10,
+    paddingRight: 10,
   },
 
   shareButton: {
@@ -24,9 +46,9 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   card: {
-    marginTop: 24,
+    paddingLeft: 10,
     alignItems: "center",
-
+    paddingBottom: 15,
   },
 
   number: {
@@ -55,9 +77,37 @@ export const styles = StyleSheet.create({
   avatar: {
     width: 100,
     height: 100,
-    borderRadius: 80,
-
+    borderRadius: 50,
   },
+
+  avatarContainer: {
+
+    overflow: 'hidden',
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+  },
+  ratingBadge: {
+    alignItems:'center',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#eab676', 
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50, 
+    width:60,
+    paddingVertical: 7,
+    
+  },
+
+  ratingText: {
+    color: 'white',
+    fontFamily:'SemiBold',
+    fontSize:16,
+  },
+
   textReview: {
     fontFamily: "Medium",
     fontSize: 18,
@@ -67,38 +117,24 @@ export const styles = StyleSheet.create({
 
   },
   textName: {
-    fontFamily: "SemiBold",
+    fontFamily: "Medium",
     fontSize: 20,
     color: COLORS.black,
 
     marginLeft: 10,
   },
-  header: {
-    backgroundColor: "#fff",
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1, // Asegúrate de que esté detrás de los botones
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-    borderRadius: 24,
-  },
+
 
   headerButtonsContainer: {
     flexDirection: "row",
-    position: "absolute",
-    top: 10,
 
-    zIndex: 10,
+    top: 30,
   },
   locationContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 6
+    marginTop: 6,
+    paddingLeft: 5,
   },
   textLocation: {
     fontFamily: "Regular",

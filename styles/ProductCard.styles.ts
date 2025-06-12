@@ -1,13 +1,14 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, useWindowDimensions } from "react-native";
 import { COLORS, SIZES } from "@/constants/theme";
 import { scale } from "@/constants/scale";
+const { width } = useWindowDimensions();
 
 export const styles = StyleSheet.create({
   container: {
-    width: 185,
+    width: (width - 36) / 2,
     height: 280,
     borderRadius: SIZES.medium,
-    marginHorizontal: 5,
+    
     overflow: "hidden",
   },
   tipo: {
