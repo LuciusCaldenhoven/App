@@ -475,16 +475,20 @@ export const getBookmarkedPostById = query({
 });
 
 export const getSoldPostsByUser = query({
-  handler: async (ctx) => {
-    const currentUser = await getAuthenticatedUser(ctx);
+  args: {
+    userId: v.optional(v.id("users")),
+  },
+  handler: async (ctx, args) => {
+    const userId = args.userId ?? (await getAuthenticatedUser(ctx))._id;
 
     return await ctx.db
       .query("posts")
-      .withIndex("by_user", (q) => q.eq("userId", currentUser._id))
+      .withIndex("by_user", (q) => q.eq("userId", userId))
       .filter((q) => q.eq(q.field("sold"), true))
       .collect();
   },
 });
+
 
 
 export const getNotSoldPostsByUser = query({

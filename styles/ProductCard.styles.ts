@@ -6,8 +6,8 @@ const { width } = useWindowDimensions();
 export const styles = StyleSheet.create({
   container: {
     width: (width - 36) / 2,
-    height: 280,
-    borderRadius: SIZES.medium,
+    height: 250,
+    borderRadius: 18,
     
     overflow: "hidden",
   },

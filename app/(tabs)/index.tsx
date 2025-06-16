@@ -35,7 +35,7 @@ export default function Index() {
     );
 
     const saveLocation = useMutation(api.users.saveLocation);
-
+    
     return (
         <View style={styles.container}>
             <TopSection

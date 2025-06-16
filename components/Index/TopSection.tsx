@@ -46,7 +46,7 @@ export default function TopSection({ scrollY, openBottomSheet, currentUser }: {
 
       <View style={styles.containerCarousel}>
         <Carousel
-          width={width * 0.85}
+          width={width }
           height={160}
           data={items}
           loop

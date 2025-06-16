@@ -12,7 +12,7 @@ import { Paperclip, Send } from 'lucide-react-native';
 import { COLORS } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 import styles from '../chat/chats.styles';
-import SellerBottomSheet from '@/components/SellerBottomSheet/SellerBottomSheet';
+
 import LoaderChats from '@/components/loaders/loaderChats';
 
 const ChatPage = () => {
@@ -228,12 +228,7 @@ const ChatPage = () => {
                 </View>
             )}
 
-            <SellerBottomSheet
-                author={otherUser}
-                posts={posts || []}
-                visible={showBottomSheet}
-                onClose={() => setShowBottomSheet(false)}
-            />
+
         </View>
     );
 };

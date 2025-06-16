@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "rea
 import React, { useState } from "react";
 import { MapPin, Star } from "lucide-react-native";
 import { COLORS, SIZES } from "@/constants/theme";
-import SellerBottomSheet from "../SellerBottomSheet/SellerBottomSheet";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
@@ -11,6 +10,7 @@ import MapView, { Circle, Marker } from "react-native-maps";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import DiscountInfo from "../DiscountInfo/DiscountInfo ";
+import { router } from "expo-router";
 
 interface SellerInfoProps {
     author: Doc<"users">;
@@ -99,7 +99,16 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
             {/* Info vendedor */}
             <View style={styles.line} />
             <Text style={[styles.description, { paddingLeft: 16 }]}>Informacion del vendedor</Text>
-            <TouchableOpacity style={styles.sellerContainer} activeOpacity={0.8} onPress={() => setShowBottomSheet(true)} >
+            <TouchableOpacity
+                style={styles.sellerContainer}
+                activeOpacity={0.8}
+                onPress={() =>
+                    router.push({
+                        pathname: './Profile',
+                        params: { authorId: author._id },
+                    })
+                }
+            >
 
                 <Image source={{ uri: author.image }} style={styles.sellerAvatar} />
                 <View style={styles.sellerInfo}>
@@ -143,7 +152,7 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
 
 
 
-            <SellerBottomSheet author={author} posts={posts || []} visible={showBottomSheet} onClose={() => setShowBottomSheet(false)} />
+           
         </View>
     );
 };

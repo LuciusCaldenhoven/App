@@ -4,7 +4,7 @@ import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { Loader } from '../Loader';
+import { ReviewSkeleton } from '../loaders/ReviewSkeleton';
 import { styles } from './review.styles';
 interface Props {
   sellerId: Id<'users'>;
@@ -25,17 +25,24 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
   const sortedReviews = reviews ? [...reviews].sort(
     (a, b) => b._creationTime - a._creationTime
   ) : [];
-  if (!reviews) return <Loader />;
+  if (!reviews ) return (
+  <>
+    <ReviewSkeleton />
+    <ReviewSkeleton />
+    <ReviewSkeleton />
+    <ReviewSkeleton />
+  </>
+);
+
 
   return (
     <View>
-
-
       <FlatList
         data={sortedReviews}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 16 }}
+        scrollEnabled={false}
         renderItem={({ item }) => (
           <View style={[styles.card, containerStyle]}>
             {/* Header row: avatar + name + stars | date */}
@@ -71,13 +78,9 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
                 {item.comment}
               </Text>
             </View>
-
           </View>
         )}
       />
-      <TouchableOpacity style={styles.fab}>
-        <Ionicons name="add" size={28} color="#fff" />
-      </TouchableOpacity>
     </View>
   );
 };

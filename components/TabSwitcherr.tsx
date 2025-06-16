@@ -1,3 +1,4 @@
+import { COLORS } from '@/constants/theme';
 import React from 'react';
 import {
   View,
@@ -64,7 +65,7 @@ export const TabSwitcherr = ({ activeTab, setActiveTab }: TabSwitcherProps) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    
+
     alignItems: 'center',
 
   },
@@ -77,8 +78,10 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     padding: 3,
-    
-    alignItems: 'center'
+
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
   },
   activeBackground: {
     position: 'absolute',
@@ -87,8 +90,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f8fd',
     borderRadius: 8,
     zIndex: 1,
-    left:7,
-    
+    left: 7,
+
   },
   tabButton: {
     width: TAB_WIDTH,
@@ -101,7 +104,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SemiBold'
   },
   activeTabText: {
-    color: '#00bfa5',
+    color: COLORS.main,
     fontWeight: '600',
   },
   inactiveTabText: {

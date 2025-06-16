@@ -39,14 +39,17 @@ const styles = StyleSheet.create({
   },
 
   item: {
+
+    alignItems:'center',
     width: "100%",
     height: 160,
     borderRadius: 12,
     overflow: "hidden",
   },
   image: {
-    width: "100%",
+    width: "85%",
     height: "100%",
+    borderRadius: 12,
   },
   searchContainer: {
     flexDirection: "row",
@@ -78,7 +81,14 @@ const styles = StyleSheet.create({
     elevation: 2, // para Android
 
   },
-
+  stickyHeaderWrapper: {
+  position: 'absolute',
+  top: HEADER_HEIGHT,
+  width: '100%',
+  zIndex: 100,
+  backgroundColor: 'white', // si tu fondo es blanco
+  paddingBottom: 10,
+},
   topSection: {
     position: "absolute",
     top: 0,
