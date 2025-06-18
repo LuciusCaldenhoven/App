@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Alert, ImageBackground, } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Alert, ImageBackground, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { useSignIn, useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { COLORS } from "@/constants/theme";
 import { styles } from "@/app/(auth)/auth.styles";
 import { BlurView } from "expo-blur";
+import { UserRound } from "lucide-react-native";
 export default function Login() {
   const { signIn, setActive } = useSignIn();
   const { startSSOFlow } = useSSO();
@@ -16,32 +17,32 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
- 
-  
+
+
 
   const handleEmailContinue = async () => {
-  try {
-    if (!signIn) return;
+    try {
+      if (!signIn) return;
 
-    // Intentar iniciar sesión sin contraseña para verificar si el correo existe
-    const result = await signIn.create({ identifier: email });
+      // Intentar iniciar sesión sin contraseña para verificar si el correo existe
+      const result = await signIn.create({ identifier: email });
 
-    // Si Clerk devuelve factores de autenticación, el usuario existe
-    if (Array.isArray(result.supportedFirstFactors) && result.supportedFirstFactors.length > 0) {
-      
-      router.push({ pathname: "/main" ,params: { email } });
+      // Si Clerk devuelve factores de autenticación, el usuario existe
+      if (Array.isArray(result.supportedFirstFactors) && result.supportedFirstFactors.length > 0) {
+
+        router.push({ pathname: "/main", params: { email } });
+      }
+    } catch (err: any) {
+      const code = err?.errors?.[0]?.code;
+
+      if (code === "form_identifier_not_found") {
+        // Correo no registrado → ir a registro
+        router.push({ pathname: "/register", params: { email } });
+      } else {
+        Alert.alert("Error", err?.errors?.[0]?.message || "Error al verificar el correo.");
+      }
     }
-  } catch (err: any) {
-    const code = err?.errors?.[0]?.code;
-
-    if (code === "form_identifier_not_found") {
-      // Correo no registrado → ir a registro
-      router.push({ pathname: "/register", params: { email } });
-    } else {
-      Alert.alert("Error", err?.errors?.[0]?.message || "Error al verificar el correo.");
-    }
-  }
-};
+  };
 
 
   const handleGoogleSignIn = async () => {
@@ -72,27 +73,45 @@ export default function Login() {
     }
   };
 
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground source={require("@/assets/images/fondo.png")} style={{ flex: 1, justifyContent: "center" }} resizeMode="cover" >
-        <Text style={styles.welcome}>Hola!</Text>
-        <BlurView intensity={42} tint="light" style={styles.card} >
-          
+      <View style={styles.container}>
+        <Image
+          source={require('@/assets/images/background-balls.png')} 
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            placeholderTextColor="#ccc"
-          />
-
+        <BlurView intensity={100} tint="light" style={styles.blurOverlay}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={styles.title}>¡Bienvenido de nuevo!</Text>
+            <Text style={styles.subtitle}>Iniciá sesión para comenzar.</Text>
+          </View>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+              placeholderTextColor="#ccc"
+            />
+            <UserRound size={20} style={styles.icon} />
+          </View>
           <TouchableOpacity style={styles.loginButton} onPress={handleEmailContinue}>
 
             <Text style={styles.loginButtonText}>Continuar</Text>
           </TouchableOpacity>
+
+
+
+          <TouchableOpacity>
+            <Text style={styles.forgotText}>Olvidaste tu contrasena?</Text>
+          </TouchableOpacity>
+
+
 
           <View style={styles.divider}>
             <View style={styles.line} />
@@ -101,16 +120,16 @@ export default function Login() {
           </View>
 
           <View style={styles.loginSection}>
-            <TouchableOpacity style={styles.googleButton} activeOpacity={0.9} disabled={isDisabled} onPress={handleGoogleSignIn}>
+            <TouchableOpacity style={styles.googleButton} disabled={isDisabled} onPress={handleGoogleSignIn}>
               <View style={styles.googleIconContainer}>
-                <Ionicons name="logo-google" size={20} color={COLORS.surface} />
+                <Image source={require('@/assets/images/Google.png')} style={styles.icon} resizeMode="contain" />
               </View>
               <Text style={styles.googleButtonText}>Continuar con Google</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.googleButton} activeOpacity={0.9} disabled={isDisabled} onPress={handleFacebookSignIn}>
+            <TouchableOpacity style={styles.googleButton} disabled={isDisabled} onPress={handleFacebookSignIn}>
               <View style={styles.googleIconContainer}>
-                <Ionicons name="logo-facebook" size={20} color={COLORS.surface} />
+                <Image source={require('@/assets/images/facebook.png')} style={styles.icon} resizeMode="contain" />
               </View>
               <Text style={styles.googleButtonText}>Continuar con Facebook</Text>
             </TouchableOpacity>
@@ -119,15 +138,10 @@ export default function Login() {
               Al continuar, aceptas nuestros Términos y Política de privacidad.
             </Text>
           </View>
-
-          <Text style={styles.registerText}>
-            ¿No tienes cuenta?{" "}
-            <Text style={styles.registerLink} onPress={() => router.push({ pathname: "/register", params: { email } })}>
-              Regístrate
-            </Text>
-          </Text>
         </BlurView>
-      </ImageBackground>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
+
+

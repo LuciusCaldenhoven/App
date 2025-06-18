@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
 
   primaryButton: {
-    backgroundColor: '#111',
+    backgroundColor: '#7ea437',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

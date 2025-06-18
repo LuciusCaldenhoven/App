@@ -102,7 +102,7 @@ export const styles = StyleSheet.create({
     color: COLORS.main,
   },
   btnn: {
-    backgroundColor: COLORS.main,
+    backgroundColor: "#7ea437",
     height: 50,
     borderRadius: 8,
     justifyContent: "center",

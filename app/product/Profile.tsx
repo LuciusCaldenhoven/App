@@ -8,6 +8,7 @@ import { api } from "@/convex/_generated/api";
 import ProductSkeleton from "@/components/loaders/ProductSkeleton";
 import Post from "@/components/Post";
 import ReviewComponent from "@/components/review/component";
+import ReviewComponentVertical from "@/components/ReviewComponentVertical/ReviewComponentVertical";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { COLORS } from "@/constants/theme";
 
@@ -20,6 +21,7 @@ export default function SellerScreen() {
     const { authorId } = useLocalSearchParams();
     const author = useQuery(api.users.getById, { userId: authorId as Id<"users"> });
     const posts = useQuery(api.posts.getPostsByUser, { userId: authorId as Id<"users"> });
+    const [showAllReviews, setShowAllReviews] = useState(false);
 
     const postsSold = useQuery(api.posts.getSoldPostsByUser, { userId: author?._id });
 
@@ -61,7 +63,7 @@ export default function SellerScreen() {
                 </View>
 
                 <View style={styles.infoRow}>
-                    <Animated.View style={{ alignItems:'center', opacity: avatarOpacity }}>
+                    <Animated.View style={{ alignItems: 'center', opacity: avatarOpacity }}>
                         <Image source={{ uri: author.image }} style={styles.avatar} />
                         <Text style={styles.name}>{displayName}</Text>
                         {author.location && <Text style={styles.textLocation}>{author.location}</Text>}
@@ -143,7 +145,22 @@ export default function SellerScreen() {
                         />
                     )
                 ) : (
-                    <ReviewComponent sellerId={author._id} />
+                    <View>
+                        <View>
+                            <ReviewComponent sellerId={author._id} />
+
+                        </View>
+                        <View>
+                            <TouchableOpacity onPress={() => setShowAllReviews(true)} style={styles.floatingButton} >
+                                <Text style={styles.floatingButtonText}>Ver más</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <ReviewComponentVertical
+                            visible={showAllReviews}
+                            onClose={() => setShowAllReviews(false)}
+                            sellerId={author._id}
+                        />
+                    </View>
                 )}
             </Animated.ScrollView>
         </View>
@@ -159,6 +176,51 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
 
     },
+    floatingButton: {
+        position: 'absolute',
+        top: 30,
+        right: 20,
+        backgroundColor: COLORS.black,
+
+        borderRadius: 25,
+        zIndex: 999,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+
+    floatingButtonText: {
+        color: '#fff',
+        fontWeight: '500',
+        fontSize: 14,
+    },
+
+    modalOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 100,
+    },
+
+    modalContent: {
+        width: '90%',
+        height: '80%',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 16,
+    },
+
+    closeButton: {
+        alignSelf: 'flex-end',
+    },
+
     seeMoreFooter: {
         width: 120,
         height: 180,

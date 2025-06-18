@@ -157,7 +157,10 @@ export const getFilteredPosts = query({
     paginationOpts: paginationOptsValidator,
   },
 
+
   handler: async (ctx, args) => {
+
+
     const currentUser = await getAuthenticatedUser(ctx);
     let q = ctx.db.query("posts");
 
@@ -208,13 +211,16 @@ export const getFilteredPosts = query({
       const fuseOptions = {
         keys: ['title'],
         threshold: 0.4, // Ajusta este valor entre 0 y 1 (0 = coincidencia exacta, 1 = coincidencia más flexible)
-        includeScore: true
+        includeScore: true,
+        
       };
       const fuse = new Fuse(filteredPage, fuseOptions);
       const searchResults = fuse.search(args.title);
+      
       filteredPage = searchResults.map(result => result.item);
+      
     }
-
+    
     // Filtrar por ubicación si es necesario
     if (args.location) {
       const { lat, lng, km } = args.location;
@@ -340,7 +346,7 @@ export const getFilteredPrices = query({
   args: {
     title: v.optional(v.string()),
     category: v.optional(v.string()),
-    
+
   },
   handler: async (ctx, args) => {
     let q = ctx.db.query("posts");
@@ -349,7 +355,7 @@ export const getFilteredPrices = query({
       q = q.filter((q) => q.eq(q.field("category"), args.category));
     }
 
-   
+
 
     let posts = await q.collect();
 

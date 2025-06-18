@@ -6,9 +6,122 @@ const { width, height } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EFEFEF",
+    backgroundColor: '#eaedf7',
+    
+  },
+  blurOverlayRegister:{
+    flex: 1,
+    paddingTop: 60,
     paddingHorizontal: 24,
-    paddingTop: 80,
+    justifyContent: 'center',
+  },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+   
+  },
+  blurOverlay: {
+    flex: 1,
+    paddingTop: 150,
+    paddingHorizontal: 24,
+    justifyContent: 'center',
+    
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: 'SemiBold',
+    marginBottom: 8,
+    color: '#222',
+    textAlign: 'center'
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 100,
+    fontFamily: 'Medium',
+  },
+  titleLogin: {
+    fontSize: 14,
+    color: '#555',
+    
+    fontFamily: 'Medium',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 16,
+    elevation: 3,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16, // Si estás en RN >= 0.71
+    marginTop: 12,
+  },
+  socialButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+
+  input: {
+    flex: 1,
+    color: '#000',
+    fontFamily: 'Medium',
+    height: 30,
+  },
+  forgotText: {
+    color: '#007BFF',
+    textAlign: 'right',
+    paddingBottom: 50,
+    fontFamily: 'Regular'
+  },
+  signInButton: {
+    backgroundColor: '#3A72E8',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  signInText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  orContinue: {
+    textAlign: 'center',
+    marginBottom: 12,
+    color: '#444',
+  },
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  socialBtn: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 10,
+    marginHorizontal: 8,
+    elevation: 4,
   },
   introText: {
     color: "Black",
@@ -16,6 +129,13 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     fontFamily: 'Regular',
     paddingBottom: 10,
+  },
+  blurContainer: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)', // blanco translúcido
+    padding: 20,
+    margin: 20,
   },
 
   emailText: {
@@ -102,14 +222,7 @@ export const styles = StyleSheet.create({
     color: "#555",
     marginBottom: 32,
   },
-  input: {
-    backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 8,
-    fontSize: 16,
-    fontFamily: 'Medium',
-    marginBottom: 16,
-  },
+
   passwordWrapper: {
     flexDirection: "row",
     alignItems: "center",
@@ -132,12 +245,9 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 24,
   },
-  forgotText: {
-    color: COLORS.primary,
-    fontWeight: "500",
-  },
+
   loginButton: {
-    backgroundColor: "#3b5f41",
+    backgroundColor: "#adc92b",
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
@@ -163,12 +273,7 @@ export const styles = StyleSheet.create({
     color: "black",
     fontFamily: "Regular"
   },
-  socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 20,
-    marginBottom: 40,
-  },
+
   socialIcon: {
     width: 52,
     height: 52,
@@ -195,6 +300,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 40,
     alignItems: "center",
+    gap: 14
   },
   googleButton: {
     flexDirection: "row",
@@ -209,18 +315,24 @@ export const styles = StyleSheet.create({
     maxWidth: 300,
     position: "relative",
   },
+
   googleIconContainer: {
+    position: 'absolute',
+    left: 24, 
     width: 24,
     height: 24,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
   },
+
   googleButtonText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: 'Medium',
     color: COLORS.surface,
+    flex: 1,
+    paddingLeft: 45,
   },
+
   termsText: {
     textAlign: "center",
     fontSize: 12,
@@ -249,13 +361,7 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  socialButton: {
-    backgroundColor: "#333",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
+
   socialText: {
     color: "#fff",
   },

@@ -20,7 +20,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarShowLabel: true,
         headerShown: false,
-        tabBarActiveTintColor: '#4CAF50',
+        tabBarActiveTintColor: '#7ea437',
         tabBarInactiveTintColor: COLORS.black,
         tabBarStyle: {
           position: "absolute",
@@ -37,10 +37,10 @@ export default function TabLayout() {
           shadowRadius: 5,
         },
         tabBarLabelStyle: {
-          fontSize: 9,
-          fontFamily: "Regular",
+          fontSize: 10,
+          fontFamily: "Medium",
         },
-        // animation: 'shift',
+        animation: 'shift',
       }}
     >
       <Tabs.Screen

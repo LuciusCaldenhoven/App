@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, ImageBackground, Alert, } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, ImageBackground, Alert, Image } from "react-native";
 import { useState } from "react";
 import { BlurView } from "expo-blur";
 import { styles } from "@/app/(auth)/auth.styles";
@@ -53,23 +53,26 @@ export default function LoginScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground
-        source={require("@/assets/images/fondo.png")}
-        style={{ flex: 1, justifyContent: "center" }}
-        resizeMode="cover"
-      >
-        <Text style={styles.welcome}>Inicio de sesión</Text>
-        <BlurView intensity={42} tint="light" style={styles.card}>
-          <Text style={styles.introText}>
-            ¡Bienvenido de nuevo!{"\n"}
-            Estás iniciando sesión con:{"\n"}
-            <Text style={styles.emailText}>{email}</Text>
-          </Text>
+      <View style={styles.container}>
+        <Image
+          source={require("@/assets/images/background-balls.png")}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        />
+        <BlurView intensity={100} tint="light" style={styles.blurOverlayRegister}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={styles.title}>¡Bienvenido de nuevo!</Text>
+            <Text style={styles.subtitle}>Ingresa tu contrasena para iniciar</Text>
 
-          {/* Campo de contraseña */}
-          <View style={styles.passwordWrapper}>
+          </View>
+          <Text style={styles.titleLogin}>Estás iniciando sesión con:{"\n"}</Text>
+          <Text style={styles.emailText}>{email}</Text>
+
+
+
+          <View style={styles.inputWrapper}>
             <TextInput
-              style={styles.passwordInput}
+              style={styles.input}
               placeholder="Contraseña"
               placeholderTextColor="#ccc"
               secureTextEntry={!passwordVisible}
@@ -95,7 +98,7 @@ export default function LoginScreen() {
             <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
         </BlurView>
-      </ImageBackground>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

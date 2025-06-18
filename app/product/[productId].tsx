@@ -8,7 +8,7 @@ import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
 import { Loader } from "@/components/Loader";
-import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedStyle, useScrollViewOffset } from "react-native-reanimated";
+import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useScrollViewOffset, useSharedValue } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
@@ -21,9 +21,15 @@ const IMG_HEIGHT = 380;
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
     const [currentIndex, setCurrentIndex] = useState(0);
-    
+
     const scrollRef = useAnimatedRef<Animated.ScrollView>();
-    const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
+    const scrollOffset = useSharedValue(0);
+
+    const scrollHandler = useAnimatedScrollHandler({
+        onScroll: (event) => {
+            scrollOffset.value = event.contentOffset.y;
+        },
+    });
     const flatListRef = useAnimatedRef<Animated.FlatList<any>>();
 
     const imageAnimatedStyle = useAnimatedStyle(() => {
@@ -97,7 +103,7 @@ export default function ProductDetail() {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
         const index = Math.round(contentOffsetX / width);
         setCurrentIndex(index);
-    }; 
+    };
 
     const handleChat = async () => {
         try {
@@ -145,7 +151,7 @@ export default function ProductDetail() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} ref={scrollRef} scrollEventThrottle={16}>
+                <Animated.ScrollView contentContainerStyle={{ paddingBottom: 100 }} onScroll={scrollHandler} scrollEventThrottle={16}>
 
                     <Animated.FlatList
                         ref={flatListRef}

@@ -59,6 +59,12 @@ const products = [
     title: 'Electrodomésticos',
     description: 'Cocina, limpieza y tecnología para el hogar',
   },
+  {
+    id: 11,
+    icon: require('./electronica.png'),
+    title: 'Electronica',
+    description: 'Productos electronicos',
+  },
 ];
 
 const topProducts = [
@@ -76,6 +82,6 @@ const topProducts = [
   },
 ]
 
-const product = {products, topProducts};
+const product = { products, topProducts };
 
-export default product ;
+export default product;
