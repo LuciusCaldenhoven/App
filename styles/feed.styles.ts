@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   activeTab: {
-    backgroundColor: "#041B2D", // azul oscuro
+    backgroundColor: "#adc92b", // azul oscuro
   },
   tabText: {
     fontSize: 14,

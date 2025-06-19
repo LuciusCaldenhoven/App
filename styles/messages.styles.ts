@@ -34,12 +34,12 @@ const styles = StyleSheet.create({
 
   },
   activeButton: {
-    backgroundColor: COLORS.black,
+    backgroundColor: COLORS.main,
   },
   buttonText: {
     fontSize: 12,
     color: COLORS.black,
-    fontFamily: "Regular",
+    fontFamily: "Medium",
   },
   activeButtonText: {
     color: "#fff",

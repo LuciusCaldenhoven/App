@@ -102,7 +102,7 @@ export const styles = StyleSheet.create({
     color: COLORS.main,
   },
   btnn: {
-    backgroundColor: "#7ea437",
+    backgroundColor: "#adc92b",
     height: 50,
     borderRadius: 8,
     justifyContent: "center",
@@ -111,6 +111,6 @@ export const styles = StyleSheet.create({
   btnText: {
     color: "white",
     fontSize: 16,
-    fontFamily: "Regular",
+    fontFamily: "Medium",
   },
 });
