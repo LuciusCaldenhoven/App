@@ -118,7 +118,7 @@ export default function SellerScreen() {
                     useNativeDriver: false,
                 })}
                 scrollEventThrottle={16}
-                bounces={false}
+                bounces={true}
             >
                 {activeTab === "Productos" ? (
                     !posts ? (

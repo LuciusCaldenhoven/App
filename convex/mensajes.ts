@@ -7,9 +7,10 @@ export const sendMessage = mutation({
   args: {
     content: v.string(),
     chatId: v.id('chats'),
-    file: v.optional(v.id("_storage")),  // Archivo opcional
+    file: v.optional(v.id("_storage")),  
+    product: v.optional(v.id('posts')),  
   },
-  handler: async (ctx, { content, chatId, file }) => {
+  handler: async (ctx, { content, chatId, file, product }) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
     // Inserta el mensaje en la tabla `messages`
@@ -19,6 +20,7 @@ export const sendMessage = mutation({
       content,
       file,
       createdAt: Date.now(),
+      product,
     });
 
     // Actualiza el chat con el último mensaje y la hora

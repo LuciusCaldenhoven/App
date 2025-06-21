@@ -114,11 +114,6 @@ export const getFeedPosts = query({
   },
 });
 
-
-
-
-
-
 function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; // Earth radius
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -495,7 +490,19 @@ export const getSoldPostsByUser = query({
   },
 });
 
+export const getPostIdById = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
 
+    
+
+    return {
+      post
+    };
+  },
+});
 
 export const getNotSoldPostsByUser = query({
   handler: async (ctx) => {

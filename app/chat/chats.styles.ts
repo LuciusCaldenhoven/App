@@ -5,7 +5,7 @@ import { COLORS } from '@/constants/theme';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8',
+        backgroundColor: COLORS.white,
     },
     icon: {
         marginHorizontal: 8,
@@ -13,9 +13,19 @@ const styles = StyleSheet.create({
     },
     main: {
         flex: 1,
-        paddingHorizontal: scale(18),
+        paddingHorizontal: 8,
+  
     },
-
+    date: {
+        backgroundColor: '#dde2f3',
+        color: '#445',
+        paddingHorizontal: 14,
+        paddingVertical: 4,
+        borderRadius: 10,
+        fontWeight: 'bold',
+        fontSize: 13,
+        overflow: 'hidden'
+    },
     headerContent: {
         flexDirection: 'row',
         alignItems: 'center',

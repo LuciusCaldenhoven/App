@@ -80,6 +80,7 @@ export default defineSchema({
         content: v.string(),
         file: v.optional(v.id("_storage")),
         createdAt: v.number(),
+        product: v.optional(v.id("posts")),
     }).index("by_chat", ["chatId"]),
 
 

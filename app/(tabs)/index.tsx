@@ -60,6 +60,7 @@ export default function Index() {
                 <View style={styles.scrollContent}>
                     <View style={{ paddingHorizontal: 20 }}>
                         <SearchBar query={searchInput} />
+                        
                     </View>
 
                     <Animated.ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.HorizontalContainer}>

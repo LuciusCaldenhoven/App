@@ -114,13 +114,25 @@ export default function ProductDetail() {
             );
 
             if (existingChat) {
-                router.push(`/chat/${existingChat._id}`);
+                router.push({
+                    pathname: "/chat/[chatid]",
+                    params: {
+                        chatid: existingChat._id,
+                        Prod: post?._id,
+                    },
+                });
             } else {
-                const newChat = await createChat({
+                const newChatId = await createChat({
                     sellerId: post?.userId as Id<"users">,
                 });
 
-                router.push(`/chat/${newChat}`);
+                router.push({
+                    pathname: "/chat/[chatid]",
+                    params: {
+                        chatid: newChatId,
+                        Prod: post?._id,
+                    },
+                });
             }
         } catch (error) {
             console.error("Error al manejar el chat:", error);
@@ -193,7 +205,7 @@ export default function ProductDetail() {
                             </Text>
                         </View>
                         <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat}>
-                            <Text style={styles.btnText}>¡Mándale un mensaje!</Text>
+                            <Text style={styles.btnText}>Envia un mensaje</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
