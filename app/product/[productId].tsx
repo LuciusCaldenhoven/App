@@ -12,8 +12,9 @@ import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedScrollHandle
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
-import LoaderPosts from "@/components/loaders/loaderPosts";
+import ImageView from "react-native-image-viewing";
 import LoaderProductDetail from "@/components/loaders/loaderPosts";
+import { useChatNavigation } from "@/lib/useChatNavigation";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -21,8 +22,8 @@ const IMG_HEIGHT = 380;
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [visible, setIsVisible] = useState(false);
 
-    const scrollRef = useAnimatedRef<Animated.ScrollView>();
     const scrollOffset = useSharedValue(0);
 
     const scrollHandler = useAnimatedScrollHandler({
@@ -69,20 +70,23 @@ export default function ProductDetail() {
             : `$${formattedPrice}`;
     };
 
-    const post = useQuery(
-        api.posts.getBookmarkedPostById,
-        productId ? { postId: productId as Id<"posts"> } : "skip"
-    );
+    const post = useQuery( api.posts.getBookmarkedPostById, productId ? { postId: productId as Id<"posts"> } : "skip" );
 
     const author = useQuery(api.users.getUserProfile, post?.userId ? { id: post.userId } : "skip");
 
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
 
-    const createChat = useMutation(api.chats.createChat);
-    const existingChats = useQuery(api.chats.getChats);
+    
 
     const { userId } = useAuth();
     const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+    const { goToChat } = useChatNavigation();
+
+
+    const allImageIds = post ? [post.storageId, ...(post.imageUrls || [])] : [];
+    const imageUrls = useQuery(api.posts.getAllImageUrls, { storageIds: allImageIds }) || [];
+
+    const imagesForModal = imageUrls .filter((url): url is string => !!url) .map(url => ({ uri: url }));
 
     const handleBookmark = async () => {
         await toggleBookmark({ postId: post!._id });
@@ -105,45 +109,13 @@ export default function ProductDetail() {
         setCurrentIndex(index);
     };
 
-    const handleChat = async () => {
-        try {
-            const existingChat = existingChats?.find(
-                (chat: any) =>
-                    (currentUser?._id === chat.buyerId && post?.userId === chat.sellerId) ||
-                    (currentUser?._id === chat.sellerId && post?.userId === chat.buyerId)
-            );
-
-            if (existingChat) {
-                router.push({
-                    pathname: "/chat/[chatid]",
-                    params: {
-                        chatid: existingChat._id,
-                        Prod: post?._id,
-                    },
-                });
-            } else {
-                const newChatId = await createChat({
-                    sellerId: post?.userId as Id<"users">,
-                });
-
-                router.push({
-                    pathname: "/chat/[chatid]",
-                    params: {
-                        chatid: newChatId,
-                        Prod: post?._id,
-                    },
-                });
-            }
-        } catch (error) {
-            console.error("Error al manejar el chat:", error);
-        }
-    };
-
+    
     if (!post || !author || !currentUser) {
         return <LoaderProductDetail />;
     }
 
-    const allImageIds = [post.storageId, ...post.imageUrls];
+
+
 
     return (
         <>
@@ -167,7 +139,7 @@ export default function ProductDetail() {
 
                     <Animated.FlatList
                         ref={flatListRef}
-                        data={allImageIds}
+                        data={imagesForModal} // <-- Aquí pasas directamente los links ya resueltos
                         horizontal
                         pagingEnabled
                         showsHorizontalScrollIndicator={false}
@@ -175,10 +147,17 @@ export default function ProductDetail() {
                         onScroll={handleScroll}
                         renderItem={({ item, index }) => (
                             <View style={styles.imageContainer}>
-                                <ProductImageItem
-                                    storageId={item as Id<"_storage">}
-                                    animatedStyle={index === currentIndex ? imageAnimatedStyle : undefined}
-                                />
+                                <TouchableOpacity activeOpacity={1} onPress={() => { setIsVisible(true) }} >
+                                    <Animated.View style={[styles.image, index === currentIndex ? imageAnimatedStyle : undefined]}>
+                                        <Image
+                                            source={item }
+                                            style={styles.image}
+                                            contentFit="cover"
+                                            transition={200}
+                                            cachePolicy="memory"
+                                        />
+                                    </Animated.View>
+                                </TouchableOpacity>
                             </View>
                         )}
                     />
@@ -204,14 +183,19 @@ export default function ProductDetail() {
                                 {formatPrice(post.price, post.currency)}
                             </Text>
                         </View>
-                        <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={handleChat}>
+                        <TouchableOpacity style={[styles.btnn, { paddingRight: 20, paddingLeft: 20 }]} onPress={() => goToChat({ postUserId: post.userId, postId: post._id })}>
                             <Text style={styles.btnText}>Envia un mensaje</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
 
-
+                <ImageView
+                    images={imagesForModal}
+                    imageIndex={currentIndex}
+                    visible={visible}
+                    onRequestClose={() => setIsVisible(false)}
+                />
 
 
             </View>
@@ -219,23 +203,3 @@ export default function ProductDetail() {
     );
 }
 
-
-function ProductImageItem({ storageId, animatedStyle, }: { storageId: Id<"_storage">; animatedStyle?: any; }) {
-    const imageUrl = useQuery(api.posts.getImageUrl, { storageId });
-    if (!imageUrl) return null;
-
-    return (
-        <TouchableOpacity activeOpacity={1}>
-            <Animated.View style={[styles.image, animatedStyle]}>
-                <Image
-                    source={{ uri: imageUrl }}
-                    style={styles.image}
-                    contentFit="cover"
-                    transition={200}
-                    cachePolicy="memory"
-
-                />
-            </Animated.View>
-        </TouchableOpacity>
-    );
-}

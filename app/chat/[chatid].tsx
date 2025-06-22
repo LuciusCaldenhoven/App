@@ -16,9 +16,9 @@ import ChatCard from '@/components/Chats/ChatCard';
 
 
 const ChatPage = () => {
-    const { chatid, Prod } = useLocalSearchParams();
+    const { chatid, Prod, text } = useLocalSearchParams();
 
-    const [newMessage, setNewMessage] = useState('');
+    const [newMessage, setNewMessage] = useState( typeof text === 'string' ? text : Array.isArray(text) ? text[0] ?? '' : '' );
     const [selectedImage, setSelectedImage] = useState<Id<'_storage'> | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);

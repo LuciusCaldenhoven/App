@@ -23,6 +23,18 @@ export const getImageUrl = query({
   },
 });
 
+export const getAllImageUrls = query({
+  args: { storageIds: v.array(v.id("_storage")) },
+  handler: async (ctx, args) => {
+    const urls = await Promise.all(
+      args.storageIds.map(async (storageId) => {
+        const url = await ctx.storage.getUrl(storageId);
+        return url ?? null; // para filtrar nulos en el front
+      })
+    );
+    return urls;
+  },
+});
 
 export const createPost = mutation({
   args: {
@@ -207,15 +219,15 @@ export const getFilteredPosts = query({
         keys: ['title'],
         threshold: 0.4, // Ajusta este valor entre 0 y 1 (0 = coincidencia exacta, 1 = coincidencia más flexible)
         includeScore: true,
-        
+
       };
       const fuse = new Fuse(filteredPage, fuseOptions);
       const searchResults = fuse.search(args.title);
-      
+
       filteredPage = searchResults.map(result => result.item);
-      
+
     }
-    
+
     // Filtrar por ubicación si es necesario
     if (args.location) {
       const { lat, lng, km } = args.location;
@@ -496,7 +508,7 @@ export const getPostIdById = query({
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
 
-    
+
 
     return {
       post

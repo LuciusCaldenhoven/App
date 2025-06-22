@@ -1,16 +1,15 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "react-native";
 import React, { useState } from "react";
-import { MapPin, Star } from "lucide-react-native";
+import { Star } from "lucide-react-native";
 import { COLORS, SIZES } from "@/constants/theme";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
-import { scale } from "@/constants/scale";
 import MapView, { Circle, Marker } from "react-native-maps";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import DiscountInfo from "../DiscountInfo/DiscountInfo ";
 import { router } from "expo-router";
+import { useChatNavigation } from "@/lib/useChatNavigation";
+    
 
 interface SellerInfoProps {
     author: Doc<"users">;
@@ -18,16 +17,16 @@ interface SellerInfoProps {
 }
 
 const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
-    const [showBottomSheet, setShowBottomSheet] = useState(false);
     const [textLines, setTextLines] = useState(0);
-
-    const posts = useQuery( api.posts.getPostsByUser, author?._id ? { userId: author._id } : "skip" );
     const [showAll, setShowAll] = useState(false);
-    const shouldShowMore = textLines > 10;
 
+    const { goToChat } = useChatNavigation();
+    const shouldShowMore = textLines > 10;
 
     return (
         <View style={styles.details}>
+
+
             <View style={styles.titleRow}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 10, }}>
                     <Text style={styles.title}>{post.title}</Text>
@@ -58,8 +57,25 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
                 </View>
             </View>
 
-            {/* Descripcion  */}
+
             <View style={styles.line} />
+            <View style={styles.boxFast}>
+                <View style={styles.headerFast}>
+                    <Text style={styles.titleFast}>⚡️ Envía un mensaje rápido al vendedor</Text>
+                </View>
+                <View style={styles.rowFast}>
+                    <View style={styles.inputFast}>
+                        <Text style={styles.placeholderFast}>
+                            Hola. ¿Sigue disponible?
+                        </Text>
+                    </View>
+                    <TouchableOpacity style={styles.buttonFast} activeOpacity={0.8} onPress={() => goToChat({ postUserId: post.userId, postId: post._id, text: "Hola. ¿Sigue disponible?" })}>
+                        <Text style={styles.buttonTextFast}>Enviar</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={styles.line} />
+            {/* Descripcion  */}
             <View style={styles.descriptionWrapper}>
                 <Text style={styles.description}>Descripción</Text>
                 <View>
@@ -152,7 +168,7 @@ const ProductSellerInfo = ({ author, post }: SellerInfoProps) => {
 
 
 
-           
+
         </View>
     );
 };
@@ -296,6 +312,64 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         marginTop: 16,
     },
+    boxFast: {
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        padding: 16,
+        margin: 16,
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 3,
+    },
+    headerFast: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 14,
+    },
+    titleFast: {
+        fontSize: 16,
+        fontFamily: "Medium",
+        color: "#181C32",
+    },
+    rowFast: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    inputFast: {
+        flex: 1,
+        backgroundColor: "#F2F4F7",
+        borderRadius: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 14,
+        marginRight: 8,
+        minHeight: 44,
+        justifyContent: "center",
+    },
+    placeholderFast: {
+        color: "#4B5563",
+        fontSize: 13,
+        fontFamily: "Regular",
+    },
+    buttonFast: {
+        backgroundColor: "#7ea437",
+        borderRadius: 10,
+        paddingHorizontal: 22,
+        paddingVertical: 12,
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: 44,
+        elevation: 1,
+    },
+    buttonTextFast: {
+        color: "#fff",
+        fontFamily: "SemiBold",
+        fontSize: 15,
+        letterSpacing: 0.3,
+    },
+
+
 });
 
 

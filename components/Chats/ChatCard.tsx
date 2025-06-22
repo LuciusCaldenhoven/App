@@ -1,10 +1,10 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { renderMarginBottom } from '@/constants/ui-utils';
 import { Id } from '@/convex/_generated/dataModel';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { COLORS } from '@/constants/theme';
+import ImageView from "react-native-image-viewing";
 import { scale } from '@/constants/scale';
 import { router } from 'expo-router';
 
@@ -20,7 +20,7 @@ const ChatCard = ({ isSelf = false, message = '', time, file, product }: IChatCa
   const styles = createStyles(isSelf);
   const productData = useQuery(api.posts.getPostIdById, product ? { postId: product } : 'skip');
   const imageUrl = useQuery(api.posts.getImageUrl, productData && productData.post?.storageId ? { storageId: productData.post.storageId } : 'skip');
-
+  const [visible, setIsVisible] = useState(false);
 
 
   return (
@@ -46,11 +46,25 @@ const ChatCard = ({ isSelf = false, message = '', time, file, product }: IChatCa
 
 
         {file && (
-          <Image source={{ uri: file }} style={styles.messageImage} />
+          <View>
+            <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)}>
+              <Image source={{ uri: file }} style={styles.messageImage} />
+            </TouchableOpacity>
+            <ImageView
+              images={[{ uri: file }]}
+              imageIndex={0}
+              visible={visible}
+              onRequestClose={() => setIsVisible(false)}
+            />
+
+          </View>
         )}
       </View>
-     
+
       <Text style={styles.timestamp}>{time}</Text>
+
+
+
     </View>
   );
 };
