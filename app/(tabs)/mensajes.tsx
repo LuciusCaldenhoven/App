@@ -14,7 +14,7 @@ import { renderBorderBottom } from "@/constants/ui-utils";
 import { useAuth } from "@clerk/clerk-expo";
 
 export default function NotificationsAndMessages() {
-  const [selectedTab, setSelectedTab] = useState<"notifications" | "messages">("notifications");
+  const [selectedTab, setSelectedTab] = useState<"notifications" | "messages">("messages");
 
   const notifications = useQuery(api.notifications.getNotifications);
   const chats = useQuery(api.chats.getChats);
@@ -87,16 +87,6 @@ export default function NotificationsAndMessages() {
       </Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, selectedTab === "notifications" && styles.activeButton]}
-          onPress={() => setSelectedTab("notifications")}
-        >
-          <Text
-            style={[styles.buttonText, selectedTab === "notifications" && styles.activeButtonText]}
-          >
-            Notificaciones
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={[styles.button, selectedTab === "messages" && styles.activeButton]}
           onPress={() => setSelectedTab("messages")}
         >
@@ -104,6 +94,16 @@ export default function NotificationsAndMessages() {
             style={[styles.buttonText, selectedTab === "messages" && styles.activeButtonText]}
           >
             Mensajes
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, selectedTab === "notifications" && styles.activeButton]}
+          onPress={() => setSelectedTab("notifications")}
+        >
+          <Text
+            style={[styles.buttonText, selectedTab === "notifications" && styles.activeButtonText]}
+          >
+            Notificaciones
           </Text>
         </TouchableOpacity>
       </View>

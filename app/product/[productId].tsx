@@ -176,7 +176,7 @@ export default function ProductDetail() {
 
 
                 </Animated.ScrollView>
-                <View style={styles.footer}>
+                {/* <View style={styles.footer}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View style={styles.footerText}>
                             <Text style={styles.price}>
@@ -187,7 +187,7 @@ export default function ProductDetail() {
                             <Text style={styles.btnText}>Envia un mensaje</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View> */}
 
 
                 <ImageView
