@@ -113,4 +113,5 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Medium",
   },
+  
 });

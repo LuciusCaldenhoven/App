@@ -208,12 +208,6 @@ const ChatPage = () => {
                 />
             </KeyboardAvoidingView>
 
-            {uploading && (
-                <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center', },]} >
-                    <ActivityIndicator color="#fff" animating size="large" />
-                </View>
-            )}
-
 
         </View>
     );

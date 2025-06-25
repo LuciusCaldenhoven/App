@@ -1,9 +1,15 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { Leaf, PiggyBank, Recycle } from "lucide-react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
-const DiscountInfo = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+type DiscountInfoProps = {
+  bottomSheetRef: React.RefObject<BottomSheetModal | null>
+  openBottomSheet: () => void;
+};
+
+const DiscountInfo = ({ bottomSheetRef,openBottomSheet }: DiscountInfoProps) => {
+  
 
   const benefits = [
     {
@@ -48,7 +54,7 @@ const DiscountInfo = () => {
           )}
         </Text>
 
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <TouchableOpacity onPress={openBottomSheet}>
           <Text style={styles.link}>Descubre por qué es más sostenible</Text>
         </TouchableOpacity>
       </View>
