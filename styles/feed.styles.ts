@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
     elevation: 2, // para Android
-
+    zIndex: 100, 
   },
   stickyHeaderWrapper: {
   position: 'absolute',
@@ -98,9 +98,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5", // gris claro
     justifyContent: "flex-end",
     paddingBottom: 20,
-    zIndex: 10,
 
+    
   },
+
+
+   
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -129,6 +132,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
+
   },
   scrollContent: {
     backgroundColor: "#fff",
@@ -136,7 +140,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 35,
     marginTop: -HEADER_HEIGHT / 2,
     paddingVertical: 20,
+
   },
+
   scrollText: {
     fontSize: 16,
     marginBottom: 12,

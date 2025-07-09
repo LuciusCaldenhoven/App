@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { PiggyBank, Leaf, Recycle } from "lucide-react-native"; // Asegúrate de tener estos iconos disponibles
+import { PiggyBank, Leaf, Recycle } from "lucide-react-native"; 
 import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 type DiscountInfoProps = {

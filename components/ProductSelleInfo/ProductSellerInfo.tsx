@@ -46,20 +46,11 @@ const ProductSellerInfo = ({ author, post,bottomSheetRef,openBottomSheet}: Selle
   return (
     <View style={styles.details}>
       <View style={styles.titleRow}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingTop: 10,
-          }}
-        >
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 10 }}>
           <Text style={styles.title}>{post.title}</Text>
-          {post.condition && (
-            <View style={styles.conditionTag}>
-              <Text style={styles.conditionText}>{post.condition}</Text>
-            </View>
-          )}
+            <Text style={styles.priceText}>
+              {post.currency === "USD" ? "$" : "S/"} {post.price}
+            </Text>
         </View>
       </View>
 
@@ -84,6 +75,10 @@ const ProductSellerInfo = ({ author, post,bottomSheetRef,openBottomSheet}: Selle
         <View style={styles.tag}>
           <Text style={styles.tagLabel}>Categoría:</Text>
           <Text style={styles.tagValue}>{post.category}</Text>
+        </View>
+        <View style={styles.tag}>
+          <Text style={styles.tagLabel}>Condicion:</Text>
+          <Text style={styles.tagValue}>{post.condition}</Text>
         </View>
       </View>
 
@@ -478,6 +473,10 @@ const styles = StyleSheet.create({
     color: "#1B4D3E",
     textDecorationLine: "underline",
   },
+  priceText:{
+    fontSize: 22,
+    fontFamily: "SemiBold",
+  }
 
 });
 

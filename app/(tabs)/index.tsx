@@ -4,15 +4,19 @@ import {
   View,
   TextInput,
   Dimensions,
-  Animated,
   TouchableOpacity,
   Button,
+  ScrollView,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  // other Reanimated imports as needed
+} from "react-native-reanimated"; 
 import styles from "@/styles/feed.styles";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Loader } from "@/components/Loader";
-import Post from "@/components/Post";
 import React, { useCallback, useRef, useState } from "react";
 import { Link, useRouter } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
@@ -30,7 +34,7 @@ export default function Index() {
   const router = useRouter();
   const { userId } = useAuth();
   const HEADER_HEIGHT = 160;
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useSharedValue(0);
 
   const [searchInput, setSearchInput] = useState("");
   const [activeTab, setActiveTab] = useState("Recomendacion");
@@ -46,32 +50,39 @@ export default function Index() {
 
   const saveLocation = useMutation(api.users.saveLocation);
 
+  const handleScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+
   return (
     <View style={styles.container}>
-      <TopSection
-        scrollY={scrollY}
-        openBottomSheet={openBottomSheet}
-        currentUser={currentUser}
-      />
+      {/* TopSection now static */}
+ 
+        <TopSection
+          openBottomSheet={openBottomSheet}
+          currentUser={currentUser}
+          scrollY={scrollY}
+        />
+ 
 
-      <Animated.ScrollView
+      <Animated.ScrollView // <--- THIS IS THE CRITICAL CHANGE
         showsVerticalScrollIndicator={false}
         style={styles.scroll}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        scrollEventThrottle={16}
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT + 230,
           paddingBottom: 300,
         }}
+        onScroll={handleScroll} 
+        scrollEventThrottle={16}
       >
         <View style={styles.scrollContent}>
           <View style={{ paddingHorizontal: 20 }}>
             <SearchBar query={searchInput} />
           </View>
-          <Animated.ScrollView
+          <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.HorizontalContainer}
@@ -97,8 +108,8 @@ export default function Index() {
                 </TouchableOpacity>
               );
             })}
-          </Animated.ScrollView>
-          d
+          </ScrollView>
+
           <HorizontalPostSection
             title="Electrodomésticos"
             category="Electrodomésticos"

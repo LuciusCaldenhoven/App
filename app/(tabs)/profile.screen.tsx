@@ -16,7 +16,7 @@ import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
 import LoaderPosts from "@/components/loaders/loaderPosts";
 import ReviewComponentVertical from "@/components/ReviewComponentVertical/ReviewComponentVertical";
-import { LogOut, Mail, MessageCircleQuestion, PackageSearch, Star } from "lucide-react-native";
+import { LogOut, Mail, Megaphone, MessageCircleQuestion, PackageSearch, Star } from "lucide-react-native";
 
 function Profile() {
   const { signOut, userId } = useAuth();
@@ -104,13 +104,13 @@ function Profile() {
         />
         <SingleList
           component={<Star size={scale(24)} color={COLORS.black} />}
-          text="Publicitar"
-          onPress={() => router.push("/booking.screen/booking/booking")}
-        />
-        <SingleList
-          component={<Star size={scale(24)} color={COLORS.black} />}
           text="Mis Reviews"
           onPress={() => router.push("/general/reviews")}
+        />
+        <SingleList
+          component={<Megaphone size={scale(24)} color={COLORS.black} />}
+          text="Publicitar"
+          onPress={() => router.push("/working/working")}
         />
         {renderMarginBottom(12)}
         <Text style={styles.title}>Soporte</Text>

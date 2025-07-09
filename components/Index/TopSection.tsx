@@ -1,7 +1,14 @@
-import { View, Text, Animated, Dimensions, Image, TouchableOpacity } from "react-native";
+import { View, Text, Dimensions, Image, TouchableOpacity } from "react-native";
 import styles from "@/styles/feed.styles";
 import { MapPin, MessageCircle } from "lucide-react-native";
 import Carousel from "react-native-reanimated-carousel";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+} from "react-native-reanimated";
+import { router } from "expo-router";
+
 
 const items = [
   { id: "1", image: require("@/assets/images/banners/image_4.jpg") },
@@ -12,41 +19,55 @@ const items = [
 
 const { width } = Dimensions.get("window");
 
-export default function TopSection({ scrollY, openBottomSheet, currentUser }: {
-  scrollY: Animated.Value;
+export default function TopSection({ openBottomSheet, currentUser, scrollY }: {
   openBottomSheet: () => void;
   currentUser: any;
+  scrollY: Animated.SharedValue<number>; 
 }) {
-  const topOpacity = scrollY.interpolate({
-    inputRange: [30, 70],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
+const iconOpacityStyle = useAnimatedStyle(() => { 
+    const opacity = interpolate(
+      scrollY.value, 
+      [0, 200],
+      [1, 0],
+      Extrapolate.CLAMP 
+    );
+    return {
+      opacity: opacity,
+    };
   });
 
-  return (
-    <Animated.View style={[styles.topSection, { opacity: topOpacity }]}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.iconWrapper} onPress={openBottomSheet}>
-          <MapPin size={24} strokeWidth={2.2} color="#222" />
-        </TouchableOpacity>
 
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.title}>
+
+
+
+  return (
+    <View style={styles.topSection}>
+      <View style={styles.header}>
+        <Animated.View 
+          style={[styles.iconWrapper, iconOpacityStyle]} 
+        >
+          <TouchableOpacity onPress={openBottomSheet}>
+            <MapPin size={24} strokeWidth={2.2} color="#222" />
+          </TouchableOpacity>
+        </Animated.View>
+        <View style={{ alignItems: "center", maxWidth: "65%" }}>
+          <Text style={styles.title}   numberOfLines={1} ellipsizeMode="tail">
             {currentUser?.location && currentUser?.km
               ? `${currentUser.location} - ${currentUser.km} km`
               : 'Establecer ubicación'}
           </Text>
           <Text style={styles.subtitle}>Peru</Text>
         </View>
-
-        <View style={styles.iconWrapper}>
+      <Animated.View style={[styles.iconWrapper, iconOpacityStyle]} >
+        <TouchableOpacity >
           <MessageCircle size={24} strokeWidth={2.2} color="#222" />
-        </View>
+        </TouchableOpacity>
+      </Animated.View>
       </View>
 
       <View style={styles.containerCarousel}>
         <Carousel
-          width={width }
+          width={width}
           height={160}
           data={items}
           loop
@@ -64,6 +85,6 @@ export default function TopSection({ scrollY, openBottomSheet, currentUser }: {
           )}
         />
       </View>
-    </Animated.View>
+    </View>
   );
 }
