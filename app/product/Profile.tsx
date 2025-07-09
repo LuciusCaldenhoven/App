@@ -66,7 +66,7 @@ export default function SellerScreen() {
                     <Animated.View style={{ alignItems: 'center', opacity: avatarOpacity }}>
                         <Image source={{ uri: author.image }} style={styles.avatar} />
                         <Text style={styles.name}>{displayName}</Text>
-                        {author.location && <Text style={styles.textLocation}>{author.location}</Text>}
+                        {author.location && <Text numberOfLines={1} style={styles.textLocation}>{author.location}</Text>}
                     </Animated.View>
 
                     <Animated.View style={[styles.textContainer, { opacity: textOpacity }]}>
@@ -353,5 +353,6 @@ const styles = StyleSheet.create({
     textLocation: {
         fontFamily: "Regular",
         fontSize: 14,
+        maxWidth: 10,
     },
 });

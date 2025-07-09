@@ -12,7 +12,7 @@ import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
-  // other Reanimated imports as needed
+
 } from "react-native-reanimated"; 
 import styles from "@/styles/feed.styles";
 import { useMutation, useQuery } from "convex/react";
@@ -68,7 +68,7 @@ export default function Index() {
         />
  
 
-      <Animated.ScrollView // <--- THIS IS THE CRITICAL CHANGE
+      <Animated.ScrollView 
         showsVerticalScrollIndicator={false}
         style={styles.scroll}
         contentContainerStyle={{
