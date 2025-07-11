@@ -243,7 +243,6 @@ export default function CreateScreen() {
                         onChangeText={setLocation}
                         onFocus={() => handleFocus(400)}
                         onLocationSelected={({ description, lat: newLat, lng: newLng }) => {
-                            console.log('Location selected:', { description, newLat, newLng }); // Debug log
                             setLocation(description);
                             setLat(Number(newLat));
                             setLng(Number(newLng));

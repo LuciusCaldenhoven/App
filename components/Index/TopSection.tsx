@@ -58,11 +58,7 @@ const iconOpacityStyle = useAnimatedStyle(() => {
           </Text>
           <Text style={styles.subtitle}>Peru</Text>
         </View>
-      <Animated.View style={[styles.iconWrapper, iconOpacityStyle]} >
-        <TouchableOpacity >
-          <MessageCircle size={24} strokeWidth={2.2} color="#222" />
-        </TouchableOpacity>
-      </Animated.View>
+
       </View>
 
       <View style={styles.containerCarousel}>

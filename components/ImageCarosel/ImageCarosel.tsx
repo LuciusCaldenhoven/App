@@ -8,6 +8,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { COLORS } from "@/constants/theme";
 import styles from "./ImageCarosel.styles";
 import { Image } from "expo-image";
+import ImageCropperModal from "./ImageCropperModal";
 
 type Props = {
   selectedImages: (string | Id<"_storage">)[];
@@ -31,21 +32,15 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
     }
   };      
   
-  const editImageAtIndex = async (index: number) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsMultipleSelection: false,
-    });
+  const [cropModalVisible, setCropModalVisible] = useState(false);
+  const [cropIndex, setCropIndex] = useState<number | null>(null);
+  const [cropImageUri, setCropImageUri] = useState<string | null>(null);
 
-    if (!result.canceled && result.assets.length > 0) {
-      const newUri = result.assets[0].uri;
-      setSelectedImages((prev) => {
-        const updated = [...prev];
-        updated[index] = newUri;
-        return updated;
-      });
-    }
+  const editImageAtIndex = (index: number) => {
+    const uri = typeof selectedImages[index] === "string" ? selectedImages[index] : undefined;
+    setCropImageUri(uri || null);
+    setCropIndex(index);
+    setCropModalVisible(true);
   };
 
   return (
@@ -86,6 +81,25 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
           </TouchableOpacity>
         }
       />
+
+      {cropModalVisible && cropImageUri && (
+      <ImageCropperModal
+        visible={cropModalVisible}
+        imageUri={cropImageUri}
+        onClose={() => setCropModalVisible(false)}
+        onCrop={(croppedUri) => {
+          if (cropIndex !== null) {
+            setSelectedImages((prev) => {
+              const updated = [...prev];
+              updated[cropIndex] = croppedUri;
+              return updated;
+            });
+          }
+          setCropModalVisible(false);
+        }}
+      />
+    )}
+
     </View>
   );
 }
@@ -115,12 +129,13 @@ function ResolvedImage({ item }: { item: string | Id<"_storage"> }) {
 
   const width = aspectRatio * 100;
   const displayWidth = width > 70 ? width : 70;
-
+  const display = displayWidth < 250 ? displayWidth : 250;
+  
   return (
     <Image
       source={{ uri }}
       style={{
-        width: displayWidth,
+        width: display,
         height: 100,
         borderRadius: 5,
       }}

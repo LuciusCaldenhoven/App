@@ -12,7 +12,7 @@ export default function OfrecerScreen() {
 
         {/* Banner visual */}
 
-        <Text style={styles.title}>ReVende</Text>
+        <Text style={styles.title}>DiUna</Text>
         <Text style={styles.subtitle}>¿Qué deseas ofrecer hoy?</Text>
         <Text style={styles.select}>Selecciona una opción</Text>
 
@@ -38,21 +38,19 @@ export default function OfrecerScreen() {
         />
 
 
-        {/* Beneficios o motivador */}
-        <View style={styles.infoBox}>
-          <Text style={styles.infoTitle}>¿Por qué publicar en ReVende?</Text>
-          <Text style={styles.infoText}>✔ Llega a miles de personas en tu zona</Text>
-          <Text style={styles.infoText}>✔ Comparte, gana o ayuda a otros</Text>
-          <Text style={styles.infoText}>✔ Publicar es rápido y gratuito</Text>
-        </View>
-
-        {/* Recomendaciones */}
-
-
       </View>
-      <Text style={styles.note}>
-        📌 Recuerda subir imágenes claras y describir bien tu producto o servicio.
-      </Text>
+       <View style={{paddingHorizontal: 20, bottom: 10}}>
+
+          <View style={styles.infoBox}>
+            <Text style={styles.infoTitle}>¿Por qué publicar en DiUna?</Text>
+            <Text style={styles.infoText}>✔ Llega a miles de personas en tu zona</Text>
+            <Text style={styles.infoText}>✔ Comparte, gana o ayuda a otros</Text>
+            <Text style={styles.infoText}>✔ Publicar es rápido y gratuito</Text>
+          </View>
+        <Text style={styles.note}>
+          📌 Recuerda subir imágenes claras y describir bien tu producto o servicio.
+        </Text>
+       </View>
     </View>
   );
 }
@@ -144,6 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
     borderWidth: 1,
     borderColor: '#EEE',
+    marginBottom: 10,
   },
   infoTitle: {
     fontSize: 15,
@@ -161,5 +160,6 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
 });
