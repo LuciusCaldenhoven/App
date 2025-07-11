@@ -151,30 +151,8 @@ const ProductSellerInfo = ({ author, post,bottomSheetRef,openBottomSheet}: Selle
       <Text style={[styles.description, { paddingLeft: 16 }]}>
         Informacion del vendedor
       </Text>
+      
       <TouchableOpacity
-        style={styles.sellerContainer}
-        activeOpacity={0.8}
-        onPress={() =>
-          router.push({
-            pathname: "./Profile",
-            params: { authorId: author._id },
-          })
-        }
-      >
-        <Image source={{ uri: author.image }} style={styles.sellerAvatar} />
-        <View style={styles.sellerInfo}>
-          <Text style={styles.sellerName} numberOfLines={1}>
-            {author.fullname}
-          </Text>
-          <View style={styles.sellerRatingRow}>
-            <Star size={16} color={COLORS.main} />
-            <Text style={styles.sellerRatingText}>
-              {author.averageRating.toFixed(1)} • {author.reviewCount} reseñas
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-            <TouchableOpacity
         style={styles.sellerContainer}
         activeOpacity={0.8}
         onPress={() =>

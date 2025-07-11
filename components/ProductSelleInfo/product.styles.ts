@@ -148,15 +148,36 @@ const styles = StyleSheet.create({
     fontFamily: 'Regular'
   },
 
-  iconWrapper: {
-    left: 10,
-    padding: 8,
-    borderRadius: 999,
-    justifyContent: "center",
-    alignItems: "flex-start",
+iconWrapper: {
+  position: 'absolute',
+  top: 50,
+  left: 20,
+  zIndex: 100,
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 40,
+  height: 40,
+},
 
-    zIndex: 100, 
-  },
+iconBackground: {
+  position: 'absolute',
+  width: 40,
+  height: 40,
+  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+
+  borderRadius: 20, // la mitad de width/height
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: -1, // detrás del ícono
+  shadowColor: '#000',
+  shadowOpacity: 0.1,
+  shadowOffset: { width: 0, height: 2 },
+  shadowRadius: 4,
+  elevation: 3,
+},
+
+
+
   stickyHeaderWrapper: {
   position: 'absolute',
   top: HEADER_HEIGHT,

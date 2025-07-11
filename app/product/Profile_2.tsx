@@ -115,22 +115,28 @@ export default function SellerScreen() {
                         />
                     )
                 ) : (
-                    <View>
-                        <View>
-                            <ReviewComponent sellerId={author._id} />
-
-                        </View>
-                        <View>
-                            <TouchableOpacity onPress={() => setShowAllReviews(true)} style={styles.floatingButton} >
-                                <Text style={styles.floatingButtonText}>Ver más</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <ReviewComponentVertical
-                            visible={showAllReviews}
-                            onClose={() => setShowAllReviews(false)}
-                            sellerId={author._id}
-                        />
+          
+                    <View style={{ flex: 1 }}>
+                    <View style={styles.floatingButton}>
+                      <TouchableOpacity onPress={() => setShowAllReviews(true)}>
+                        <Text style={styles.floatingButtonText}>Ver más</Text>
+                      </TouchableOpacity>
                     </View>
+                    <ScrollView>
+                      <ReviewComponent sellerId={author._id} />
+                    </ScrollView>
+
+                    {/* Floating Button */}
+                    
+
+                    <ReviewComponentVertical
+                      visible={showAllReviews}
+                      onClose={() => setShowAllReviews(false)}
+                      sellerId={author._id}
+                    />
+                  </View>
+
+             
                 )}
                 </View>
 
@@ -151,20 +157,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
   },
-      floatingButton: {
-        position: 'absolute',
-        top: 30,
-        right: 20,
-        backgroundColor: COLORS.black,
-
-        borderRadius: 25,
-        zIndex: 999,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 5,
+    floatingButton: {
+      position: 'absolute',
+      bottom: 30,
+      right: 20,
+      backgroundColor: COLORS.black,
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 25,
+      zIndex: 999,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 5,
     },
+
     floatingButtonText: {
         color: '#fff',
         fontWeight: '500',

@@ -2,8 +2,8 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import InitialLayout from "@/components/InitialLayout";
 import ClerkAndConvexProvider from "@/providers/ClerkAndConvexProvider";
 import { useFonts } from "expo-font";
-import { useCallback, useEffect } from "react";
-import { SplashScreen, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import * as Navigation from "expo-navigation-bar";
 import { Platform, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -11,8 +11,14 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/ToastConfig/ToastConfig";
+import * as SplashScreen from 'expo-splash-screen';
+import WelcomeScreen from "./welcome";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+
+  
   const [fontsLoaded] = useFonts({
     "JetBrainsMono-Medium": require("../assets/fonts/JetBrainsMono-Medium.ttf"),
     "Regular": require("../assets/fonts/Poppins-Regular.ttf"),
@@ -25,13 +31,19 @@ export default function RootLayout() {
 
   });
 
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  const handleFinishWelcome = useCallback(async () => {
+    await SplashScreen.hideAsync();
+    setShowWelcome(false);
+  }, []);
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
-  
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -40,18 +52,26 @@ export default function RootLayout() {
     }
   }, []);
 
+
+
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        {/* Configura el fondo blanco detrás del StatusBar */}
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
             <View style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
-              {/* Configura el StatusBar global */}
-              <StatusBar style="dark" backgroundColor="white" />
-              <InitialLayout />
-              
-              <Toast config={toastConfig} />
+         
+              <View style={{ flex: 1 }} onLayout={fontsLoaded ? undefined : undefined}>
+                <StatusBar style="dark" backgroundColor="white" />
+                
+                {!fontsLoaded ? null : showWelcome ? (
+                  <WelcomeScreen onAnimationFinish={handleFinishWelcome} />
+                ) : (
+                  <InitialLayout />
+                )}
+                
+                <Toast config={toastConfig} />
+              </View>
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

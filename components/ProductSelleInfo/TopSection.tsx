@@ -23,7 +23,7 @@ const iconOpacityStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       scrollY.value, 
       [0, 200],
-      [1, 0],
+      [0, 1],
       Extrapolate.CLAMP 
     );
     return {
@@ -38,11 +38,16 @@ const iconOpacityStyle = useAnimatedStyle(() => {
 
   return (
     <View style={styles.topSection}>
-      <Animated.View style={[styles.iconWrapper, iconOpacityStyle]} >
-          <TouchableOpacity onPress={() => router.back()}>
-            <CornerUpLeft size={28} strokeWidth={2.2} color="#222" />
-          </TouchableOpacity>
-        </Animated.View>
+     <View style={styles.iconWrapper}>
+  {/* Fondo animado */}
+  <Animated.View style={[styles.iconBackground, iconOpacityStyle]} />
+
+      {/* Ícono siempre visible */}
+      <TouchableOpacity onPress={() => router.back()}>
+        <CornerUpLeft size={28} strokeWidth={2.2} color="#222" />
+      </TouchableOpacity>
+    </View>
+
        
           <View style={styles.infoRow}>
                 <Animated.View style={{ alignItems: 'center'}}>

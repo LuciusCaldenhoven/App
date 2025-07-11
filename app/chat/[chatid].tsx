@@ -148,7 +148,7 @@ const ChatPage = () => {
                         <Ionicons name="chevron-back" size={scale(28)} color={'black'} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.headerContent} onPress={() => router.push({ pathname: '../product/Profile', params: { authorId: otherUser?._id }, })}>
+                    <TouchableOpacity style={styles.headerContent} onPress={() => router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id }, })}>
                         <Image source={{ uri: otherUser?.image || '' }} style={styles.image} />
                         <Text numberOfLines={1} style={styles.text}>
                             {otherUser?.fullname || 'Usuario Desconocido'}

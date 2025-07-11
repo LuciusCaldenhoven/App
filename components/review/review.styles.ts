@@ -48,6 +48,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Regular',
     fontSize: 14,
     marginBottom: 2,
+    maxWidth: width * 0.5,
   },
   starsRow: {
     flexDirection: 'row',

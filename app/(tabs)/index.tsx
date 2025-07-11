@@ -116,16 +116,12 @@ export default function Index() {
           />
           <HorizontalPostSection title="Bicicletas" category="Bicicletas" />
           <HorizontalPostSection title="Electronica" category="Electronica" />
+
+          <Button title="Abrir galería animada" onPress={() => router.push('/welcome')} />
+
         </View>
 
-        <Button
-          title="Ver más"
-          onPress={() => router.push("/screen3/screen3")}
-        />
-        <Button
-          title="Ver más"
-          onPress={() => router.push("/screen3/screen1")}
-        />
+ 
       </Animated.ScrollView>
 
       <LocationPickerModal
