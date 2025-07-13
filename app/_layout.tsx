@@ -27,7 +27,7 @@ export default function RootLayout() {
     "Medium": require("../assets/fonts/Poppins-Medium.ttf"),
     "ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
     "SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
-
+    "STENCIL": require("../assets/fonts/STENCIL.ttf"),
 
   });
 

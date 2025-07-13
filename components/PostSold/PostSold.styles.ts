@@ -1,6 +1,9 @@
 import { StyleSheet, Dimensions } from "react-native";
 import { COLORS, SIZES, SHADOWS } from "@/constants/theme";
 
+const screenWidth = Dimensions.get('window').width;
+
+
 export const styles = StyleSheet.create({
     card: {
     backgroundColor: "#fff",
@@ -25,21 +28,36 @@ export const styles = StyleSheet.create({
     height: 90,
     borderRadius: 10,
   },
-  soldOverlay: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    backgroundColor: "#FF5A5F",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    transform: [{ rotate: "-10deg" }],
-  },
-  soldText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 12,
-  },
+
+
+soldStamp: {
+  position: "absolute",
+  // Centra el sello en la tarjeta usando top/left/right/bottom y margin
+  top: "30%",
+  left: "10%",
+  width: "80%",
+  aspectRatio: 5, // Más fino
+  borderWidth: 2,
+  borderColor: "#FF5A5F",
+  borderRadius: 10,
+  backgroundColor: "rgba(255,255,255,0.5)", // Más suave, ajusta la opacidad si quieres
+  justifyContent: "center",
+  alignItems: "center",
+  transform: [{ rotate: "-10deg" }], 
+  zIndex: 20,
+},
+soldStampText: {
+  color: "#FF5A5F",
+  fontFamily:"STENCIL",
+  fontSize: 28,
+  textTransform: "uppercase",
+  letterSpacing: 3,
+  textShadowColor: "rgba(0,0,0,0.15)",
+  textShadowOffset: { width: 1, height: 1 },
+  textShadowRadius: 2,
+},
+
+
   infoContainer: {
     flex: 1,
     marginLeft: 12,

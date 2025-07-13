@@ -5,16 +5,16 @@ import { Platform, StatusBar, StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
     container: {
 
-        paddingBottom: 50,
+        paddingBottom: 10,
         backgroundColor: "#fff",
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 80,
     },
     header: {
         fontSize: 28,
         fontFamily: "SemiBold",
         color: COLORS.black,
-        marginBottom: 15,
+        marginBottom: 5,
         paddingHorizontal: 10,
+        paddingTop: 20,
     },
 
     title: {
@@ -31,6 +31,19 @@ export const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 16,
     },
+      value: {
+    fontSize: 16,
+    color: "#222", // Un color oscuro pero no puro negro, más amigable a la vista
+    fontFamily: "Medium", // Cambia según tu fuente
+    marginBottom: 10,
+    marginTop: 3,
+    paddingHorizontal: 2,
+    // Si quieres que destaque en touchable, puedes ponerle un fondo suave al presionar
+    // backgroundColor: "#f6f6f6",
+    // borderRadius: 6,
+    // paddingVertical: 6,
+  },
+
     input: {
         backgroundColor: "#fff",
         padding: 14,
@@ -68,7 +81,7 @@ export const styles = StyleSheet.create({
     soldButton: {
         flexDirection: "row",
         justifyContent: "center",
-        backgroundColor: "#30C04F", // verde tipo "éxito"
+        backgroundColor: "#adc92b", // verde tipo "éxito"
         padding: 16,
         borderRadius: 14,
         alignItems: "center",

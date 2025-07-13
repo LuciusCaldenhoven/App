@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StatusBar, StyleSheet, Dimensions } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from 'react-native-reanimated';
 
 const { height } = Dimensions.get('window');
 const hp = (percent: number) => (height * percent) / 100;
@@ -19,8 +15,9 @@ export default function WelcomeScreen({ onAnimationFinish }: { onAnimationFinish
   }, []);
   const ring1padding = useSharedValue(0);
   const ring2padding = useSharedValue(0);
-
-  useEffect(() => {
+  const opacity = useSharedValue(1);
+  
+    useEffect(() => {
     ring1padding.value = 0;
     ring2padding.value = 0;
 
@@ -31,6 +28,16 @@ export default function WelcomeScreen({ onAnimationFinish }: { onAnimationFinish
     setTimeout(() => {
       ring2padding.value = withSpring(hp(5.5));
     }, 300);
+
+    
+    const fadeTimeout = setTimeout(() => {
+      opacity.value = withTiming(0, { duration: 500 }, (finished) => {
+
+        if (finished) runOnJS(onAnimationFinish)();
+      });
+    }, 2100);
+
+    return () => clearTimeout(fadeTimeout);
   }, []);
 
   const ring1Style = useAnimatedStyle(() => ({
@@ -41,11 +48,13 @@ export default function WelcomeScreen({ onAnimationFinish }: { onAnimationFinish
     padding: ring2padding.value,
   }));
 
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+  const fadeStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
-      {/* Logo image with animated rings */}
+  return (
+    <Animated.View style={[styles.container, fadeStyle]}>
+      <StatusBar barStyle="light-content" />
       <Animated.View style={[styles.outerRing, ring2Style]}>
         <Animated.View style={[styles.innerRing, ring1Style]}>
           <Image
@@ -54,14 +63,11 @@ export default function WelcomeScreen({ onAnimationFinish }: { onAnimationFinish
           />
         </Animated.View>
       </Animated.View>
-
-      {/* Title and punchline */}
       <View style={styles.textContainer}>
-         <Text style={styles.subtitle}>Compra y vende</Text>
+        <Text style={styles.subtitle}>Compra y vende</Text>
         <Text style={styles.title}>Diuna</Text>
-       
       </View>
-    </View>
+    </Animated.View>
   );
 }
 

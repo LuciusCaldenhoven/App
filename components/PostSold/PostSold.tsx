@@ -46,9 +46,7 @@ export default function PostProduct({ post }: PostProps) {
           />
 
           {/* Texto SOLD superpuesto */}
-          <View style={styles.soldOverlay}>
-            <Text style={styles.soldText}>SOLD</Text>
-          </View>
+
         </View>
 
         <View style={styles.infoContainer}>
@@ -59,6 +57,12 @@ export default function PostProduct({ post }: PostProps) {
             {post.category}
           </Text>
         </View>
+        
+
+
+      </View>
+      <View style={styles.soldStamp}>
+        <Text style={styles.soldStampText}>VENDIDO</Text>
       </View>
     </TouchableOpacity>
   );

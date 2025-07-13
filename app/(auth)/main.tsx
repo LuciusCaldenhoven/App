@@ -24,6 +24,42 @@ export default function LoginScreen() {
     );
   }
 
+  const handleForgotPassword = async () => {
+  try {
+    if (!signIn) throw new Error("Clerk no está listo");
+    if (!email) throw new Error("No se encontró el correo.");
+
+    // Inicia el proceso de recuperación con Clerk
+    await signIn.create({
+      strategy: "reset_password_email_code",
+      identifier: email,
+    });
+
+    Alert.alert(
+      "Revisa tu correo",
+      "Te hemos enviado un código para restablecer tu contraseña."
+    );
+
+    // Redirige a la pantalla de reset de password, o muestra un input para el código + nueva contraseña
+    // Por ejemplo:
+    router.push({
+      pathname: "/reset-password",
+      params: { email }
+    });
+
+  } catch (err: any) {
+    const code = err?.errors?.[0]?.code;
+    if (code === "form_identifier_not_found") {
+      Alert.alert("Correo no encontrado", "No existe una cuenta asociada a este correo.");
+    } else {
+      Alert.alert("Error", err?.errors?.[0]?.message || "Ocurrió un error.");
+    }
+  }
+};
+
+
+
+
   const handleLogin = async () => {
     try {
       setIsSubmitting(true);
@@ -94,9 +130,10 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           {/* Link olvidó contraseña */}
-          <TouchableOpacity>
-            <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
+        <TouchableOpacity onPress={handleForgotPassword}>
+          <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+        </TouchableOpacity>
+
         </BlurView>
       </View>
     </TouchableWithoutFeedback>

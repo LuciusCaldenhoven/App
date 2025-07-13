@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { PiggyBank, Leaf, Recycle } from "lucide-react-native"; 
+import { PiggyBank, Leaf, Recycle } from "lucide-react-native";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 type DiscountInfoProps = {
@@ -12,8 +12,8 @@ const DiscountModal = ({ bottomSheetRef }: DiscountInfoProps) => {
     <BottomSheetModal
       ref={bottomSheetRef}
       index={0}
-      snapPoints={["70%"]}
-      backgroundStyle={{ borderRadius: 24 }}
+      snapPoints={["55%"]}
+      backgroundStyle={{ borderRadius: 20 }}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
@@ -31,35 +31,41 @@ const DiscountModal = ({ bottomSheetRef }: DiscountInfoProps) => {
 
         <View style={styles.benefitContainer}>
           <View style={styles.benefitItem}>
-            <PiggyBank size={30} color="#adc92b" />
+            <PiggyBank size={26} color="#adc92b" style={styles.icon} />
             <Text style={styles.benefitText}>
               Ahorra dinero: Es un 46% más barato que comprar uno nuevo.
             </Text>
           </View>
           <View style={styles.benefitItem}>
-            <Leaf size={30} color="#7ea437" />
+            <Leaf size={26} color="#7ea437" style={styles.icon} />
             <Text style={styles.benefitText}>
               Ayudas al planeta: Reduciendo el desperdicio y el uso de recursos.
             </Text>
           </View>
           <View style={styles.benefitItem}>
-            <Recycle size={30} color="#f3e203" />
+            <Recycle size={26} color="#f3e203" style={styles.icon} />
             <Text style={styles.benefitText}>
               Dale una segunda vida al producto, evitando más residuos.
             </Text>
           </View>
         </View>
 
+        <View style={styles.divider} />
+
         <View style={styles.additionalInfo}>
           <Text style={styles.kpiText}>
-            Evita la emisión de 40kg de CO2 (equivalente a conducir 187 km en coche).
+            🌱 Evita la emisión de <Text style={styles.bold}>40kg de CO₂</Text> (equivalente a conducir 187 km en coche).
           </Text>
           <Text style={styles.kpiText}>
-            Ahorra 328 litros de agua (equivalente a lo que bebe un adulto en 8 meses).
+            💧 Ahorra <Text style={styles.bold}>328 litros de agua</Text> (equivalente a lo que bebe un adulto en 8 meses).
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.closeButton} onPress={() => bottomSheetRef.current?.dismiss()}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => bottomSheetRef.current?.dismiss()}
+          activeOpacity={0.8}
+        >
           <Text style={styles.closeText}>Cerrar</Text>
         </TouchableOpacity>
       </BottomSheetView>
@@ -69,59 +75,84 @@ const DiscountModal = ({ bottomSheetRef }: DiscountInfoProps) => {
 
 const styles = StyleSheet.create({
   modalContent: {
-    padding: 20,
+    padding: 16,
     backgroundColor: "white",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   modalTitle: {
-    fontSize: 18,
-    fontFamily: "Medium",
+    fontSize: 19,
+    fontFamily: "SemiBold",
     color: "#adc92b",
+    marginBottom: 6,
+    textAlign: "center",
   },
   modalParagraph: {
-    fontSize: 14,
-    color: "black",
-    marginVertical: 12,
+    fontSize: 13,
+    color: "#333",
+    marginVertical: 6,
     fontFamily: "Regular",
+    textAlign: "center",
+    marginBottom: 12,
   },
   benefitContainer: {
-    marginVertical: 16,
+    marginVertical: 4,
+    gap: 10,
   },
   benefitItem: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
+    alignItems: "flex-start",
+    marginBottom: 4,
+  },
+  icon: {
+    marginRight: 12,
+    marginTop: 1,
   },
   benefitText: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#1B4D3E",
-    paddingHorizontal: 15,
     fontFamily: "Regular",
+    flex: 1,
+    lineHeight: 18,
+  },
+  divider: {
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+    marginVertical: 14,
   },
   additionalInfo: {
-    marginTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
-    paddingTop: 16,
+    marginBottom: 10,
   },
   kpiText: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#444",
-    marginBottom: 6,
+    marginBottom: 4,
     fontFamily: "Regular",
+    textAlign: "center",
+  },
+  bold: {
+    fontWeight: "bold",
+    color: "#7ea437",
   },
   closeButton: {
-    marginTop: 20,
-    backgroundColor: "#adc92b", 
+    marginTop: 4,
+    backgroundColor: "#adc92b",
     borderRadius: 8,
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     alignItems: "center",
+    alignSelf: "center",
+    width: 120,
+    shadowColor: "#adc92b",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.07,
+    shadowRadius: 3,
+    elevation: 1,
   },
   closeText: {
     color: "#FFF",
     fontWeight: "600",
+    fontSize: 15,
   },
 });
 

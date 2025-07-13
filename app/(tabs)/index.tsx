@@ -110,14 +110,14 @@ export default function Index() {
             })}
           </ScrollView>
 
-          <HorizontalPostSection
-            title="Electrodomésticos"
-            category="Electrodomésticos"
-          />
+      
           <HorizontalPostSection title="Bicicletas" category="Bicicletas" />
           <HorizontalPostSection title="Electronica" category="Electronica" />
-
-          <Button title="Abrir galería animada" onPress={() => router.push('/welcome')} />
+          <HorizontalPostSection title="Ropa" category="Ropa" />
+          <HorizontalPostSection title="Deportes" category="Deportes" />
+          <HorizontalPostSection title="Vehiculos" category="Vehiculos" />
+          <HorizontalPostSection title="Electrodomésticos" category="Electrodomésticos" />
+          {/* <Button title="Abrir galería animada" onPress={() => router.push('/welcome')} /> */}
 
         </View>
 

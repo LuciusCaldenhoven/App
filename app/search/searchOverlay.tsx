@@ -9,19 +9,33 @@ import {
   Image,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { History } from "lucide-react-native";
 import { COLORS } from "@/constants/theme";
 import product from "@/assets/index/data";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TOP_SEARCHES = ["Zapatillas", "Laptop gamer", "Celular usado", "Moto"];
+const HISTORY_KEY = "expo_app_search_history";
 
 export default function SearchOverlay() {
   const { query = "" } = useLocalSearchParams();
   const [search, setSearch] = useState(String(query));
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  // Cargar historial al montar
+  useEffect(() => {
+    AsyncStorage.getItem(HISTORY_KEY).then(stored => {
+      if (stored) setRecentSearches(JSON.parse(stored));
+    });
+  }, []);
+
+  // Guardar historial cuando cambia
+  useEffect(() => {
+    AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(recentSearches));
+  }, [recentSearches]);
 
   const handleSearch = (text: string) => {
     const newSearch = text.trim();
@@ -80,29 +94,42 @@ export default function SearchOverlay() {
           )}
         </View>
 
-
+        {/* Top Categorías (con imágenes) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Categorías</Text>
           {product.topProducts.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.itemContainer}
-              onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: item.title }, }) } >
-                
+              onPress={() =>
+                router.push({
+                  pathname: "/search/searchCategory",
+                  params: { category: item.title },
+                })
+              }
+            >
+              {/* Usa imagen */}
               <Image source={item.icon} style={styles.icon} />
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Categorías */}
+        {/* Categorías (con imágenes) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categorías</Text>
           {product.products.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.itemContainer}
-              onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: item.title }, }) } >
+              onPress={() =>
+                router.push({
+                  pathname: "/search/searchCategory",
+                  params: { category: item.title },
+                })
+              }
+            >
+              {/* Usa imagen */}
               <Image source={item.icon} style={styles.icon} />
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>
@@ -157,13 +184,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     color: COLORS.main,
-    fontFamily: 'SemiBold',
+    fontFamily: "SemiBold",
   },
   item: {
     fontSize: 16,
     paddingVertical: 6,
     color: "#222",
-    fontFamily: 'Medium',
+    fontFamily: "Medium",
   },
   itemContainer: {
     flexDirection: "row",
@@ -173,7 +200,7 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 16,
     color: "#222",
-    fontFamily: 'Medium',
+    fontFamily: "Medium",
   },
   icon: {
     width: 32,

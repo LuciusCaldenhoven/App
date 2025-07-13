@@ -49,11 +49,19 @@ export default function EditPostScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={{paddingTop: 50,}}> 
+        <TouchableOpacity onPress={() => router.back()}>
+          <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7, }} />
+        </TouchableOpacity>
         <Animated.Text entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
           Editar publicación
         </Animated.Text>
+
+      </View>
+
+      <ScrollView style={styles.container}>
+              
+
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
           <ImageCarousel selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
         </Animated.View>

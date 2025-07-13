@@ -107,10 +107,6 @@ export default function Login() {
 
 
 
-          <TouchableOpacity>
-            <Text style={styles.forgotText}>Olvidaste tu contrasena?</Text>
-          </TouchableOpacity>
-
 
 
           <View style={styles.divider}>

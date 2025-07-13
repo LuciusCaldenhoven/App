@@ -65,6 +65,12 @@ const products = [
     title: 'Electronica',
     description: 'Productos electronicos',
   },
+    {
+    id: 12,
+    icon: require('./ropa.png'),
+    title: 'Ropa',
+    description: 'Productos electronicos',
+  },
 ];
 
 const topProducts = [

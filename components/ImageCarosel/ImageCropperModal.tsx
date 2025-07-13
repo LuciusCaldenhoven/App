@@ -1,5 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, View, Image, FlatList, TouchableOpacity, StyleSheet, Dimensions, Text, PanResponder, Animated, } from "react-native";
+import {
+  Modal,
+  View,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Text,
+  PanResponder,
+  Animated,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImageManipulator from "expo-image-manipulator";
 
@@ -25,14 +36,19 @@ type Props = {
   onCrop: (croppedUri: string) => void;
 };
 
-const ImageCropperModal: React.FC<Props> = ({ visible, imageUri, onClose, onCrop, }) => {
+const ImageCropperModal: React.FC<Props> = ({
+  visible,
+  imageUri,
+  onClose,
+  onCrop,
+}) => {
   const [selectedRatio, setSelectedRatio] = useState<number | null>(null);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
 
   // Free Crop
   const [cropPosition, setCropPosition] = useState({ top: 0, bottom: 0, left: 0, right: 0 });
 
-  // 1:1 Crop Instagram-style
+  // 1:1 Instagram-style
   const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const lastPan = useRef({ x: 0, y: 0 });
   const [minPan, setMinPan] = useState({ x: 0, y: 0 });
@@ -55,10 +71,9 @@ const ImageCropperModal: React.FC<Props> = ({ visible, imageUri, onClose, onCrop
     if (selectedRatio === 1 && imageSize) {
       const s = Math.max(SQUARE / imageSize.width, SQUARE / imageSize.height);
       setScale(s);
-      // imagen más grande que SQUARE
+
       const shownW = imageSize.width * s;
       const shownH = imageSize.height * s;
-      // min/max para centrar y no ver gris
       setMinPan({
         x: -(shownW - SQUARE) / 2,
         y: -(shownH - SQUARE) / 2,
@@ -98,35 +113,46 @@ const ImageCropperModal: React.FC<Props> = ({ visible, imageUri, onClose, onCrop
 
   // PanResponders para Free Crop
   const createPanResponder = (edge: "top" | "bottom" | "left" | "right") =>
-  PanResponder.create({
-    onStartShouldSetPanResponder: () => selectedRatio === null,
-    onPanResponderMove: (_, gesture) => {
-      setCropPosition((prev) => {
-        if (!imageSize) return prev;
-        const area = getCropArea();
-        const maxCrop =
-          edge === "top" || edge === "bottom"
-            ? area.height * 0.4
-            : area.width * 0.4;
-        const minCrop = 0;
-        let newValue = prev[edge];
-        if (edge === "top") {
-          newValue = Math.max(minCrop, Math.min(prev.top + gesture.dy, maxCrop));
-        }
-        if (edge === "bottom") {
-          newValue = Math.max(minCrop, Math.min(prev.bottom - gesture.dy, maxCrop));
-        }
-        if (edge === "left") {
-          newValue = Math.max(minCrop, Math.min(prev.left + gesture.dx, maxCrop));
-        }
-        if (edge === "right") {
-          newValue = Math.max(minCrop, Math.min(prev.right - gesture.dx, maxCrop));
-        }
-        return { ...prev, [edge]: newValue };
-      });
-    },
-  });
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => selectedRatio === null,
+      onPanResponderMove: (_, gestureState) => {
+        setCropPosition((prev) => {
+          const areaHeight = cropArea.height;
+          const areaWidth = cropArea.width;
+          const minCrop = 0;
+          const minArea = 50;
 
+          let newValue = prev[edge];
+
+          if (edge === "top") {
+            newValue = Math.max(
+              minCrop,
+              Math.min(prev.top + gestureState.dy, areaHeight - prev.bottom - minArea)
+            );
+          }
+          if (edge === "bottom") {
+            newValue = Math.max(
+              minCrop,
+              Math.min(prev.bottom - gestureState.dy, areaHeight - prev.top - minArea)
+            );
+          }
+          if (edge === "left") {
+            newValue = Math.max(
+              minCrop,
+              Math.min(prev.left + gestureState.dx, areaWidth - prev.right - minArea)
+            );
+          }
+          if (edge === "right") {
+            newValue = Math.max(
+              minCrop,
+              Math.min(prev.right - gestureState.dx, areaWidth - prev.left - minArea)
+            );
+          }
+
+          return { ...prev, [edge]: newValue };
+        });
+      },
+    });
 
   const topPanResponder = createPanResponder("top");
   const bottomPanResponder = createPanResponder("bottom");
@@ -174,7 +200,7 @@ const ImageCropperModal: React.FC<Props> = ({ visible, imageUri, onClose, onCrop
       <Ionicons
         name={item.icon as any}
         size={24}
-        color={selectedRatio === item.ratio ? "#FF5A5F" : "#888"}
+        color={selectedRatio === item.ratio ? "#adc92b" : "#888"}
       />
       <Text
         style={[
@@ -253,22 +279,23 @@ const ImageCropperModal: React.FC<Props> = ({ visible, imageUri, onClose, onCrop
               {selectedRatio === null && (
                 <>
                   <View
-                    style={[
-                      styles.cropContainer,
-                      {
-                        width: cropArea.width - (cropPosition.left + cropPosition.right),
-                        height: cropArea.height - (cropPosition.top + cropPosition.bottom),
-                        top: cropPosition.top,
-                        left: cropPosition.left,
-                      },
-                    ]}
+                    style={{
+                      width: cropArea.width - (cropPosition.left + cropPosition.right),
+                      height: cropArea.height - (cropPosition.top + cropPosition.bottom),
+                      overflow: "hidden",
+                      position: "absolute",
+                      top: cropPosition.top,
+                      left: cropPosition.left,
+                    }}
                   >
                     <Image
                       source={{ uri: imageUri }}
                       style={{
                         width: cropArea.width,
                         height: cropArea.height,
-                        resizeMode: "contain",
+                        resizeMode: "cover",
+                        marginLeft: -cropPosition.left,
+                        marginTop: -cropPosition.top,
                       }}
                     />
                   </View>
@@ -303,67 +330,43 @@ const ImageCropperModal: React.FC<Props> = ({ visible, imageUri, onClose, onCrop
               {/* 1:1 Instagram style */}
               {selectedRatio === 1 && (
                 <>
-                  <Animated.View
-                    {...movePanResponder.panHandlers}
-                    style={[
-                      {
-                        width: imageSize.width * scale,
-                        height: imageSize.height * scale,
-                        position: "absolute",
-                        left: (cropArea.width - imageSize.width * scale) / 2,
-                        top: (cropArea.height - imageSize.height * scale) / 2,
-                        transform: [{ translateX: pan.x }, { translateY: pan.y }],
-                      },
-                    ]}
+                  <View
+                    style={{
+                      width: SQUARE,
+                      height: SQUARE,
+                      overflow: "hidden",
+                      position: "relative",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                   >
-                    <Image
+                    <Animated.Image
                       source={{ uri: imageUri }}
                       style={{
                         width: imageSize.width * scale,
                         height: imageSize.height * scale,
-                        resizeMode: "cover",
+                        position: "absolute",
+                        left: (SQUARE - imageSize.width * scale) / 2,
+                        top: (SQUARE - imageSize.height * scale) / 2,
+                        transform: [{ translateX: pan.x }, { translateY: pan.y }],
                       }}
+                      {...movePanResponder.panHandlers}
                     />
-                  </Animated.View>
-                  {/* Grises fuera del cuadrado */}
-                  <View pointerEvents="none" style={StyleSheet.absoluteFillObject}>
-                    {/* Top */}
+                    {/* Borde cuadrado */}
                     <View
+                      pointerEvents="none"
                       style={{
                         position: "absolute",
                         left: 0,
-                        right: 0,
                         top: 0,
-                        height: (cropArea.height - SQUARE) / 2,
-                        backgroundColor: "rgba(80,80,80,0.32)",
-                      }}
-                    />
-                    {/* Bottom */}
-                    <View
-                      style={{
-                        position: "absolute",
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        height: (cropArea.height - SQUARE) / 2,
-                        backgroundColor: "rgba(80,80,80,0.32)",
+                        width: SQUARE,
+                        height: SQUARE,
+                        borderColor: "#adc92b",
+                        borderWidth: 2,
+                        zIndex: 2,
                       }}
                     />
                   </View>
-                  {/* Borde cuadrado */}
-                  <View
-                    pointerEvents="none"
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      top: (cropArea.height - SQUARE) / 2,
-                      width: cropArea.width,
-                      height: SQUARE,
-                      borderColor: "#FF5A5F",
-                      borderWidth: 2,
-                      zIndex: 2,
-                    }}
-                  />
                 </>
               )}
             </View>
@@ -404,7 +407,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    height: SCREEN_HEIGHT * 0.7,
+    height: SCREEN_HEIGHT * 0.6,
     padding: 20,
     flexDirection: "column",
   },
@@ -419,20 +422,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     overflow: "hidden",
-  },
-  cropContainer: {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-    position: "absolute",
-    top: 0,
-    left: 0,
-  },
-  previewImage: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    resizeMode: "contain",
   },
   cropHandle: {
     position: "absolute",
@@ -464,11 +453,12 @@ const styles = StyleSheet.create({
   handleLine: {
     width: 40,
     height: 4,
-    backgroundColor: "#FF5A5F",
+    backgroundColor: "#adc92b",
     borderRadius: 2,
   },
   ratioContainer: {
-    marginBottom: 60,
+    marginBottom: 40,
+    alignItems: "center",
   },
   ratioList: {
     paddingHorizontal: 10,
@@ -481,7 +471,7 @@ const styles = StyleSheet.create({
   },
   selectedRatioItem: {
     borderBottomWidth: 2,
-    borderBottomColor: "#FF5A5F",
+    borderBottomColor: "#adc92b",
   },
   ratioLabel: {
     fontSize: 12,
@@ -489,7 +479,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   selectedRatioLabel: {
-    color: "#FF5A5F",
+    color: "#adc92b",
     fontWeight: "bold",
   },
   confirmButton: {
@@ -499,7 +489,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#FF5A5F",
+    backgroundColor: "#adc92b",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,

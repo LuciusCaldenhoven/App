@@ -45,6 +45,7 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
 
   return (
     <View style={styles.imageCarousel}>
+      
       <FlatList
         data={selectedImages}
         horizontal
@@ -104,33 +105,60 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
   );
 }
 
-// Mostrar imagen con tamaño dinámico
 function ResolvedImage({ item }: { item: string | Id<"_storage"> }) {
-  const isUri = typeof item === "string" && item.startsWith("file://");
+  // Si es string con file:// o http(s), es una URI directa
+  const isUri = typeof item === "string" && (item.startsWith("file://") || item.startsWith("http"));
+  // Solo busca el URL si NO es una URI directa
   const imageUrl = useQuery(
     api.posts.getImageUrl,
     !isUri ? { storageId: item as Id<"_storage"> } : "skip"
   );
+  
+  // Solo muestra imagen si hay URI válida
+  const uri: string | null =
+    isUri
+      ? (item as string)
+      : typeof imageUrl === "string" && (imageUrl.startsWith("http") || imageUrl.startsWith("file://"))
+        ? imageUrl
+        : null;
 
-  const uri = isUri ? (item as string) : imageUrl;
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
 
   useEffect(() => {
-    if (uri) {
-      RNImage.getSize(
-        uri,
-        (width, height) => setAspectRatio(width / height),
-        (error) => console.warn("No se pudo obtener tamaño:", error)
-      );
-    }
+    if (!uri) return;
+    RNImage.getSize(
+      uri,
+      (width, height) => setAspectRatio(width / height),
+      (error) => setAspectRatio(1)
+    );
   }, [uri]);
 
-  if (!uri || !aspectRatio) return null;
+  if (!uri) {
+    return (
+      <View style={{
+        width: 70, height: 100, borderRadius: 5, backgroundColor: "#eee",
+        justifyContent: "center", alignItems: "center"
+      }}>
+        <Text style={{ color: "#aaa" }}>...</Text>
+      </View>
+    );
+  }
+
+  if (!aspectRatio) {
+    return (
+      <View style={{
+        width: 70, height: 100, borderRadius: 5, backgroundColor: "#eee",
+        justifyContent: "center", alignItems: "center"
+      }}>
+        <Text style={{ color: "#aaa" }}>...</Text>
+      </View>
+    );
+  }
 
   const width = aspectRatio * 100;
   const displayWidth = width > 70 ? width : 70;
   const display = displayWidth < 250 ? displayWidth : 250;
-  
+
   return (
     <Image
       source={{ uri }}
