@@ -256,7 +256,7 @@ const ImageCropperModal: React.FC<Props> = ({
     const result = await ImageManipulator.manipulateAsync(
       imageUri,
       [{ crop: cropConfig }],
-      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+      { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG }
     );
     onCrop(result.uri);
   };

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, TextInput, View, KeyboardTypeOptions } from 'react-native';
 import { COLORS } from '@/constants/theme';
 
@@ -14,19 +14,17 @@ interface InputTextProps {
   duration?: number;
 }
 
-const InputText = ({
-  label,
-  value,
-  onChangeText,
-  iconComponent,
-  onFocus,
-  keyboardType,
-  multiline,
-  minHeight,
-  duration = 200,
-}: InputTextProps) => {
+const InputText = ({ label, value, onChangeText, iconComponent, onFocus, keyboardType, multiline, minHeight, duration = 200, }: InputTextProps) => {
   const borderWidth = useRef(new Animated.Value(1.25)).current;
   const transY = useRef(new Animated.Value(0)).current;
+
+
+    useEffect(() => {
+        if (value?.trim() !== '') {
+            animateTransform(-40);
+            animateBorderWidth(2);
+        }
+    }, [value]);
 
   const animateTransform = (toValue: number) => {
     Animated.timing(transY, {
@@ -61,7 +59,7 @@ const InputText = ({
 
   const borderColor = borderWidth.interpolate({
     inputRange: [0, 2],
-    outputRange: ['black', '#0a5fff'],
+    outputRange: ['black', '#7ea437'],
   });
 
   const labelColor = borderWidth.interpolate({

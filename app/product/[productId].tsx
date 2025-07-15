@@ -142,14 +142,9 @@ export default function ProductDetail() {
     <>
       <StatusBar style="light" backgroundColor="white" />
       <View style={styles.container}>
-        <Animated.View
-          style={[styles.header, headerAnimatedStyle]}
-        ></Animated.View>
+        <Animated.View style={[styles.header, headerAnimatedStyle]} ></Animated.View>
         <View style={styles.headerButtonsContainer}>
-          <TouchableOpacity
-            style={styles.roundButton}
-            onPress={() => router.back()}
-          >
+          <TouchableOpacity style={styles.roundButton} onPress={() => router.back()} >
             <Ionicons name="chevron-back" size={20} />
           </TouchableOpacity>
           <View style={styles.rightButtons}>
@@ -201,6 +196,11 @@ export default function ProductDetail() {
                       transition={200}
                       cachePolicy="memory"
                     />
+                      {/* {post.sold && (
+                        <View style={styles.soldStamp}>
+                          <Text style={styles.soldStampText}>VENDIDO</Text>
+                        </View>
+                      )} */}
                   </Animated.View>
                 </TouchableOpacity>
               </View>

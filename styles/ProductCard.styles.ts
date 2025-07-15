@@ -63,4 +63,30 @@ export const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     color: COLORS.black,
   },
+  soldStamp: {
+  position: "absolute",
+
+  top: "30%",
+  left: "5%",
+  width: "90%",
+  aspectRatio: 5, // Más fino
+  borderWidth: 2,
+  borderColor: "#FF5A5F",
+  borderRadius: 10,
+  backgroundColor: "rgba(255,255,255,0.5)", // Más suave, ajusta la opacidad si quieres
+  justifyContent: "center",
+  alignItems: "center",
+  transform: [{ rotate: "-20deg" }], 
+  zIndex: 20,
+},
+soldStampText: {
+  color: "#FF5A5F",
+  fontFamily:"STENCIL",
+  fontSize: 25,
+  textTransform: "uppercase",
+  letterSpacing: 3,
+  textShadowColor: "rgba(0,0,0,0.15)",
+  textShadowOffset: { width: 1, height: 1 },
+  textShadowRadius: 2,
+},
 });

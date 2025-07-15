@@ -55,6 +55,33 @@ export const styles = StyleSheet.create({
     height: 380,
     position: "relative",
   },
+
+soldStamp: {
+  position: "absolute",
+  // Centra el sello en la tarjeta usando top/left/right/bottom y margin
+  top: "40%",
+  left: "5%",
+  width: "90%",
+  aspectRatio: 5, // Más fino
+  borderWidth: 2,
+  borderColor: "#FF5A5F",
+  borderRadius: 10,
+  backgroundColor: "rgba(255,255,255,0.5)", // Más suave, ajusta la opacidad si quieres
+  justifyContent: "center",
+  alignItems: "center",
+  transform: [{ rotate: "-20deg" }], 
+  zIndex: 20,
+},
+soldStampText: {
+  color: "#FF5A5F",
+  fontFamily:"STENCIL",
+  fontSize: 32,
+  textTransform: "uppercase",
+  letterSpacing: 3,
+  textShadowColor: "rgba(0,0,0,0.15)",
+  textShadowOffset: { width: 1, height: 1 },
+  textShadowRadius: 2,
+},
   imageContainer: {
     width: width,
     height: 380,

@@ -28,12 +28,13 @@ const InputLocation = ({ label, iconComponent, duration = 200, keyboardType, min
     const [query, setQuery] = useState(value);
 
     useEffect(() => {
-        if (value?.trim() !== '') {
-            animateTransform(-40);
-            animateBorderWidth(2);
-            setQuery(value);
-        }
-    }, []);
+    setQuery(value);
+    if (value?.trim() !== "") {
+        animateTransform(-40);
+        animateBorderWidth(2);
+    }
+    }, [value]);
+
 
     const handleFocus = () => {
         animateTransform(-40);
@@ -66,7 +67,7 @@ const InputLocation = ({ label, iconComponent, duration = 200, keyboardType, min
 
     const borderColor = borderWidth.current.interpolate({
         inputRange: [0, 2],
-        outputRange: ['black', '#0a5fff'],
+        outputRange: ['black', '#7ea437'],
         extrapolate: 'clamp',
     });
 

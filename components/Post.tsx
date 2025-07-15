@@ -67,6 +67,11 @@ export default function Post({ post }: PostProps) {
                         {post.title}
                     </Text>
                 </View>
+                {post.sold && (
+                    <View style={styles.soldStamp}>
+                    <Text style={styles.soldStampText}>VENDIDO</Text>
+                    </View>
+                )}
             </View>
         </TouchableOpacity>
     );

@@ -22,7 +22,7 @@ import TopSection from "@/components/ProductSelleInfo/TopSection";
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16;
 
-const HEADER_HEIGHT = 160;
+const HEADER_HEIGHT = 50;
 export default function SellerScreen() {
     const router = useRouter();
     const { authorId } = useLocalSearchParams();

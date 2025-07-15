@@ -171,7 +171,6 @@ export const getFilteredPosts = query({
     const currentUser = await getAuthenticatedUser(ctx);
     let q = ctx.db.query("posts");
 
-    // Aplicar otros filtros primero
     if (args.category) {
       q = q.filter((q) => q.eq(q.field("category"), args.category));
     }
@@ -395,7 +394,14 @@ export const deletePost = mutation({
     if (post.userId !== currentUser._id) throw new Error("Not authorized to delete this post");
 
 
-
+    if (post.storageId) {
+      await ctx.storage.delete(post.storageId);
+    }
+    if (post.imageUrls && Array.isArray(post.imageUrls)) {
+      for (const id of post.imageUrls) {
+        await ctx.storage.delete(id);
+      }
+    }
 
     // delete associated comments
     const bookmarks = await ctx.db
@@ -406,15 +412,6 @@ export const deletePost = mutation({
     for (const bookmark of bookmarks) {
       await ctx.db.delete(bookmark._id);
     }
-    // todo: delete associated notifications
-    // const notifications = await ctx.db
-    //     .query("notifications")
-    //     .withIndex("by_post", (q) => q.eq("postId", args.postId))
-    //     .collect();
-
-    // for (const notification of notifications) {
-    //     await ctx.db.delete(notification._id);
-    // }
 
     // delete the post
     await ctx.db.delete(args.postId);
@@ -580,3 +577,10 @@ export const updatePost = mutation({
   }
 });
 
+
+export const deleteFromStorage = mutation({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    await ctx.storage.delete(args.storageId);
+  },
+});

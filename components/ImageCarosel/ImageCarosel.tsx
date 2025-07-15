@@ -9,6 +9,8 @@ import { COLORS } from "@/constants/theme";
 import styles from "./ImageCarosel.styles";
 import { Image } from "expo-image";
 import ImageCropperModal from "./ImageCropperModal";
+import { useConvex } from "convex/react";
+
 
 type Props = {
   selectedImages: (string | Id<"_storage">)[];
@@ -36,12 +38,27 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
   const [cropIndex, setCropIndex] = useState<number | null>(null);
   const [cropImageUri, setCropImageUri] = useState<string | null>(null);
 
-  const editImageAtIndex = (index: number) => {
-    const uri = typeof selectedImages[index] === "string" ? selectedImages[index] : undefined;
-    setCropImageUri(uri || null);
+const convex = useConvex();
+
+const editImageAtIndex = async (index: number) => {
+  let uri: string | undefined = undefined;
+  const img = selectedImages[index];
+
+  if (typeof img === "string" && (img.startsWith("file://") || img.startsWith("http"))) {
+    uri = img;
+  } else {
+    const id = img as Id<"_storage">;
+    uri = await convex.query(api.posts.getImageUrl, { storageId: id });
+  }
+
+  if (uri) {
+    setCropImageUri(uri);
     setCropIndex(index);
     setCropModalVisible(true);
-  };
+  }
+};
+
+
 
   return (
     <View style={styles.imageCarousel}>
@@ -54,10 +71,7 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
         renderItem={({ item, index }) => (
           <View style={styles.imageWrapper}>
             {/* Botón editar */}
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => editImageAtIndex(index)}
-            >
+            <TouchableOpacity style={styles.editButton} onPress={() => editImageAtIndex(index)} >
               <MaterialIcons name="edit" size={17} color={COLORS.white} />
             </TouchableOpacity>
 
@@ -71,7 +85,6 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
               <Feather name="x" size={17} color={COLORS.white} />
             </TouchableOpacity>
 
-            {/* Imagen */}
             <ResolvedImage item={item} />
           </View>
         )}

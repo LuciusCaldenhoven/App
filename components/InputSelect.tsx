@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Keyboard, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { COLORS } from '@/constants/theme';
@@ -14,20 +14,21 @@ interface InputSelectProps {
   duration?: number;
 }
 
-const InputSelect = ({
-  label,
-  data,
-  value,
-  onChangeText,
-  iconComponent,
-  onFocus,
-  duration = 200,
-}: InputSelectProps) => {
+const InputSelect = ({ label, data, value, onChangeText, iconComponent, onFocus, duration = 200, }: InputSelectProps) => {
   const borderWidth = useRef(new Animated.Value(1.25)).current;
   const transY = useRef(new Animated.Value(0)).current;
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
+
+  useEffect(() => {
+    setSelectedItem(value);
+      if (value?.trim() !== '') {
+          animateTransform(-40);
+          animateBorderWidth(2);
+      }
+  }, [value]);
+      
   const animateTransform = (toValue: number) => {
     Animated.timing(transY, {
       toValue,
@@ -66,7 +67,7 @@ const InputSelect = ({
 
   const borderColor = borderWidth.interpolate({
     inputRange: [0, 2],
-    outputRange: ['black', '#0a5fff'],
+    outputRange: ['black', '#7ea437'],
   });
 
   const labelColor = borderWidth.interpolate({

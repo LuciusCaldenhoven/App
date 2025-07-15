@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet, } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -7,84 +7,200 @@ import { Id } from "@/convex/_generated/dataModel";
 import { styles } from "./EditProduct.styles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { Entypo, Feather } from "@expo/vector-icons";
-
 import ImageCarousel from "@/components/ImageCarosel/ImageCarosel";
-import { Loader } from "@/components/Loader";
+import InputText from "@/components/InputText";
+import { Banknote, DollarSign, FileSliders, FileText, MapPinCheck, Pencil, Tag } from "lucide-react-native";
+import InputSelect from "@/components/InputSelect";
+import InputLocation from "@/components/InputLocation/InputLocation";
+import moneda from "@/assets/precio/precio.data";
+import product from "@/assets/index/data";
+import condicion from "@/assets/condicion/condicion.data";
 
 export default function EditPostScreen() {
   const { editProductId } = useLocalSearchParams();
   const postId = Array.isArray(editProductId) ? editProductId[0] : editProductId;
   const markAsSold = useMutation(api.posts.markAsSold);
+  const updatePost = useMutation(api.posts.updatePost);
+  const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
+  const deleteFromStorage = useMutation(api.posts.deleteFromStorage);
 
-  const post = useQuery(
-    api.posts.getPostById,
-    postId ? { postId: postId as Id<"posts"> } : "skip"
-  );
+  const post = useQuery(api.posts.getPostById, postId ? { postId: postId as Id<"posts"> } : "skip");
 
+  // 1. Estados del formulario
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [currency, setCurrency] = useState("");
   const [location, setLocation] = useState("");
+  const [lat, setLat] = useState<number>(0);
+  const [lng, setLng] = useState<number>(0);
+  const [caption, setCaption] = useState("");
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = useState<(string | Id<"_storage">)[]>([]);
+  const [originalImageIds, setOriginalImageIds] = useState<Id<"_storage">[]>([]);
 
-
-
-
+  // 2. Carga inicial de datos
   useEffect(() => {
     if (post) {
-      setTitle(post.title);
-      setPrice(post.price.toString());
-      setLocation(post.location);
-      setCategory(post.category);
-      setCondition(post.condition);
-      setSelectedImages([post.storageId, ...(post.imageUrls || [])]);
+      setTitle(post.title || "");
+      setPrice(post.price?.toString() || "");
+      setCurrency(post.currency || "");
+      setLocation(post.location || "");
+      setLat(post.lat ?? 0);
+      setLng(post.lng ?? 0);
+      setCaption(post.caption || "");
+      setCategory(post.category || "");
+      setCondition(post.condition || "");
+      setSelectedImages([
+        ...(post.storageId ? [post.storageId] : []),
+        ...(post.imageUrls || [])
+      ]);
+      // Guarda los IDs originales (para detectar cuáles eliminar)
+      setOriginalImageIds([
+        ...(post.storageId ? [post.storageId] : []),
+        ...(post.imageUrls || [])
+      ]);
     }
   }, [post]);
 
-  const handleSave = () => {
-    console.log("Guardar cambios...");
+  // 3. Utilidad para subir imágenes locales
+  async function uploadLocalImage(uri: string) {
+    const uploadUrl = await generateUploadUrl();
+    const blob = await fetch(uri).then(res => res.blob());
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      headers: { "Content-Type": blob.type },
+      body: blob
+    });
+    const { storageId } = await response.json();
+    return storageId as Id<"_storage">;
+  }
 
+  // 4. Procesa el array de imágenes para que solo haya IDs
+  async function processImages(images: (string | Id<"_storage">)[]) {
+    const processed: Id<"_storage">[] = [];
+    for (const img of images) {
+      if (typeof img === "string" && img.startsWith("file://")) {
+        const id = await uploadLocalImage(img);
+        processed.push(id);
+      } else {
+        processed.push(img as Id<"_storage">);
+      }
+    }
+    return processed;
+  }
+
+  // 5. Guardar cambios (incluye eliminación de imágenes antiguas)
+  const handleSave = async () => {
+    if (!post) return;
+
+    // Procesa imágenes y obtiene solo IDs
+    const processedImages = await processImages(selectedImages);
+    const storageId = processedImages[0];
+    const imageUrls = processedImages.slice(1);
+
+    // Encuentra los IDs que ya no están en el array final (los eliminados o recortados)
+    const imagesToDelete = originalImageIds.filter(
+      id => !processedImages.includes(id)
+    );
+
+    // Actualiza el post
+    const cleanPrice = Number(price.replace(/,/g, ""));
+    await updatePost({
+      postId: post._id,
+      title,
+      caption,
+      price: cleanPrice,
+      currency,
+      location,
+      lat,
+      lng,
+      category,
+      condition,
+      storageId,
+      imageUrls,
+    });
+
+    // Elimina imágenes antiguas (si hay)
+    for (const id of imagesToDelete) {
+      await deleteFromStorage({ storageId: id });
+    }
+
+    alert("¡Cambios guardados!");
+    router.back();
+  };
+
+  function formatNumberWithCommas(value: string) {
+    const numericValue = value.replace(/\D/g, '');
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  const handlePriceChange = (text: string) => {
+    const formatted = formatNumberWithCommas(text);
+    setPrice(formatted);
+  };
+  const scrollViewRef = useRef<ScrollView>(null);
+  const handleFocus = (y: number) => {
+    scrollViewRef.current?.scrollTo({
+      y: y,
+      animated: true
+    });
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <View style={{paddingTop: 50,}}> 
+      <View style={{ paddingTop: 50, }}>
         <TouchableOpacity onPress={() => router.back()}>
           <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7, }} />
         </TouchableOpacity>
         <Animated.Text entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
           Editar publicación
         </Animated.Text>
-
       </View>
 
-      <ScrollView style={styles.container}>
-              
-
+      <ScrollView style={styles.container} ref={scrollViewRef}>
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
           <ImageCarousel selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
         </Animated.View>
-        <View style={{ paddingHorizontal: 15 }}>
-          {[
-            { label: "Título", value: title, setter: setTitle },
-            { label: "Precio", value: price, setter: setPrice, keyboardType: "numeric" as const },
-            { label: "Ubicación", value: location, setter: setLocation },
-            { label: "Categoría", value: category, setter: setCategory },
-            { label: "Condición", value: condition, setter: setCondition },
-          ].map((item, index) => (
-            <Animated.View key={item.label} entering={FadeInDown.delay(200 + index * 100).duration(400)}>
-              <Text style={styles.label}>{item.label}</Text>
-              <TextInput
-                value={item.value}
-                onChangeText={item.setter}
-                style={styles.input}
-                placeholder={`Escribe ${item.label.toLowerCase()}`}
-                placeholderTextColor="#999"
-                keyboardType={item.keyboardType}
-              />
-            </Animated.View>
-          ))}
+        <View >
+          <View style={styles.inputSection}>
+            <InputText label="Título del producto" iconComponent={<Pencil size={20} />} value={title} onChangeText={setTitle} onFocus={() => handleFocus(100)} />
+          </View>
+
+          <View style={[styles.inputSection, { flexDirection: "row", paddingLeft: 20, paddingRight: 10 }]}>
+            <View style={{ flex: 2.5 }}>
+              <InputText label="Precio" iconComponent={<Banknote size={20} />} keyboardType="numeric" value={price} onChangeText={handlePriceChange} />
+            </View>
+            <View style={{ flex: 1.7 }}>
+              <InputSelect label="Moneda" iconComponent={<DollarSign size={18} />} value={currency} onChangeText={setCurrency} data={moneda} onFocus={() => handleFocus(100)} />
+            </View>
+          </View>
+
+          <View style={styles.inputSection}>
+            <InputSelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} data={product.products} />
+          </View>
+
+          <View style={styles.inputSection}>
+            <InputLocation
+              label="Ubicación"
+              iconComponent={<MapPinCheck size={20} />}
+              value={location}
+              onChangeText={setLocation}
+              onFocus={() => handleFocus(400)}
+              onLocationSelected={({ description, lat: newLat, lng: newLng }) => {
+                setLocation(description);
+                setLat(Number(newLat));
+                setLng(Number(newLng));
+              }}
+            />
+          </View>
+
+          <View style={styles.inputSection}>
+            <InputSelect label="Condición" iconComponent={<FileSliders size={18} />} value={condition} onChangeText={setCondition} data={condicion} />
+          </View>
+
+          <View style={styles.inputSection}>
+            <InputText label="Descripción" iconComponent={<FileText size={18} />} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(500)} minHeight={120} multiline />
+          </View>
 
           <Animated.View entering={FadeInDown.delay(800).duration(400)}>
             <TouchableOpacity style={styles.button} onPress={handleSave}>
@@ -114,4 +230,3 @@ export default function EditPostScreen() {
     </View>
   );
 }
-
