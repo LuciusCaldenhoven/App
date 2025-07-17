@@ -504,12 +504,17 @@ export const getPostIdById = query({
   handler: async (ctx, args) => {
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
-
-
-
     return {
       post
     };
+  },
+});
+
+export const existsPost = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    return !!post; 
   },
 });
 

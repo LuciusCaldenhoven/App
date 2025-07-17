@@ -11,9 +11,8 @@ export const styles = StyleSheet.create({
   },
   blurOverlayRegister:{
     flex: 1,
-    paddingTop: 60,
     paddingHorizontal: 24,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   backgroundImage: {
     ...StyleSheet.absoluteFillObject,
@@ -86,7 +85,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     color: '#000',
     fontFamily: 'Medium',
-    height: 30,
+    height: 40,
+        alignItems: 'center',
   },
   forgotText: {
     color: '#007BFF',

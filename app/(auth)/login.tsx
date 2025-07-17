@@ -88,7 +88,7 @@ export default function Login() {
             <Text style={styles.title}>¡Bienvenido de nuevo!</Text>
             <Text style={styles.subtitle}>Iniciá sesión para comenzar.</Text>
           </View>
-          <View style={styles.inputWrapper}>
+          <View style={[styles.inputWrapper]}>
             <TextInput
               style={styles.input}
               placeholder="Email"

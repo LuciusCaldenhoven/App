@@ -79,7 +79,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 18,
-    height: 20,
+    height: 40,
+   
     color: '#000',
   },
   dash: {

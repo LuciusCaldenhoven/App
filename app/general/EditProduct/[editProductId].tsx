@@ -7,6 +7,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { styles } from "./EditProduct.styles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { Entypo, Feather } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
+import savingAnimation from "@/assets/animations/Loading.json";
 import ImageCarousel from "@/components/ImageCarosel/ImageCarosel";
 import InputText from "@/components/InputText";
 import { Banknote, DollarSign, FileSliders, FileText, MapPinCheck, Pencil, Tag } from "lucide-react-native";
@@ -15,6 +17,7 @@ import InputLocation from "@/components/InputLocation/InputLocation";
 import moneda from "@/assets/precio/precio.data";
 import product from "@/assets/index/data";
 import condicion from "@/assets/condicion/condicion.data";
+import Toast from "react-native-toast-message";
 
 export default function EditPostScreen() {
   const { editProductId } = useLocalSearchParams();
@@ -38,6 +41,7 @@ export default function EditPostScreen() {
   const [condition, setCondition] = useState("");
   const [selectedImages, setSelectedImages] = useState<(string | Id<"_storage">)[]>([]);
   const [originalImageIds, setOriginalImageIds] = useState<Id<"_storage">[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // 2. Carga inicial de datos
   useEffect(() => {
@@ -55,7 +59,6 @@ export default function EditPostScreen() {
         ...(post.storageId ? [post.storageId] : []),
         ...(post.imageUrls || [])
       ]);
-      // Guarda los IDs originales (para detectar cuáles eliminar)
       setOriginalImageIds([
         ...(post.storageId ? [post.storageId] : []),
         ...(post.imageUrls || [])
@@ -90,44 +93,75 @@ export default function EditPostScreen() {
     return processed;
   }
 
-  // 5. Guardar cambios (incluye eliminación de imágenes antiguas)
   const handleSave = async () => {
     if (!post) return;
 
-    // Procesa imágenes y obtiene solo IDs
-    const processedImages = await processImages(selectedImages);
-    const storageId = processedImages[0];
-    const imageUrls = processedImages.slice(1);
-
-    // Encuentra los IDs que ya no están en el array final (los eliminados o recortados)
-    const imagesToDelete = originalImageIds.filter(
-      id => !processedImages.includes(id)
-    );
-
-    // Actualiza el post
-    const cleanPrice = Number(price.replace(/,/g, ""));
-    await updatePost({
-      postId: post._id,
-      title,
-      caption,
-      price: cleanPrice,
-      currency,
-      location,
-      lat,
-      lng,
-      category,
-      condition,
-      storageId,
-      imageUrls,
+    const requiredFields = [
+    { value: selectedImages.length > 0, name: "imágenes" },
+    { value: title.trim(), name: "título" },
+    { value: price.trim(), name: "precio" },
+    { value: currency.trim(), name: "moneda" },
+    { value: category.trim(), name: "categoría" },
+    { value: location.trim(), name: "ubicación" },
+    { value: condition.trim(), name: "condición" },
+    { value: caption.trim(), name: "descripción" },
+  ];
+  const emptyField = requiredFields.find(field => !field.value);
+  if (emptyField) {
+    Toast.show({
+      type: "warning",
+      position: "top",
+      visibilityTime: 3000,
+      text1: `Falta completar: ${emptyField.name}`,
+      text2: "Por favor completa todos los campos requeridos.",
     });
+    return;
+  }
 
-    // Elimina imágenes antiguas (si hay)
-    for (const id of imagesToDelete) {
-      await deleteFromStorage({ storageId: id });
+
+    setIsSaving(true);
+
+    try {
+      const processedImages = await processImages(selectedImages);
+      const storageId = processedImages[0];
+      const imageUrls = processedImages.slice(1);
+
+      const imagesToDelete = originalImageIds.filter(
+        id => !processedImages.includes(id)
+      );
+
+      const cleanPrice = Number(price.replace(/,/g, ""));
+      await updatePost({
+        postId: post._id,
+        title,
+        caption,
+        price: cleanPrice,
+        currency,
+        location,
+        lat,
+        lng,
+        category,
+        condition,
+        storageId,
+        imageUrls,
+      });
+
+      for (const id of imagesToDelete) {
+        await deleteFromStorage({ storageId: id });
+      }
+
+      setIsSaving(false);
+      Toast.show({
+          type: "success",
+          position: "top",
+          text1: "¡Producto editado!",
+          text2: "Tu publicación se ha guardado con éxito.",
+      });
+      router.back();
+    } catch (e) {
+      setIsSaving(false);
+      alert("Error al guardar cambios");
     }
-
-    alert("¡Cambios guardados!");
-    router.back();
   };
 
   function formatNumberWithCommas(value: string) {
@@ -157,7 +191,7 @@ export default function EditPostScreen() {
         </Animated.Text>
       </View>
 
-      <ScrollView style={styles.container} ref={scrollViewRef}>
+      <ScrollView style={styles.container} ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 3000 }} >
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
           <ImageCarousel selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
         </Animated.View>
@@ -202,14 +236,32 @@ export default function EditPostScreen() {
             <InputText label="Descripción" iconComponent={<FileText size={18} />} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(500)} minHeight={120} multiline />
           </View>
 
-          <Animated.View entering={FadeInDown.delay(800).duration(400)}>
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Feather name="check-circle" size={20} color="#fff" />
-              <Text style={styles.buttonText}>Guardar cambios</Text>
+          <Animated.View entering={FadeInDown.delay(800).duration(400)} style={{paddingHorizontal:20}}>
+            <TouchableOpacity
+              style={[styles.button, isSaving && { opacity: 0.7 }]}
+              onPress={handleSave}
+              disabled={isSaving}
+              activeOpacity={0.8}
+            >
+              <View style={{ maxHeight: 25, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+                {isSaving ? (
+                  <LottieView
+                    source={savingAnimation}
+                    autoPlay
+                    loop
+                    style={{ width: 250, height: 250 }}
+                  />
+                ) : (
+                  <>
+                    <Feather name="check-circle" size={20} color="#fff" />
+                    <Text style={styles.buttonText}>Guardar cambios</Text>
+                  </>
+                )}
+              </View>
             </TouchableOpacity>
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(900).duration(400)}>
+          <Animated.View entering={FadeInDown.delay(900).duration(400)} style={{paddingHorizontal:20}}>
             <TouchableOpacity
               style={styles.soldButton}
               onPress={() => {
@@ -224,7 +276,6 @@ export default function EditPostScreen() {
               <Text style={styles.buttonText}>Vendido</Text>
             </TouchableOpacity>
           </Animated.View>
-
         </View>
       </ScrollView>
     </View>

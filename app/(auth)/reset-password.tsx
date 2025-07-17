@@ -4,6 +4,7 @@ import { BlurView } from "expo-blur";
 import { styles } from "@/app/(auth)/auth.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
+import { ChevronLeft, MoveLeft } from "lucide-react-native";
 
 export default function ResetPasswordScreen() {
   const [code, setCode] = useState("");
@@ -60,6 +61,9 @@ export default function ResetPasswordScreen() {
           resizeMode="cover"
         />
         <BlurView intensity={100} tint="light" style={styles.blurOverlayRegister}>
+        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 120,paddingTop: 80 }}>
+          <ChevronLeft size={35} color={"black"}  />
+        </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
             <Text style={styles.title}>Restablecer contraseña</Text>
             <Text style={styles.subtitle}>

@@ -7,7 +7,7 @@ export default function SearchBar({ query }: { query: string }) {
   return (
     <View style={styles.searchContainer}>
       <Link href={{ pathname: "/search/searchOverlay", params: { query } }} asChild>
-        <TouchableOpacity style={{ flexDirection: "row" }}>
+        <TouchableOpacity style={{flexDirection: "row", alignItems: "center",}}>
           <Ionicons name="search" size={18} color="#666" style={{ marginRight: 8 }} />
           <TextInput
             placeholder="¿Qué quieres comprar?"

@@ -4,6 +4,7 @@ import { BlurView } from "expo-blur";
 import { styles } from "@/app/(auth)/auth.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
+import { ChevronLeft, MoveLeft } from "lucide-react-native";
 
 export default function LoginScreen() {
   const [password, setPassword] = useState("");
@@ -96,6 +97,9 @@ export default function LoginScreen() {
           resizeMode="cover"
         />
         <BlurView intensity={100} tint="light" style={styles.blurOverlayRegister}>
+        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 120,paddingTop: 80 }}>
+          <ChevronLeft size={35} color={"black"}  />
+        </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>
             <Text style={styles.title}>¡Bienvenido de nuevo!</Text>
             <Text style={styles.subtitle}>Ingresa tu contrasena para iniciar</Text>

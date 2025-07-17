@@ -141,7 +141,8 @@ export default function LocationPickerModal({
                             <Text style={styles.secondaryButtonText}>Ver ubicación actual</Text>
                         </TouchableOpacity>
 
-                        <View style={styles.sliderContainer}>
+                        <View style={styles.sliderContainer} pointerEvents="box-only">
+
                             <Slider
                                 style={styles.slider}
                                 minimumValue={1}

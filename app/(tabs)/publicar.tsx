@@ -1,165 +1,207 @@
 // app/ofrecer.tsx
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import { FontAwesome5, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { router } from 'expo-router';
-import { COLORS } from '@/constants/theme';
-import { KeyRound, ShoppingCart, Wrench } from 'lucide-react-native';
+import { ShoppingCart, KeyRound, Wrench } from 'lucide-react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+// PALETA PRINCIPAL (solo Paleta 1)
+const PALETTE = {
+  marca: "#adc92b",         // principal para badge y card
+  fondo: "#fafcf4",         // fondo de pantalla
+  texto: "#465b17",         // texto oscuro principal
+  textoClaro: "#fff",
+  info: "#7ea437",
+  card: "#eff4d5",          // fondo de OptionCard (puedes cambiar a #bfd156 si quieres más saturado)
+};
+
+const WIDTH = Dimensions.get('window').width;
 
 export default function OfrecerScreen() {
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <View style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: PALETTE.fondo }}>
+      <View style={styles.bgCircle} />
 
-        {/* Banner visual */}
-
-        <Text style={styles.title}>DiUna</Text>
-        <Text style={styles.subtitle}>¿Qué deseas ofrecer hoy?</Text>
-        <Text style={styles.select}>Selecciona una opción</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>¿Qué deseas ofrecer hoy?</Text>
+        <Text style={styles.subtitle}>
+          Publica en <Text style={{ color: PALETTE.marca, fontFamily: 'Bold' }}>DiUna</Text> y conecta con miles de personas
+        </Text>
+        <View style={{ height: 20 }} />
 
         <OptionCard
           title="Venta"
-          description="Ofrece tus productos nuevos o usados"
-          iconComponent={<ShoppingCart  size={24} strokeWidth={2.5} color="#4F8EF7" />}
-          bgColor="#DCEEFF"
+          description="Ofrece productos nuevos o usados"
+          icon={<ShoppingCart size={26} color={PALETTE.textoClaro} strokeWidth={2.2} />}
         />
-
         <OptionCard
           title="Alquiler"
           description="Alquila tus propiedades o artículos"
-          iconComponent={<KeyRound  size={24} strokeWidth={2.25} color="#30C04F" />}
-          bgColor="#DFF5E5"
+          icon={<KeyRound size={26} color={PALETTE.textoClaro} strokeWidth={2.2} />}
         />
-
         <OptionCard
           title="Servicio"
           description="Ofrece tus habilidades y servicios"
-          iconComponent={<Wrench  size={24} strokeWidth={2.25} color="#A86AEF" />}
-          bgColor="#F0E9FF"
+          icon={<Wrench size={26} color={PALETTE.textoClaro} strokeWidth={2.2} />}
         />
 
-
-      </View>
-       <View style={{paddingHorizontal: 20, bottom: 10}}>
-
-          <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>¿Por qué publicar en DiUna?</Text>
-            <Text style={styles.infoText}>✔ Llega a miles de personas en tu zona</Text>
-            <Text style={styles.infoText}>✔ Comparte, gana o ayuda a otros</Text>
-            <Text style={styles.infoText}>✔ Publicar es rápido y gratuito</Text>
-          </View>
+        {/* INFORMACIÓN AL FINAL */}
+        <View style={{ height: 26 }} />
+        <View style={styles.infoBox}>
+          <Text style={styles.infoTitle}>¿Por qué publicar en DiUna?</Text>
+          <Text style={styles.infoText}>• Llega a miles de personas en tu zona</Text>
+          <Text style={styles.infoText}>• Comparte, gana o ayuda a otros</Text>
+          <Text style={styles.infoText}>• Publicar es rápido y gratuito</Text>
+        </View>
         <Text style={styles.note}>
           📌 Recuerda subir imágenes claras y describir bien tu producto o servicio.
         </Text>
-       </View>
+        <View style={{ height: 22 }} />
+      </ScrollView>
     </View>
   );
 }
 
-function OptionCard({ title, description, iconComponent, bgColor }: any) {
+// Opciones con mismo color de fondo y badge
+function OptionCard({ title, description, icon }: any) {
   return (
     <TouchableOpacity
       style={styles.card}
+      activeOpacity={0.93}
       onPress={() => router.push(`/InfoProducto/infoProducto?tipo=${title}`)}
     >
-      <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
-        {iconComponent}
+      <View style={styles.iconBadge}>
+        {icon}
       </View>
-      <View style={styles.textBox}>
+      <View style={styles.cardTextBox}>
         <Text style={styles.cardTitle}>{title}</Text>
         <Text style={styles.cardDesc}>{description}</Text>
       </View>
-      <MaterialCommunityIcons name="chevron-right" size={24} color="#777" />
+      <MaterialCommunityIcons name="chevron-right" size={24} color={PALETTE.marca} />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 60,
-    paddingBottom: 80,
-    paddingHorizontal: 20,
-    backgroundColor: 'white',
+  scrollContent: {
+    paddingHorizontal: 22,
+    paddingTop: 88,
+    alignItems: 'center',
   },
-  banner: {
-    width: '100%',
-    height: 160,
-    marginBottom: 20,
+  bgCircle: {
+    position: 'absolute',
+    top: -WIDTH * 0.20,
+    left: -WIDTH * 0.25,
+    width: WIDTH * 0.65,
+    height: WIDTH * 0.63,
+    borderRadius: WIDTH * 0.4,
+    backgroundColor: '#dfe8ab',
+    zIndex: 0,
+    opacity: 0.18,
+ 
   },
   title: {
-    fontSize: 28,
+    fontSize: 25,
     fontFamily: 'SemiBold',
-    color: COLORS.black,
-    marginBottom: 8,
+    color: PALETTE.texto,
+    textAlign: 'center',
+    marginBottom: 3,
+    letterSpacing: -0.4,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 10,
-  },
-  select: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 16,
+    fontSize: 14.3,
+    fontFamily: 'Medium',
+    color: PALETTE.info,
+    textAlign: 'center',
+    marginBottom: 7,
+    letterSpacing: 0.1,
   },
   card: {
-    height: 85,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+    borderRadius: 17,
+    paddingVertical: 13,
+    paddingHorizontal: 13,
+    marginBottom: 17,
+    width: '100%',
+    backgroundColor: PALETTE.card,
+    borderLeftWidth: 5,
+    borderLeftColor: PALETTE.marca,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
+    shadowRadius: 7,
+    elevation: 2,
+    zIndex: 1,
   },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+  iconBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 14,
+    backgroundColor: PALETTE.marca,
+    shadowColor: PALETTE.marca,
+    shadowOpacity: 0.09,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
   },
-  textBox: {
+  cardTextBox: {
     flex: 1,
+    paddingRight: 7,
+    justifyContent: 'center',
   },
   cardTitle: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 15.5,
+    fontFamily: 'SemiBold',
+    color: PALETTE.texto,
+    marginBottom: 2,
+    letterSpacing: -0.4,
   },
   cardDesc: {
-    fontSize: 13,
-    color: '#777',
-    marginTop: 2,
+    fontSize: 12.2,
+    fontFamily: 'Regular',
+    color: PALETTE.texto,
+    lineHeight: 16,
+    marginBottom: 1,
   },
   infoBox: {
     marginTop: 10,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#FAFAFA',
+    padding: 14,
+    borderRadius: 14,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#EEE',
+    borderColor: PALETTE.marca,
     marginBottom: 10,
+    alignSelf: 'stretch',
+    shadowColor: PALETTE.marca + "22",
+    shadowOpacity: 0.07,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   infoTitle: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14,
+    fontFamily: 'Bold',
     marginBottom: 6,
+    color: PALETTE.info,
+    letterSpacing: 0.16,
   },
   infoText: {
-    fontSize: 13,
-    color: '#444',
-    marginBottom: 2,
+    fontSize: 12.3,
+    fontFamily: 'Regular',
+    color: '#98b65f',
+    marginBottom: 1,
+    letterSpacing: 0.04,
   },
   note: {
-    bottom: 5,
-    fontSize: 12,
-    color: '#999',
+    fontSize: 11,
+    fontFamily: 'Regular',
+    color: '#9ca17b',
     textAlign: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingHorizontal: 14,
+    paddingTop: 7,
+    fontWeight: '500',
+    opacity: 0.82
   },
 });

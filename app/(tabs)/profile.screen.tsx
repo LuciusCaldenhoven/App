@@ -55,7 +55,7 @@ function Profile() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 150 }}>
+      <ScrollView style={styles.main} contentContainerStyle={{ paddingBottom: 200 }}>
         <Text style={styles.title_first}>Perfil</Text>
         <View style={styles.profileContainer}>
           <TouchableOpacity

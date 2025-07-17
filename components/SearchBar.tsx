@@ -1,4 +1,4 @@
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F7FA",
     borderRadius: 999,
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 0,
     alignItems: "center",
     marginVertical: 10,
   },

@@ -18,55 +18,63 @@ interface IChatCardProps {
 
 const ChatCard = ({ isSelf = false, message = '', time, file, product }: IChatCardProps) => {
   const styles = createStyles(isSelf);
-  const productData = useQuery(api.posts.getPostIdById, product ? { postId: product } : 'skip');
-  const imageUrl = useQuery(api.posts.getImageUrl, productData && productData.post?.storageId ? { storageId: productData.post.storageId } : 'skip');
-  const [visible, setIsVisible] = useState(false);
+  const exists = useQuery(api.posts.existsPost, product ? { postId: product } : 'skip');
+const productData = useQuery(api.posts.getPostIdById, exists && product ? { postId: product } : 'skip');
+const imageUrl = useQuery(
+  api.posts.getImageUrl,
+  exists && productData?.post?.storageId ? { storageId: productData.post.storageId } : 'skip'
+);
+const [visible, setIsVisible] = useState(false);
 
+return (
+  <View style={styles.cardWrapper}>
+    <View style={styles.card}>
 
-  return (
-    <View style={styles.cardWrapper}>
-      <View style={styles.card}>
-
-        {productData?.post && (
-          <TouchableOpacity style={styles.productBar} onPress={() => router.push(`/product/${productData.post._id}`)}>
-            {imageUrl && (
-              <Image source={{ uri: imageUrl }} style={styles.productImage} />
-            )}
-            <View>
-              <Text style={styles.productTitle}>{productData.post.title}</Text>
-              {productData.post.price && (
-                <Text style={styles.productPrice}>${productData.post.price}</Text>
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-
-
-        {message !== '' && <Text style={styles.messageText}>{message}</Text>}
-
-
-        {file && (
+      {/* PRODUCT BAR */}
+      {exists === true && productData?.post && (
+        <TouchableOpacity style={styles.productBar} onPress={() => router.push(`/product/${productData.post._id}`)}>
+          {imageUrl && (
+            <Image source={{ uri: imageUrl }} style={styles.productImage} />
+          )}
           <View>
-            <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)}>
-              <Image source={{ uri: file }} style={styles.messageImage} />
-            </TouchableOpacity>
-            <ImageView
-              images={[{ uri: file }]}
-              imageIndex={0}
-              visible={visible}
-              onRequestClose={() => setIsVisible(false)}
-            />
-
+            <Text style={styles.productTitle}>{productData.post.title}</Text>
+            {productData.post.price && (
+              <Text style={styles.productPrice}>${productData.post.price}</Text>
+            )}
           </View>
-        )}
-      </View>
+        </TouchableOpacity>
+      )}
 
-      <Text style={styles.timestamp}>{time}</Text>
+      {/* PRODUCTO ELIMINADO */}
+      {exists === false && (
+        <View style={styles.productBar}>
+          <Text style={styles.productTitle}>Producto eliminado</Text>
+        </View>
+      )}
 
+      {/* MENSAJE */}
+      {message !== '' && <Text style={styles.messageText}>{message}</Text>}
 
-
+      {/* IMAGEN ADJUNTA */}
+      {file && (
+        <View>
+          <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)}>
+            <Image source={{ uri: file }} style={styles.messageImage} />
+          </TouchableOpacity>
+          <ImageView
+            images={[{ uri: file }]}
+            imageIndex={0}
+            visible={visible}
+            onRequestClose={() => setIsVisible(false)}
+          />
+        </View>
+      )}
     </View>
-  );
+
+    <Text style={styles.timestamp}>{time}</Text>
+  </View>
+);
+
 };
 
 export default ChatCard;

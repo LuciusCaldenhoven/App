@@ -2,11 +2,19 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { ToastConfig } from "react-native-toast-message";
 import { CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react-native";
+import LottieView from "lottie-react-native";
+import successAnim from "@/assets/animations/Check.json";
+import warning from "@/assets/animations/Warning.json";
 
 export const toastConfig: ToastConfig = {
   success: ({ text1, text2 }) => (
     <View style={[styles.toastBox, { backgroundColor: "#e9f9f0" }]}>
-      <CheckCircle color="#2ecc71" size={26} />
+      <LottieView
+      source={successAnim}
+      autoPlay
+      loop={true}
+      style={{ width: 70, height: 80 }}
+    />
       <View style={styles.toastContent}>
         <Text style={styles.toastTitle}>{text1 || "¡Éxito!"}</Text>
         {text2 && <Text style={styles.toastText}>{text2}</Text>}
@@ -24,7 +32,12 @@ export const toastConfig: ToastConfig = {
   ),
   warning: ({ text1, text2 }) => (
     <View style={[styles.toastBox, { backgroundColor: "#fff4e5" }]}>
-      <AlertTriangle color="#f39c12" size={26} />
+      <LottieView
+      source={warning}
+      autoPlay
+      loop={true}
+      style={{ width: 50, height: 50 }}
+    />
       <View style={styles.toastContent}>
         <Text style={styles.toastTitle}>{text1 || "Advertencia"}</Text>
         {text2 && <Text style={styles.toastText}>{text2}</Text>}
@@ -58,6 +71,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 4,
+    maxHeight: 70,
   },
   toastContent: {
     marginLeft: 15,
