@@ -11,27 +11,44 @@ import PostSold from "@/components/PostSold/PostSold";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Plus } from "lucide-react-native";
+import snap from "@/assets/animations/Chasquido.json";
+import LottieView from "lottie-react-native";
 
 
 export default function MyProducts() {
   const [refreshing, setRefreshing] = useState(false);
   const { userId } = useAuth();
   const [selectedTab, setSelectedTab] = useState<"En venta" | "Vendidos">("En venta");
-  // Consulta para obtener los productos del usuario
+  const [showAnimation, setShowAnimation] = useState(false);
+
   const posts = useQuery(api.posts.getNotSoldPostsByUser, {});
   const postsSold = useQuery(api.posts.getSoldPostsByUser, {});
-  // Mostrar un loader mientras se cargan los datos
-  if (!posts) return <Loader />;
 
-  // Mostrar un mensaje si no hay productos
+  if (!posts ) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <LottieView
+          source={snap}
+          autoPlay
+          loop
+          style={{
+            width: 220,
+            height: 220,
+          }}
+        />
+      </View>
+    );
+  }
 
 
-  // Función para manejar el refresco
+
+
   const onRefresh = () => {
     setRefreshing(true);
+    setShowAnimation(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 2000);
+    }, 500);
   };
 
 
@@ -53,13 +70,13 @@ export default function MyProducts() {
               }}
             />
           )}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={COLORS.main}
-            />
-          }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.main}
+          />
+        }
           showsVerticalScrollIndicator={false}
         />
       );
@@ -93,7 +110,21 @@ export default function MyProducts() {
     }
   };
 
-  if (!posts) return <Loader />;
+  if (!posts) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <LottieView
+        source={snap}
+        autoPlay
+        loop
+        style={{
+          width: 220,
+          height: 220,
+        }}
+      />
+    </View>
+  );
+}
 
   return (
     <View style={styles.container}>

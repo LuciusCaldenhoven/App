@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar, Platform, } from 'react-native';
-import { ThumbsUp, MessageCircle, Loader } from 'lucide-react-native';
+import { ThumbsUp, MessageCircle, Loader, ArrowLeft } from 'lucide-react-native';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useAuth } from '@clerk/clerk-expo';
 import { formatDistanceToNow } from 'date-fns';
 import { COLORS } from '@/constants/theme';
+import LottieView from 'lottie-react-native';
+import snap from "@/assets/animations/Chasquido.json";
+import { router } from 'expo-router';
 
 
 const filters = ['Most recent', 'Highest rating', 'Lowest rating'];
@@ -19,9 +22,26 @@ export default function ReviewsScreen() {
         api.reviews.getReviewsByUser,
         currentUser?._id ? { userId: currentUser._id } : "skip"
     );
-    if (!reviews) return <Loader />;
+    if (!reviews ) {
+      return (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <LottieView
+            source={snap}
+            autoPlay
+            loop
+            style={{
+              width: 220,
+              height: 220,
+            }}
+          />
+        </View>
+      );
+    }
     return (
         <View style={styles.container}>
+             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <ArrowLeft size={28} color="#000" />
+      </TouchableOpacity>
             <Text style={styles.title}>Reseñas</Text>
 
             {reviews.length === 0 ? (
@@ -69,6 +89,10 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 80,
     },
+      backButton: {
+        paddingBottom: 20,
+
+  },
     title: {
         fontSize: 28,
         fontFamily: "SemiBold",

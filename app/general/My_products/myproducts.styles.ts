@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
   },
+
   title:{
     fontSize: 28,
     fontFamily: "SemiBold",
@@ -17,6 +18,18 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: scale(18),
   },
+  loaderContainer: {
+  position: "absolute",
+  top: Platform.select({ ios: 10, android: 0 }), // Leves ajustes para iOS/Android
+  left: 0,
+  right: 0,
+  height: 60,
+  zIndex: 999,
+  alignItems: "center",
+  justifyContent: "center",
+  pointerEvents: "none",
+  backgroundColor: "transparent",
+},
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",

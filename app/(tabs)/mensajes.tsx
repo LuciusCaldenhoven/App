@@ -12,6 +12,8 @@ import SingleItem from "@/components/singleItem/singleItem";
 import { scale } from "@/constants/scale";
 import { renderBorderBottom } from "@/constants/ui-utils";
 import { useAuth } from "@clerk/clerk-expo";
+import LottieView from "lottie-react-native";
+import snap from "@/assets/animations/Chasquido.json";
 
 export default function NotificationsAndMessages() {
   const [selectedTab, setSelectedTab] = useState<"notifications" | "messages">("messages");
@@ -78,7 +80,21 @@ export default function NotificationsAndMessages() {
     }
   };
 
-  if (!notifications || !chats) return <Loader />;
+    if (!notifications || !chats) {
+      return (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <LottieView
+            source={snap}
+            autoPlay
+            loop
+            style={{
+              width: 220,
+              height: 220,
+            }}
+          />
+        </View>
+      );
+    }
 
   return (
     <View style={styles.container}>

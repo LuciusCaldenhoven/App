@@ -59,7 +59,7 @@
         {
           "image": "./assets/images/splashh-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "black"
         }
       ],
       [
