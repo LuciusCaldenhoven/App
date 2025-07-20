@@ -1,6 +1,6 @@
 import { View, Text, Dimensions, Image, TouchableOpacity } from "react-native";
 import styles from "@/styles/feed.styles";
-import { MapPin, MessageCircle } from "lucide-react-native";
+import { Bell, MapPin, MessageCircle } from "lucide-react-native";
 import Carousel from "react-native-reanimated-carousel";
 import Animated, {
   useAnimatedStyle,
@@ -18,7 +18,8 @@ const items = [
 ];
 
 const { width } = Dimensions.get("window");
-
+const carouselHeight = width * 0.42;
+console.log("Carousel Height:", width);
 export default function TopSection({ openBottomSheet, currentUser, scrollY }: {
   openBottomSheet: () => void;
   currentUser: any;
@@ -57,8 +58,8 @@ const iconOpacityStyle = useAnimatedStyle(() => {
           <Text style={styles.subtitle}>Peru</Text>
         </View>
         <Animated.View style={[styles.iconWrapper, iconOpacityStyle]} >
-          <TouchableOpacity onPress={openBottomSheet}>
-            <MapPin size={24} strokeWidth={2.2} color="#222" />
+          <TouchableOpacity onPress={() => router.push("/notificaciones/notificaciones")}>
+            <Bell size={24} strokeWidth={2.2} color="#222" />
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -66,7 +67,7 @@ const iconOpacityStyle = useAnimatedStyle(() => {
       <View style={styles.containerCarousel}>
         <Carousel
           width={width}
-          height={160}
+          height={carouselHeight}
           data={items}
           loop
           autoPlay

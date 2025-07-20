@@ -9,12 +9,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor: COLORS.white,
+    paddingTop: 70,
   },
   title:{
     fontSize: 28,
     fontFamily: "SemiBold",
     color: COLORS.black,
-    paddingTop: 80,
+    paddingTop: 15,
     paddingHorizontal: scale(18),
   },
   buttonContainer: {

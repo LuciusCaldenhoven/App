@@ -1,107 +1,132 @@
-// app/ofrecer.tsx
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, } from 'react-native';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
+import OptionCard from '@/components/publicar/OptionCard';
 import { router } from 'expo-router';
-import { ShoppingCart, KeyRound, Wrench } from 'lucide-react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// PALETA PRINCIPAL (solo Paleta 1)
 const PALETTE = {
-  marca: "#adc92b",         // principal para badge y card
-  fondo: "#fafcf4",         // fondo de pantalla
-  texto: "#465b17",         // texto oscuro principal
-  textoClaro: "#fff",
-  info: "#7ea437",
-  card: "#eff4d5",          // fondo de OptionCard (puedes cambiar a #bfd156 si quieres más saturado)
+  marca: "#adc92b",
+  fondo: "white",
+  texto: "#222",
+  grisBtn: "#bababa",
 };
 
-const WIDTH = Dimensions.get('window').width;
+
+const OPTIONS = [
+  {
+    title: "Venta",
+    description: "Vende tus productos nuevos o usados.",
+    image: require("@/assets/images/prueba1.png"),
+  },
+  {
+    title: "Alquiler",
+    description: "Alquila objetos o propiedades.",
+    image: require("@/assets/images/prueba2.png"),
+  },
+  {
+    title: "Servicio",
+    description: "Ofrece tus habilidades, tiempo o conocimiento.",
+    image: require("@/assets/images/prueba1.png"),
+  },
+];
 
 export default function OfrecerScreen() {
+  const [selected, setSelected] = useState<number | null>(null);
+  const [sheetContent, setSheetContent] = useState<{ title: string } | null>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const handleCardPress = (idx: number) => {
+    if (selected === idx) {
+      setSheetContent({
+        title: OPTIONS[idx].title,
+ 
+      });
+      bottomSheetRef.current?.present();
+    } else {
+      setSelected(idx);
+    }
+  };
+
+  const snapPoints = ['36%'];
+
   return (
     <View style={{ flex: 1, backgroundColor: PALETTE.fondo }}>
-      <View style={styles.bgCircle} />
-
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>¿Qué deseas ofrecer hoy?</Text>
         <Text style={styles.subtitle}>
-          Publica en <Text style={{ color: PALETTE.marca, fontFamily: 'Bold' }}>DiUna</Text> y conecta con miles de personas
+          Publica en <Text style={{ color: PALETTE.marca, fontWeight: 'bold' }}>DiUna</Text> y recibe ingresos de inmediato.
         </Text>
-        <View style={{ height: 20 }} />
+        <View style={{ height: 28 }} />
 
-        <OptionCard
-          title="Venta"
-          description="Ofrece productos nuevos o usados"
-          icon={<ShoppingCart size={26} color={PALETTE.textoClaro} strokeWidth={2.2} />}
-        />
-        <OptionCard
-          title="Alquiler"
-          description="Alquila tus propiedades o artículos"
-          icon={<KeyRound size={26} color={PALETTE.textoClaro} strokeWidth={2.2} />}
-        />
-        <OptionCard
-          title="Servicio"
-          description="Ofrece tus habilidades y servicios"
-          icon={<Wrench size={26} color={PALETTE.textoClaro} strokeWidth={2.2} />}
-        />
+        {OPTIONS.map((opt, i) => (
+          <OptionCard
+            key={opt.title}
+            title={opt.title}
+            description={opt.description}
+            selected={selected === i}
+            onPress={() => handleCardPress(i)}
+            image={opt.image}
+          />
+        ))}
 
-        {/* INFORMACIÓN AL FINAL */}
-        <View style={{ height: 26 }} />
-        <View style={styles.infoBox}>
-          <Text style={styles.infoTitle}>¿Por qué publicar en DiUna?</Text>
-          <Text style={styles.infoText}>• Llega a miles de personas en tu zona</Text>
-          <Text style={styles.infoText}>• Comparte, gana o ayuda a otros</Text>
-          <Text style={styles.infoText}>• Publicar es rápido y gratuito</Text>
-        </View>
-        <Text style={styles.note}>
-          📌 Recuerda subir imágenes claras y describir bien tu producto o servicio.
-        </Text>
-        <View style={{ height: 22 }} />
+        <View style={{ height: 38 }} />
+        <TouchableOpacity style={[ styles.btn, { backgroundColor: selected === null ? PALETTE.grisBtn : PALETTE.marca, }, ]}
+          disabled={selected === null}
+          activeOpacity={selected === null ? 1 : 0.82}
+          onPress={() => {
+            if (selected !== null) {
+              router.push(`/InfoProducto/infoProducto?tipo=${OPTIONS[selected].title}`);
+            }
+          }}
+        >
+          <Text style={{ color: "#fff", fontFamily: "SemiBold", fontSize: 17, letterSpacing: 0.1, opacity: selected === null ? 0.62 : 1, }} >
+            Continuar
+          </Text>
+        </TouchableOpacity>
+        <View style={{ height: 34 }} />
       </ScrollView>
-    </View>
-  );
-}
 
-// Opciones con mismo color de fondo y badge
-function OptionCard({ title, description, icon }: any) {
-  return (
-    <TouchableOpacity
-      style={styles.card}
-      activeOpacity={0.93}
-      onPress={() => router.push(`/InfoProducto/infoProducto?tipo=${title}`)}
-    >
-      <View style={styles.iconBadge}>
-        {icon}
-      </View>
-      <View style={styles.cardTextBox}>
-        <Text style={styles.cardTitle}>{title}</Text>
-        <Text style={styles.cardDesc}>{description}</Text>
-      </View>
-      <MaterialCommunityIcons name="chevron-right" size={24} color={PALETTE.marca} />
-    </TouchableOpacity>
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        backgroundStyle={{ backgroundColor: "#fff", borderRadius: 24 }}
+        backdropComponent={props => (
+          <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.28} />
+        )}
+        handleIndicatorStyle={{ backgroundColor: "#e3e3e3", width: 60 }}
+      >
+        <BottomSheetView style={{ flex: 1, padding: 26, justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ fontSize: 21, fontFamily: "SemiBold", color: PALETTE.marca, marginBottom: 10 }}>
+            {sheetContent?.title}
+          </Text>
+          <TouchableOpacity
+            style={{
+              marginTop: 30,
+              backgroundColor: PALETTE.marca,
+              borderRadius: 12,
+              paddingVertical: 12,
+              paddingHorizontal: 35,
+            }}
+            onPress={() => bottomSheetRef.current?.dismiss()}
+            activeOpacity={0.85}
+          >
+            <Text style={{ color: "#fff", fontFamily: "SemiBold", fontSize: 16 }}>Cerrar</Text>
+          </TouchableOpacity>
+        </BottomSheetView>
+      </BottomSheetModal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingHorizontal: 22,
+    paddingHorizontal: 18,
     paddingTop: 88,
     alignItems: 'center',
   },
-  bgCircle: {
-    position: 'absolute',
-    top: -WIDTH * 0.20,
-    left: -WIDTH * 0.25,
-    width: WIDTH * 0.65,
-    height: WIDTH * 0.63,
-    borderRadius: WIDTH * 0.4,
-    backgroundColor: '#dfe8ab',
-    zIndex: 0,
-    opacity: 0.18,
- 
-  },
   title: {
     fontSize: 25,
-    fontFamily: 'SemiBold',
+    fontFamily: "SemiBold",
     color: PALETTE.texto,
     textAlign: 'center',
     marginBottom: 3,
@@ -109,99 +134,23 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14.3,
-    fontFamily: 'Medium',
-    color: PALETTE.info,
+    fontFamily: "Medium",
+    color: "#7ea437",
     textAlign: 'center',
     marginBottom: 7,
     letterSpacing: 0.1,
   },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 17,
-    paddingVertical: 13,
-    paddingHorizontal: 13,
-    marginBottom: 17,
-    width: '100%',
-    backgroundColor: PALETTE.card,
-    borderLeftWidth: 5,
-    borderLeftColor: PALETTE.marca,
-    shadowOffset: { width: 0, height: 3 },
+  btn: {
+    borderRadius: 16,
+    alignSelf: "center",
+    width: "90%",
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+    shadowColor: "#222",
     shadowOpacity: 0.07,
-    shadowRadius: 7,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
-    zIndex: 1,
-  },
-  iconBadge: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-    backgroundColor: PALETTE.marca,
-    shadowColor: PALETTE.marca,
-    shadowOpacity: 0.09,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 2,
-  },
-  cardTextBox: {
-    flex: 1,
-    paddingRight: 7,
-    justifyContent: 'center',
-  },
-  cardTitle: {
-    fontSize: 15.5,
-    fontFamily: 'SemiBold',
-    color: PALETTE.texto,
-    marginBottom: 2,
-    letterSpacing: -0.4,
-  },
-  cardDesc: {
-    fontSize: 12.2,
-    fontFamily: 'Regular',
-    color: PALETTE.texto,
-    lineHeight: 16,
-    marginBottom: 1,
-  },
-  infoBox: {
-    marginTop: 10,
-    padding: 14,
-    borderRadius: 14,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: PALETTE.marca,
-    marginBottom: 10,
-    alignSelf: 'stretch',
-    shadowColor: PALETTE.marca + "22",
-    shadowOpacity: 0.07,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-  infoTitle: {
-    fontSize: 14,
-    fontFamily: 'Bold',
-    marginBottom: 6,
-    color: PALETTE.info,
-    letterSpacing: 0.16,
-  },
-  infoText: {
-    fontSize: 12.3,
-    fontFamily: 'Regular',
-    color: '#98b65f',
-    marginBottom: 1,
-    letterSpacing: 0.04,
-  },
-  note: {
-    fontSize: 11,
-    fontFamily: 'Regular',
-    color: '#9ca17b',
-    textAlign: 'center',
-    paddingHorizontal: 14,
-    paddingTop: 7,
-    fontWeight: '500',
-    opacity: 0.82
   },
 });

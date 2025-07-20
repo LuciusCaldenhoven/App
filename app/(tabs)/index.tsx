@@ -33,7 +33,8 @@ const tabItems = ["Recomendacion", "Celulares", "Motos", "Servicios"];
 export default function Index() {
   const router = useRouter();
   const { userId } = useAuth();
-  const HEADER_HEIGHT = 160;
+  const { width } = Dimensions.get("window");
+  const HEADER_HEIGHT = width * 0.42;
   const scrollY = useSharedValue(0);
 
   const [searchInput, setSearchInput] = useState("");

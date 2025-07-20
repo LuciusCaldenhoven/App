@@ -2,7 +2,8 @@ import { scale } from "@/constants/scale";
 import { COLORS, SIZES } from "@/constants/theme";
 import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
+const carouselHeight = Math.round(width * 0.42);
 const ITEM_WIDTH = width / 2 - 16;
 
 const HEADER_HEIGHT = 160;
@@ -42,12 +43,12 @@ const styles = StyleSheet.create({
 
     alignItems:'center',
     width: "100%",
-    height: 160,
+    height: carouselHeight,
     borderRadius: 12,
     overflow: "hidden",
   },
   image: {
-    width: "85%",
+    width: "90%",
     height: "100%",
     borderRadius: 12,
   },
