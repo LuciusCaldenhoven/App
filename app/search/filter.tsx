@@ -14,6 +14,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import PriceRangeInput from "@/components/PriceRangeInput";
 import WaveDotsLoader from "@/components/loaders/WaveDotsLoader";
+import LottieView from "lottie-react-native";
 
 
 type FilterProps = {
@@ -222,21 +223,26 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
             </TouchableOpacity>
             <TouchableOpacity onPress={handleApplyFilters}>
               <Button
-                text={
-                  stats?.totalPosts !== undefined
-                    ? `Mostrar ${stats.totalPosts} productos`
-                    : ""
-                }
-                component={
-                  stats?.totalPosts === undefined ? (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 20 }}>
-                      <WaveDotsLoader />
-                    </View>
-                  ) : undefined
-                }
-                textStyles={styles.btnTextStyle}
-                buttonStyles={styles.btnContainerStyle}
-              />
+              text={
+                stats?.totalPosts !== undefined
+                  ? `Mostrar ${stats.totalPosts} productos`
+                  : ""
+              }
+              component={
+                stats?.totalPosts === undefined ? (
+                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 20 }}>
+                    <LottieView
+                      source={require('@/assets/animations/Loading.json')}
+                      autoPlay
+                      loop
+                      style={{ width: 220, height: 220 }}
+                    />
+                  </View>
+                ) : undefined
+              }
+              textStyles={styles.btnTextStyle}
+              buttonStyles={styles.btnContainerStyle}
+            />
             </TouchableOpacity>
 
           </View>

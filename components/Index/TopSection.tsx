@@ -19,7 +19,7 @@ const items = [
 
 const { width } = Dimensions.get("window");
 const carouselHeight = width * 0.42;
-console.log("Carousel Height:", width);
+
 export default function TopSection({ openBottomSheet, currentUser, scrollY }: {
   openBottomSheet: () => void;
   currentUser: any;

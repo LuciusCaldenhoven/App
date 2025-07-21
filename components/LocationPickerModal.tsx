@@ -141,13 +141,14 @@ export default function LocationPickerModal({
                             <Text style={styles.secondaryButtonText}>Ver ubicación actual</Text>
                         </TouchableOpacity>
 
-                        <View style={styles.sliderContainer} pointerEvents="box-only">
+                        <View style={styles.sliderContainer} >
 
                             <Slider
                                 style={styles.slider}
                                 minimumValue={1}
                                 maximumValue={100}
                                 value={km}
+                                step={1}
                                 onValueChange={(value: number) => {
                                     const roundedKm = Number(value.toFixed(0));
                                     setKm(roundedKm);
