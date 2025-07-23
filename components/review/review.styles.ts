@@ -20,6 +20,27 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 12,
   },
+  floatingButton: {
+        position: 'absolute',
+        bottom: 30,
+        right: 20,
+        backgroundColor: "black",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 25,
+        zIndex: 999,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+  
+      floatingButtonText: {
+          color: '#fff',
+          fontWeight: '500',
+          fontSize: 14,
+      },
   avatarNameSection: {
     flexDirection: 'row',
     alignItems: 'center',

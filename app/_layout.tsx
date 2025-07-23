@@ -44,10 +44,6 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  console.log('CLERK KEY:', process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  console.log('CONVEX URL:', process.env.EXPO_PUBLIC_CONVEX_URL);
-  console.log('GOOGLE API KEY:', process.env.EXPO_PUBLIC_GOOGLE_API_KEY);
-  console.log('FORMSPREE URL:', process.env.EXPO_PUBLIC_FORMSPREE_URL);
 
 
   useEffect(() => {

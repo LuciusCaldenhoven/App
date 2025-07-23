@@ -37,6 +37,7 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
 
   return (
     <View>
+      
       <FlatList
         data={sortedReviews}
         keyExtractor={(item) => item._id}
@@ -78,9 +79,13 @@ const ReviewComponent = ({ sellerId, containerStyle }: Props) => {
                 {item.comment}
               </Text>
             </View>
+
+              
           </View>
+          
         )}
       />
+      
     </View>
   );
 };

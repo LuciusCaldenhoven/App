@@ -73,7 +73,7 @@ export default function OptionCard({
         ]}
       >
         {selected && image && (
-          <Animated.View style={{ opacity: imageOpacity, alignSelf: "center", marginTop: 2, paddingBottom: 12 }}>
+          <Animated.View style={{ opacity: imageOpacity, alignSelf: "center", marginTop: 2, paddingBottom: 0 }}>
             <Image
               source={image}
               style={styles.cardImage}
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     maxHeight: 170,
   },
   cardImage: {
-    width: 200,
-    height: 85,
+    width: 300,
+    height: 110,
     borderRadius: 12,
     alignSelf: "center",
   },

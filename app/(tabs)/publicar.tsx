@@ -16,7 +16,7 @@ const OPTIONS = [
   {
     title: "Venta",
     description: "Vende tus productos nuevos o usados.",
-    image: require("@/assets/images/prueba1.png"),
+    image: require("@/assets/images/prueba3.png"),
   },
   {
     title: "Alquiler",

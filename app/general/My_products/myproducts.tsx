@@ -81,7 +81,7 @@ export default function MyProducts() {
         />
       );
     } else {
-      if (!postsSold || postsSold.length === 0) return <NoProductsFound />;
+      if (!postsSold || postsSold.length === 0) return <NoProductsSold />;
       return (
         <FlatList
           data={postsSold}
@@ -179,6 +179,22 @@ function NoProductsFound() {
         <Plus size={18} color="#fff" />
         <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>Publicar ahora</Text>
       </TouchableOpacity>
+    </View>
+  );
+}
+
+
+
+function NoProductsSold() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, }} >
+      <Text style={{ color: COLORS.main, fontSize: 20, fontWeight: '600', marginBottom: 6 }}>
+        Aún no has vendido productos
+      </Text>
+      <Text style={{ fontSize: 14, color: '#666', marginBottom: 24, textAlign: 'center' }}>
+        Empieza a vender o alquilar algo en minutos
+      </Text>
+      
     </View>
   );
 }

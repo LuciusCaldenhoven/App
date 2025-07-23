@@ -1,13 +1,9 @@
 import { Animated, Easing, FlatList, Image, Keyboard, KeyboardTypeOptions, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
-import { min } from 'date-fns';
-import { BottomSheet } from '../bottomSheet/BottomSheet';
 import { COLORS } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 import { Entypo } from '@expo/vector-icons';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 interface NewInputProps {
     label: string;

@@ -9,7 +9,6 @@ export function usePushRegistration() {
     const token = await registerForPushNotificationsAsync();
     if (token) {
       await savePushToken({ pushToken: token });
-      console.log("Push token registrado correctamente ✅");
 
     }
   };

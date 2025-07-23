@@ -54,6 +54,12 @@ export default function SearchOverlay() {
   const onPressCategory = (title: string) => {
     handleSearch(title);
   };
+  const removeRecentSearch = (itemToRemove: string) => {
+  setRecentSearches(prev =>
+    prev.filter(item => item !== itemToRemove)
+  );
+};
+
 
   return (
     <KeyboardAvoidingView
@@ -83,15 +89,21 @@ export default function SearchOverlay() {
             <History color={COLORS.main} size={18} />
             <Text style={styles.sectionTitle}> Búsquedas recientes</Text>
           </View>
-          {recentSearches.length === 0 ? (
-            <Text style={styles.item}>No hay historial</Text>
-          ) : (
-            recentSearches.map((item, index) => (
-              <TouchableOpacity key={index} onPress={() => handleSearch(item)}>
-                <Text style={styles.item}>• {item}</Text>
-              </TouchableOpacity>
-            ))
-          )}
+            {recentSearches.length === 0 ? (
+              <Text style={styles.item}>No hay historial</Text>
+            ) : (
+              recentSearches.map((item, index) => (
+                <View key={index} style={styles.recentItemContainer}>
+                  <TouchableOpacity style={{ flex: 1 }} onPress={() => handleSearch(item)}>
+                    <Text style={styles.item}>• {item}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => removeRecentSearch(item)}>
+                    <Ionicons name="close" size={18} color="#888" />
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+
         </View>
 
         {/* Top Categorías (con imágenes) */}
@@ -109,7 +121,7 @@ export default function SearchOverlay() {
               }
             >
               {/* Usa imagen */}
-              <Image source={item.icon} style={styles.icon} />
+              <item.icon size={24} color="#888" style={{ marginRight: 12 }} />
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>
           ))}
@@ -130,21 +142,13 @@ export default function SearchOverlay() {
               }
             >
               {/* Usa imagen */}
-              <Image source={item.icon} style={styles.icon} />
+              
+              <item.icon size={24} color="#888" style={{ marginRight: 12 }} />
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
-
-        {/* Top búsquedas */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Top búsquedas</Text>
-          {TOP_SEARCHES.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => handleSearch(item)}>
-              <Text style={styles.item}>• {item}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -186,6 +190,13 @@ const styles = StyleSheet.create({
     color: COLORS.main,
     fontFamily: "SemiBold",
   },
+  recentItemContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingVertical: 4,
+},
+
   item: {
     fontSize: 16,
     paddingVertical: 6,
@@ -195,10 +206,10 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 6,
+    paddingVertical: 8,
   },
   itemText: {
-    fontSize: 16,
+    fontSize: 17,
     color: "#222",
     fontFamily: "Medium",
   },

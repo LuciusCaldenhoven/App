@@ -16,13 +16,14 @@ import Animated, {
 
 } from "react-native-reanimated"; 
 import TopSection from "@/components/ProductSelleInfo/TopSection";
+import { LinearGradient } from "expo-linear-gradient";
 
 
 
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16;
 
-const HEADER_HEIGHT = 50;
+const HEADER_HEIGHT = 200;
 export default function SellerScreen() {
     const router = useRouter();
     const { authorId } = useLocalSearchParams();
@@ -46,87 +47,90 @@ export default function SellerScreen() {
     const displayName = typeof author.fullname === "string" && author.fullname.trim().length > 0 ? author.fullname.trim().split(" ").slice(0, 2).join(" ") : "User";
 
     return (
-    <View style={styles.container}>
- 
-        <TopSection
-          currentUser={author}
-          scrollY={scrollY}
-        />
- 
+  <View style={styles.container}>
+    <LinearGradient
+      colors={["#F5F5F5", "#F5F5F5", "#fff"]}
+      locations={[0, 0.5, 0.55]}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      }}
+    />
 
-      <Animated.ScrollView 
-        showsVerticalScrollIndicator={false}
-        style={styles.scroll}
-        contentContainerStyle={{
-          paddingTop: HEADER_HEIGHT + 230,
-          paddingBottom: 300,
-        }}
-        onScroll={handleScroll} 
-        scrollEventThrottle={16}
-      >
-        <View style={styles.scrollContent}>
-          
+    <TopSection
+      currentUser={author}
+      scrollY={scrollY}
+    />
 
-            <View>
-            <View style={{ paddingTop: 10, backgroundColor: 'white' }}>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={[styles.button, activeTab === "Productos" && styles.activeButton]}
-                        onPress={() => setActiveTab("Productos")}
-                    >
-                        <Text style={[styles.buttonText, activeTab === "Productos" && styles.activeButtonText]}>
-                            Productos
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={[styles.button, activeTab === "Reviews" && styles.activeButton]}
-                        onPress={() => setActiveTab("Reviews")}
-                    >
-                        <Text style={[styles.buttonText, activeTab === "Reviews" && styles.activeButtonText]}>
-                            Reviews
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+    <Animated.ScrollView 
+      showsVerticalScrollIndicator={false}
+      style={styles.scroll}
+      contentContainerStyle={{
+        paddingTop: HEADER_HEIGHT + 230,
+        paddingBottom: 300,
+      }}
+      onScroll={handleScroll} 
+      scrollEventThrottle={16}
+    >
+      <View style={styles.scrollContent}>
         
-            {activeTab === "Productos" ? (
-                    !posts ? (
-                        <FlatList
-                            data={Array.from({ length: 8 })}
-                            numColumns={2}
-                            keyExtractor={(_, index) => `skeleton-${index}`}
-                            renderItem={() => <ProductSkeleton />}
-                            columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: 12, marginBottom: 16 }}
-                            contentContainerStyle={{ paddingTop: 20 }}
-                            scrollEnabled={false}
-                        />
-                    ) : posts.length === 0 ? (
-                        <Text style={{ textAlign: "center", marginTop: 20 }}>No hay productos</Text>
-                    ) : (
-                        <FlatList
-                            data={posts}
-                            numColumns={2}
-                            keyExtractor={(item) => item._id}
-                            renderItem={({ item }) => <Post post={item} isBookmarked={false} />}
-                            columnWrapperStyle={{ justifyContent: "space-between" }}
-                            contentContainerStyle={{ paddingHorizontal: 12 }}
-                            scrollEnabled={false}
-                        />
-                    )
-                ) : (
-          
-                    <View style={{ flex: 1 }}>
-                    <View style={styles.floatingButton}>
-                      <TouchableOpacity onPress={() => setShowAllReviews(true)}>
-                        <Text style={styles.floatingButtonText}>Ver más</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <ScrollView>
-                      <ReviewComponent sellerId={author._id} />
-                    </ScrollView>
 
-                    {/* Floating Button */}
+          <View>
+          <View style={{ paddingTop: 10, backgroundColor: 'white' }}>
+              <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                      style={[styles.button, activeTab === "Productos" && styles.activeButton]}
+                      onPress={() => setActiveTab("Productos")}
+                  >
+                      <Text style={[styles.buttonText, activeTab === "Productos" && styles.activeButtonText]}>
+                          Productos
+                      </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                      style={[styles.button, activeTab === "Reviews" && styles.activeButton]}
+                      onPress={() => setActiveTab("Reviews")}
+                  >
+                      <Text style={[styles.buttonText, activeTab === "Reviews" && styles.activeButtonText]}>
+                          Reviews
+                      </Text>
+                  </TouchableOpacity>
+              </View>
+              
+          </View>
+      
+          {activeTab === "Productos" ? (
+                  !posts ? (
+                      <FlatList
+                          data={Array.from({ length: 8 })}
+                          numColumns={2}
+                          keyExtractor={(_, index) => `skeleton-${index}`}
+                          renderItem={() => <ProductSkeleton />}
+                          columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: 12, marginBottom: 16 }}
+                          contentContainerStyle={{ paddingTop: 20 }}
+                          scrollEnabled={false}
+                      />
+                  ) : posts.length === 0 ? (
+                      <Text style={{ textAlign: "center", marginTop: 20 }}>No hay productos</Text>
+                  ) : (
+                      <FlatList
+                          data={posts}
+                          numColumns={2}
+                          keyExtractor={(item) => item._id}
+                          renderItem={({ item }) => <Post post={item} isBookmarked={false} />}
+                          columnWrapperStyle={{ justifyContent: "space-between" }}
+                          contentContainerStyle={{ paddingHorizontal: 12 }}
+                          scrollEnabled={false}
+                      />
+                  )
+              ) : (
+        
+                  <View style={{ flex: 1, position: "relative" }}>
+                    
+                      <ReviewComponent sellerId={author._id} />
                     
 
                     <ReviewComponentVertical
@@ -136,20 +140,29 @@ export default function SellerScreen() {
                     />
                   </View>
 
-             
-                )}
-                </View>
 
-     
+           
+              )}
+              </View>
+
+      
 
 
         </View>
 
 
-      </Animated.ScrollView>
+    </Animated.ScrollView>
 
-    </View>
-    );
+    {/* Botón flotante siempre fijo */}
+    {activeTab === "Reviews" && (
+      <View style={styles.floatingButton}>
+        <TouchableOpacity onPress={() => setShowAllReviews(true)}>
+          <Text style={styles.floatingButtonText}>+</Text>
+        </TouchableOpacity>
+      </View>
+    )}
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -159,12 +172,14 @@ const styles = StyleSheet.create({
   },
     floatingButton: {
       position: 'absolute',
-      bottom: 30,
+      bottom: 80, 
       right: 20,
-      backgroundColor: COLORS.black,
-      paddingHorizontal: 20,
-      paddingVertical: 10,
-      borderRadius: 25,
+      width: 64,
+      height: 64,
+      backgroundColor: "#adc92b",
+      borderRadius: 32,
+      alignItems: "center",
+      justifyContent: "center",
       zIndex: 999,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -172,12 +187,12 @@ const styles = StyleSheet.create({
       shadowRadius: 4,
       elevation: 5,
     },
-
     floatingButtonText: {
-        color: '#fff',
-        fontWeight: '500',
-        fontSize: 14,
+      color: 'black',
+      fontSize: 28, 
+      fontFamily: "SemiBold",
     },
+
 buttonContainer: {
         flexDirection: "row",
         justifyContent: "flex-end",

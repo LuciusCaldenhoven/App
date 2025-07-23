@@ -36,7 +36,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.elpibeluuu1.Segunda_mano",
-      "jsEngine": "hermes",
+      "jsEngine": "jsc",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM"
@@ -57,9 +57,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splashh-icon.png",
+          "image": "./assets/images/adaptive-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "black"
+          "backgroundColor": "white"
         }
       ],
       [

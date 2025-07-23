@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
 import { COLORS } from "@/constants/theme";
-import { Heart, House, MessageCircle, Plus, User } from "lucide-react-native";
+import { Heart, House, MessageCircle, Plus, Search, User } from "lucide-react-native";
 import { usePushRegistration } from "@/lib/usePushRegistration";
 import { useAuth } from "@clerk/clerk-expo";
 
@@ -38,7 +38,7 @@ export default function TabLayout() {
           shadowRadius: 5,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 10 ,
           fontFamily: "Medium",
         },
         animation: 'shift',
@@ -48,8 +48,8 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarLabel: "Explorar",
-          tabBarIcon: ({ color, size }) => (
-            <House size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Search size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
           ),
         }}
       />
@@ -57,8 +57,8 @@ export default function TabLayout() {
         name="favoritos"
         options={{
           tabBarLabel: "Favoritos",
-          tabBarIcon: ({ color, size }) => (
-            <Heart size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Heart size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
           ),
         }}
       />
@@ -66,8 +66,8 @@ export default function TabLayout() {
         name="publicar"
         options={{
           tabBarLabel: "Subir",
-          tabBarIcon: ({ color, size }) => (
-            <Plus size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Plus size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
           ),
         }}
       />
@@ -75,8 +75,8 @@ export default function TabLayout() {
         name="mensajes"
         options={{
           tabBarLabel: "Mensajes",
-          tabBarIcon: ({ color, size }) => (
-            <MessageCircle size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <MessageCircle size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
           ),
         }}
       />
@@ -84,8 +84,8 @@ export default function TabLayout() {
         name="profile.screen"
         options={{
           tabBarLabel: "Perfil",
-          tabBarIcon: ({ color, size }) => (
-            <User size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <User size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
           ),
         }}
       />

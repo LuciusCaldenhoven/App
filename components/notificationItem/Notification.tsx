@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Dimensions, StyleSheet, } from "react-native";
 import { Image } from "expo-image";
 import { formatDistanceToNow } from "date-fns";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { Extrapolation, interpolate, interpolateColor, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming, } from "react-native-reanimated";
 import { es } from "date-fns/locale";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";

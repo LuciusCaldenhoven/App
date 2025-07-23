@@ -94,10 +94,6 @@ function Profile() {
         <Text style={styles.title}>General</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<AntDesign name="user" size={scale(24)} color={COLORS.black} />}
-          text="Informacion Personal"
-        />
-        <SingleList
           component={<PackageSearch size={scale(24)} color={COLORS.black} />}
           text="Mis Productos"
           onPress={() => router.push("/general/My_products/myproducts")}

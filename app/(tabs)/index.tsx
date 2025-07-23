@@ -1,19 +1,5 @@
-import {
-  FlatList,
-  Text,
-  View,
-  TextInput,
-  Dimensions,
-  TouchableOpacity,
-  Button,
-  ScrollView,
-} from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-
-} from "react-native-reanimated"; 
+import { Text, View, Dimensions, TouchableOpacity, Button, ScrollView, } from "react-native";
+import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, } from "react-native-reanimated"; 
 import styles from "@/styles/feed.styles";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -27,6 +13,8 @@ import TopSection from "@/components/Index/TopSection";
 import SearchBar from "@/components/Index/SearchBar";
 import { usePaginatedQuery } from "convex/react";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
+import { LinearGradient } from "expo-linear-gradient";
+
 
 const tabItems = ["Recomendacion", "Celulares", "Motos", "Servicios"];
 
@@ -59,9 +47,19 @@ export default function Index() {
 
 
   return (
-    <View style={styles.container}>
-      {/* TopSection now static */}
- 
+    <View style={{flex:1}}>
+
+      <LinearGradient
+        colors={["#F5F5F5", "#F5F5F5", "#fff"]}
+        locations={[0, 0.5, 0.55]}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
+      />
         <TopSection
           openBottomSheet={openBottomSheet}
           currentUser={currentUser}
@@ -74,7 +72,7 @@ export default function Index() {
         style={styles.scroll}
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT + 230,
-          paddingBottom: 300,
+          paddingBottom: 100,
         }}
         onScroll={handleScroll} 
         scrollEventThrottle={16}
@@ -116,10 +114,10 @@ export default function Index() {
           <HorizontalPostSection title="Electronica" category="Electronica" />
           <HorizontalPostSection title="Ropa" category="Ropa" />
           <HorizontalPostSection title="Deportes" category="Deportes" />
-          <HorizontalPostSection title="Vehiculos" category="Vehiculos" />
+          <HorizontalPostSection title="Vehículos" category="Vehículos" />
           <HorizontalPostSection title="Electrodomésticos" category="Electrodomésticos" />
-          {/* <Button title="Abrir galería animada" onPress={() => router.push('/welcome')} /> */}
 
+ 
         </View>
 
  
