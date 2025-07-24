@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function ContactarSoporteScreen() {
     const handleEmailPress = () => {
-        Linking.openURL('mailto:soporte@revende.com').catch(() =>
+        Linking.openURL('mailto:soporte@Diuna.com').catch(() =>
             Alert.alert('Error', 'No se pudo abrir el cliente de correo.')
         );
     };
@@ -34,7 +34,7 @@ export default function ContactarSoporteScreen() {
                 <Mail color="#333" size={24} />
                 <View style={styles.textBox}>
                     <Text style={styles.optionTitle}>Correo electrónico</Text>
-                    <Text style={styles.optionText}>soporte@revende.com</Text>
+                    <Text style={styles.optionText}>soporte@Diuna.com</Text>
                 </View>
             </TouchableOpacity>
 

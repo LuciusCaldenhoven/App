@@ -110,7 +110,7 @@ export default function MyProducts() {
     }
   };
 
-  if (!posts) {
+  if (!posts ) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <LottieView

@@ -151,7 +151,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ item, onDelete }) =
           <View style={styles.textContainer}>
             <View style={styles.timeContainer}>
               <Text numberOfLines={1} style={styles.title} ellipsizeMode="tail">
-                {item.type === "app" ? "ReVende App" : item.sender?.fullname}
+                {item.type === "app" ? "Diuna App" : item.sender?.fullname}
               </Text>
               <Text numberOfLines={1} style={styles.time}>
                 {formatDistanceToNow(item._creationTime, { addSuffix: true, locale: es })}

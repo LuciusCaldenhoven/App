@@ -1,6 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import OptionCard from '@/components/publicar/OptionCard';
 import { router } from 'expo-router';
 
@@ -10,7 +9,6 @@ const PALETTE = {
   texto: "#222",
   grisBtn: "#bababa",
 };
-
 
 const OPTIONS = [
   {
@@ -32,22 +30,10 @@ const OPTIONS = [
 
 export default function OfrecerScreen() {
   const [selected, setSelected] = useState<number | null>(null);
-  const [sheetContent, setSheetContent] = useState<{ title: string } | null>(null);
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const handleCardPress = (idx: number) => {
-    if (selected === idx) {
-      setSheetContent({
-        title: OPTIONS[idx].title,
- 
-      });
-      bottomSheetRef.current?.present();
-    } else {
-      setSelected(idx);
-    }
+    setSelected(idx);
   };
-
-  const snapPoints = ['36%'];
 
   return (
     <View style={{ flex: 1, backgroundColor: PALETTE.fondo }}>
@@ -70,7 +56,11 @@ export default function OfrecerScreen() {
         ))}
 
         <View style={{ height: 38 }} />
-        <TouchableOpacity style={[ styles.btn, { backgroundColor: selected === null ? PALETTE.grisBtn : PALETTE.marca, }, ]}
+        <TouchableOpacity
+          style={[
+            styles.btn,
+            { backgroundColor: selected === null ? PALETTE.grisBtn : PALETTE.marca },
+          ]}
           disabled={selected === null}
           activeOpacity={selected === null ? 1 : 0.82}
           onPress={() => {
@@ -79,41 +69,20 @@ export default function OfrecerScreen() {
             }
           }}
         >
-          <Text style={{ color: "#fff", fontFamily: "SemiBold", fontSize: 17, letterSpacing: 0.1, opacity: selected === null ? 0.62 : 1, }} >
+          <Text
+            style={{
+              color: "#fff",
+              fontFamily: "SemiBold",
+              fontSize: 17,
+              letterSpacing: 0.1,
+              opacity: selected === null ? 0.62 : 1,
+            }}
+          >
             Continuar
           </Text>
         </TouchableOpacity>
         <View style={{ height: 34 }} />
       </ScrollView>
-
-      <BottomSheetModal
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        backgroundStyle={{ backgroundColor: "#fff", borderRadius: 24 }}
-        backdropComponent={props => (
-          <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.28} />
-        )}
-        handleIndicatorStyle={{ backgroundColor: "#e3e3e3", width: 60 }}
-      >
-        <BottomSheetView style={{ flex: 1, padding: 26, justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ fontSize: 21, fontFamily: "SemiBold", color: PALETTE.marca, marginBottom: 10 }}>
-            {sheetContent?.title}
-          </Text>
-          <TouchableOpacity
-            style={{
-              marginTop: 30,
-              backgroundColor: PALETTE.marca,
-              borderRadius: 12,
-              paddingVertical: 12,
-              paddingHorizontal: 35,
-            }}
-            onPress={() => bottomSheetRef.current?.dismiss()}
-            activeOpacity={0.85}
-          >
-            <Text style={{ color: "#fff", fontFamily: "SemiBold", fontSize: 16 }}>Cerrar</Text>
-          </TouchableOpacity>
-        </BottomSheetView>
-      </BottomSheetModal>
     </View>
   );
 }

@@ -14,7 +14,7 @@ const faqs = [
         id: '1',
         question: 'Nos hacemos responsable por las transacciones?',
         answer:
-            'No. ReVende es una plataforma de conexión entre personas. No participamos ni garantizamos los pagos ni entregas. Te recomendamos reunirte en lugares públicos y verificar los productos antes de concretar una compra.',
+            'No. Diuna es una plataforma de conexión entre personas. No participamos ni garantizamos los pagos ni entregas. Te recomendamos reunirte en lugares públicos y verificar los productos antes de concretar una compra.',
     },
     {
         id: '2',
@@ -44,7 +44,7 @@ const faqs = [
         id: '6',
         question: 'Qué pasa si alquilo algo y no me lo devuelven?',
         answer:
-            'Te recomendamos conversar claramente antes de concretar un alquiler. Por ahora, ReVende no interviene ni actúa como intermediario. Más adelante podríamos añadir garantías o contratos digitales.',
+            'Te recomendamos conversar claramente antes de concretar un alquiler. Por ahora, Diuna no interviene ni actúa como intermediario. Más adelante podríamos añadir garantías o contratos digitales.',
     },
 ];
 

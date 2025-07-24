@@ -34,7 +34,7 @@ export const createUser = mutation({
     await ctx.db.insert("notifications", {
       receiverId: userId,
       type: "app",
-      text: "¡Bienvenido a ReVende! Explora y empieza a vender o comprar desde hoy.",
+      text: "¡Bienvenido a Diuna! Explora y empieza a vender o comprar desde hoy.",
     });
   }
 

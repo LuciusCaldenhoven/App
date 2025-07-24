@@ -121,7 +121,7 @@ export default function ProductDetail() {
     try {
       await Share.share({
         title: post?.title || "Mira este producto",
-        url: `https://revende.com/post/${post?._id}`,
+        url: `https://Diuna.com/post/${post?._id}`,
       });
     } catch (err) {
       console.log(err);

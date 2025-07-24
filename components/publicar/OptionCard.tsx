@@ -1,13 +1,21 @@
-import { Info } from 'lucide-react-native';
-import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated, Image, StyleSheet, Dimensions } from 'react-native';
+import { Info } from "lucide-react-native";
+import React, { useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 
 const PALETTE = {
   marca: "#adc92b",
   grisBtn: "#bababa",
 };
 
-const CARD_IMG_SIZE = Math.round(Dimensions.get('window').width * 0.37);
+const CARD_IMG_SIZE = Math.round(Dimensions.get("window").width * 0.37);
 
 type OptionCardProps = {
   title: string;
@@ -41,7 +49,7 @@ export default function OptionCard({
   });
   const height = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [75, CARD_IMG_SIZE + 15],
+    outputRange: [75, CARD_IMG_SIZE + 35],
   });
 
   const imageOpacity = anim.interpolate({
@@ -55,11 +63,7 @@ export default function OptionCard({
   });
 
   return (
-    <TouchableOpacity
-      style={{ marginBottom: 10, width: "100%" }}
-      activeOpacity={0.91}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={{ marginBottom: 10, width: "100%" }} activeOpacity={0.91} onPress={onPress} >
       <Animated.View
         style={[
           styles.card,
@@ -73,7 +77,14 @@ export default function OptionCard({
         ]}
       >
         {selected && image && (
-          <Animated.View style={{ opacity: imageOpacity, alignSelf: "center", marginTop: 2, paddingBottom: 0 }}>
+          <Animated.View
+            style={{
+              opacity: imageOpacity,
+              alignSelf: "center",
+              marginTop: 2,
+              paddingBottom: 0,
+            }}
+          >
             <Image
               source={image}
               style={styles.cardImage}
@@ -81,32 +92,29 @@ export default function OptionCard({
             />
           </Animated.View>
         )}
-          <View style={styles.textBlock}>
-            {/* BENEFICIO + TÍTULO */}
-            <View style={{ flexDirection: "row", alignItems: "center", width: "100%" }}>
-  <Text
-    style={[
-      styles.cardTitle,
-      {
-        color: "#222",
-        fontSize: 17,
-        marginBottom: 6,
-        textAlign: "left",
-        alignSelf: "flex-start",
-        flex: 1,
-      },
-    ]}
-    numberOfLines={1}
-  >
-    {title}
-  </Text>
-
-
-</View>
-
+        <View style={styles.textBlock}>
+          {/* BENEFICIO + TÍTULO */}
+          <View style={{ flexDirection: "row", alignItems: "center", width: "100%", }} >
+            <Text style={[ styles.cardTitle, { color: "#222", fontSize: 17, marginBottom: 6, textAlign: "left", alignSelf: "flex-start", flex: 1, }, ]} numberOfLines={1} >
+              {title}
+            </Text>
+          </View>
 
           {/* DESCRIPCIÓN */}
-          <Text style={[ styles.cardDesc, { color: selected ? "#222" : "#9a9a9a", fontSize: 14, marginBottom: 0, textAlign: "left", lineHeight: 20, alignSelf: "flex-start", }, ]} numberOfLines={2} >
+          <Text
+            style={[
+              styles.cardDesc,
+              {
+                color: selected ? "#222" : "#9a9a9a",
+                fontSize: 14,
+                marginBottom: 0,
+                textAlign: "left",
+                lineHeight: 20,
+                alignSelf: "flex-start",
+              },
+            ]}
+            numberOfLines={2}
+          >
             {description}
           </Text>
         </View>
@@ -120,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 0,
     paddingHorizontal: 10,
-    width: '100%',
+    width: "100%",
     backgroundColor: "#fff",
     borderWidth: 2,
     borderColor: "#eee",
@@ -130,7 +138,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     minHeight: 75,
-    maxHeight: 170,
+    maxHeight: 200,
   },
   cardImage: {
     width: 300,
@@ -160,6 +168,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
     letterSpacing: 0.07,
     fontFamily: "Regular",
-    paddingBottom:5,
+    paddingBottom: 5,
   },
 });

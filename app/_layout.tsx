@@ -11,10 +11,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/ToastConfig/ToastConfig";
-import * as SplashScreen from 'expo-splash-screen';
-import WelcomeScreen from "./welcome";
-
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
@@ -31,18 +27,7 @@ export default function RootLayout() {
 
   });
 
-  const [showWelcome, setShowWelcome] = useState(true);
 
-  const handleFinishWelcome = useCallback(async () => {
-    await SplashScreen.hideAsync();
-    setShowWelcome(false);
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
 
 
 
@@ -60,16 +45,14 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
-            <View style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
+            <View style={{ flex: 1, backgroundColor: "white" }}>
          
               <View style={{ flex: 1 }} onLayout={fontsLoaded ? undefined : undefined}>
                 <StatusBar style="dark" backgroundColor="white" />
                 
-                {!fontsLoaded ? null : showWelcome ? (
-                  <WelcomeScreen onAnimationFinish={handleFinishWelcome} />
-                ) : (
+       
                   <InitialLayout />
-                )}
+              
                 
                 <Toast config={toastConfig} />
               </View>
