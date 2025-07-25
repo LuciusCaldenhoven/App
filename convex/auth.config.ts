@@ -2,7 +2,7 @@
 export default {
     providers: [
       {
-        domain: "https://major-hedgehog-86.clerk.accounts.dev/",
+        domain: "https://clerk.diuna.lat",
         applicationID: "convex",
       },
     ]

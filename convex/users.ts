@@ -54,6 +54,7 @@ export const getUserByClerkId = query({
   },
 });
 
+
 export const getById = query({
   args: {
     userId: v.id("users"),

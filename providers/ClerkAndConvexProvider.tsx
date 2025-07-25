@@ -14,6 +14,9 @@ if (!publishableKey) {
     "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
   );
 }
+
+
+
 export default function ClerkAndConvexProvider({ children }: { children: React.ReactNode }) {
     return (
       <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
@@ -24,3 +27,4 @@ export default function ClerkAndConvexProvider({ children }: { children: React.R
     );
 }
   
+

@@ -37,6 +37,7 @@ export default function Index() {
     userId ? { clerkId: userId } : "skip"
   );
 
+
   const saveLocation = useMutation(api.users.saveLocation);
 
   const handleScroll = useAnimatedScrollHandler({
@@ -44,7 +45,7 @@ export default function Index() {
       scrollY.value = event.contentOffset.y;
     },
   });
-
+  
 
   return (
     <View style={{flex:1}}>

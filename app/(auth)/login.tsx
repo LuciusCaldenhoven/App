@@ -4,7 +4,7 @@ import { useSignIn, useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { COLORS } from "@/constants/theme";
-import { styles } from "@/app/(auth)/auth.styles";
+import { styles } from "@/app/(auth)/auth.style";
 import { BlurView } from "expo-blur";
 import { UserRound } from "lucide-react-native";
 export default function Login() {

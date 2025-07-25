@@ -89,6 +89,7 @@ export const getFeedPosts = query({
     paginationOpts: paginationOptsValidator, // ✅ requerido
   },
   handler: async (ctx, args) => {
+
     const currentUser = await getAuthenticatedUser(ctx);
 
     const { page, isDone, continueCursor } = await ctx.db
@@ -167,7 +168,7 @@ export const getFilteredPosts = query({
 
   handler: async (ctx, args) => {
 
-
+    
     const currentUser = await getAuthenticatedUser(ctx);
     let q = ctx.db.query("posts");
 

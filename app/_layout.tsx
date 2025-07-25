@@ -11,6 +11,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/ToastConfig/ToastConfig";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
+
 
 export default function RootLayout() {
 
@@ -27,7 +31,7 @@ export default function RootLayout() {
 
   });
 
-
+  
 
 
 
@@ -38,7 +42,15 @@ export default function RootLayout() {
     }
   }, []);
 
+    const onLayoutRootView = useCallback(async () => {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
+    }, [fontsLoaded]);
 
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <ClerkAndConvexProvider>
@@ -47,15 +59,12 @@ export default function RootLayout() {
           <BottomSheetModalProvider>
             <View style={{ flex: 1, backgroundColor: "white" }}>
          
-              <View style={{ flex: 1 }} onLayout={fontsLoaded ? undefined : undefined}>
-                <StatusBar style="dark" backgroundColor="white" />
-                
-       
-                  <InitialLayout />
-              
-                
-                <Toast config={toastConfig} />
-              </View>
+              <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+              <StatusBar style="dark" backgroundColor="white" />
+              <InitialLayout />
+              <Toast config={toastConfig} />
+            </View>
+
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

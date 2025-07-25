@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, ImageBackground, Alert, Image } from "react-native";
 import { useState } from "react";
 import { BlurView } from "expo-blur";
-import { styles } from "@/app/(auth)/auth.styles";
+import { styles } from "@/app/(auth)/auth.style";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
 import { ChevronLeft, MoveLeft } from "lucide-react-native";

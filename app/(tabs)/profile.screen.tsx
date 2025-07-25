@@ -41,15 +41,7 @@ function Profile() {
   };
 
   // Mostrar un loader si los datos aún no están disponibles
-  if (!currentUser) {
-    return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <View style={{ transform: [{ scale: 1.5 }] }}>
-          <LoaderPosts />
-        </View>
-      </View>
-    );
-  }
+
 
 
 
@@ -67,13 +59,13 @@ function Profile() {
               })
             }
           >
-            <Image source={currentUser.image} style={styles.profileImage} />
+            <Image source={currentUser?.image} style={styles.profileImage} />
             <View style={{ paddingRight: 250 }}>
               <Text numberOfLines={1} style={styles.title}>
-                {currentUser.fullname}
+                {currentUser?.fullname}
               </Text>
               <Text numberOfLines={1} style={styles.email}>
-                {currentUser.email}
+                {currentUser?.email}
               </Text>
             </View>
             <MaterialCommunityIcons
