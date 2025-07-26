@@ -14,7 +14,7 @@ import SearchBar from "@/components/Index/SearchBar";
 import { usePaginatedQuery } from "convex/react";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
 import { LinearGradient } from "expo-linear-gradient";
-
+import * as Sentry from '@sentry/react-native';
 
 const tabItems = ["Recomendacion", "Celulares", "Motos", "Servicios"];
 
@@ -118,7 +118,8 @@ export default function Index() {
           <HorizontalPostSection title="Vehículos" category="Vehículos" />
           <HorizontalPostSection title="Electrodomésticos" category="Electrodomésticos" />
 
- 
+            
+<Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/>
         </View>
 
  
