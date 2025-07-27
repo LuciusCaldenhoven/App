@@ -31,7 +31,7 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
-SplashScreen.preventAutoHideAsync();
+
 
 export default Sentry.wrap(function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -45,12 +45,15 @@ export default Sentry.wrap(function RootLayout() {
     "STENCIL": require("../assets/fonts/STENCIL.ttf"),
   });
 
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      Navigation.setBackgroundColorAsync("transparent");
-      Navigation.setButtonStyleAsync("light");
-    }
-  }, []);
+useEffect(() => {
+  SplashScreen.preventAutoHideAsync().catch(console.warn);
+
+  if (Platform.OS === "android") {
+    Navigation.setBackgroundColorAsync("transparent");
+    Navigation.setButtonStyleAsync("light");
+  }
+}, []);
+
 
 
 
@@ -71,14 +74,17 @@ export default Sentry.wrap(function RootLayout() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
             <View style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
-              <StatusBar style="dark" backgroundColor="white" />
               <InitialLayout />
               <Stack
                 screenOptions={{
                   headerShown: false,
-                  animation: "default",
+                  animation: "none",
                 }}
               >
+                <Stack.Screen name="(auth)/login" />
+                <Stack.Screen name="(auth)/main" />
+                <Stack.Screen name="(auth)/register" />
+                <Stack.Screen name="(auth)/reset-password" />
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="product/[productId]" />
                 <Stack.Screen name="InfoProducto/infoProducto" />
@@ -86,16 +92,19 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen name="general/My_products/myproducts" />
                 <Stack.Screen name="general/EditProduct/[editProductId]" />
                 <Stack.Screen name="search/searchResults" />
+                <Stack.Screen name="search/searchCategory" />
+                <Stack.Screen name="search/searchOverlay" />
                 <Stack.Screen name="chat/[chatid]" />
                 <Stack.Screen name="product/Profile_2" />
-                <Stack.Screen name="general/reviews" />
                 <Stack.Screen name="search/filter" />
                 <Stack.Screen name="soporte/ContactarSoporte" />
                 <Stack.Screen name="soporte/PreguntasFrecuentes" />
                 <Stack.Screen name="soporte/ReportarProblema" />
                 <Stack.Screen name="notificaciones/notificaciones" />
+                <Stack.Screen name="working/working" />
               </Stack>
               <Toast config={toastConfig} />
+              <StatusBar style="auto" />
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

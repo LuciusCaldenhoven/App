@@ -140,7 +140,7 @@ export default function ProductDetail() {
 
   return (
     <>
-      <StatusBar style="light" backgroundColor="white" />
+    <StatusBar style="auto" />
       <View style={styles.container}>
         <Animated.View style={[styles.header, headerAnimatedStyle]} ></Animated.View>
         <View style={styles.headerButtonsContainer}>
