@@ -4,20 +4,33 @@ import { Mail, MessageCircle, FileText } from 'lucide-react-native';
 import { COLORS } from '@/constants/theme';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 export default function ContactarSoporteScreen() {
     const handleEmailPress = () => {
-        Linking.openURL('mailto:soporte@Diuna.com').catch(() =>
+        Linking.openURL('mailto:soporte@diuna.com').catch(() =>
             Alert.alert('Error', 'No se pudo abrir el cliente de correo.')
         );
     };
 
     const handleChatPress = () => {
-        Alert.alert('Próximamente', 'El chat en la app estará disponible en una futura versión.');
+        Toast.show({
+            type: "warning",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Próximamente`,
+            text2: "El chat en la app estará disponible en una futura versión.",
+        });
     };
 
     const handleFormPress = () => {
-        Alert.alert('Próximamente', 'Estamos trabajando en un formulario de contacto.');
+        Toast.show({
+            type: "warning",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Próximamente`,
+            text2: "Estamos trabajando en un formulario de contacto.",
+        });
     };
 
     return (
@@ -34,7 +47,7 @@ export default function ContactarSoporteScreen() {
                 <Mail color="#333" size={24} />
                 <View style={styles.textBox}>
                     <Text style={styles.optionTitle}>Correo electrónico</Text>
-                    <Text style={styles.optionText}>soporte@Diuna.com</Text>
+                    <Text style={styles.optionText}>soporte@diuna.com</Text>
                 </View>
             </TouchableOpacity>
 

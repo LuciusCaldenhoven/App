@@ -119,7 +119,7 @@ export default function Index() {
           <HorizontalPostSection title="Electrodomésticos" category="Electrodomésticos" />
 
             
-<Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/>
+{/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
         </View>
 
  

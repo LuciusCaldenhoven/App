@@ -104,7 +104,7 @@ export default function LocationPickerModal({
 
                 <View style={{ width: '95%', height: 290, marginTop: 12 }}>
                     <MapView
-                        style={{ flex: 1, borderRadius: 12 }}
+                        style={{ flex: 1, borderRadius: 12}}
                         initialRegion={region}
                         region={region}
                         onRegionChangeComplete={setRegion}
@@ -174,7 +174,8 @@ export default function LocationPickerModal({
       step={1}
       onValuesChange={(values: number[]) => {
         const value = values[0];
-        setKm(value);
+        const roundedKm = Number(value.toFixed(0));
+        setKm(roundedKm);
         const delta = kmToDelta(value);
         setRegion(prev => ({
           ...prev,

@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar, } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const FORMSPREE_URL = process.env.EXPO_PUBLIC_FORMSPREE_URL!;
 
@@ -14,7 +15,13 @@ export default function ReportProblemScreen() {
 
   const handleSubmit = async () => {
     if (!title || !description || !email) {
-      Alert.alert('Completa todos los campos antes de enviar.');
+      Toast.show({
+          type: "warning",
+          position: "top",
+          visibilityTime: 3000,
+          text1: `Falta completar`,
+          text2: "Por favor completa todos los campos requeridos.",
+      });
       return;
     }
 
@@ -32,16 +39,34 @@ export default function ReportProblemScreen() {
       });
 
       if (response.ok) {
-        Alert.alert('Gracias', 'Tu reporte ha sido enviado correctamente.');
+        Toast.show({
+          type: "success",
+          position: "top",
+          visibilityTime: 3000,
+          text1: `Reporte enviado`,
+          text2: "Gracias por tu reporte.",
+        });
         setTitle('');
         setDescription('');
         setEmail('');
       } else {
-        Alert.alert('Error', 'No se pudo enviar el formulario.');
+        Toast.show({
+          type: "error",
+          position: "top",
+          visibilityTime: 3000,
+          text1: `Error al enviar el reporte`,
+          text2: "Por favor intenta nuevamente.",
+        });
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Hubo un problema al enviar tu mensaje.');
+      Toast.show({
+          type: "error",
+          position: "top",
+          visibilityTime: 3000,
+          text1: `Error al enviar el reporte`,
+          text2: "Por favor intenta nuevamente.",
+        });
     }
   };
 
@@ -116,7 +141,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#adc92b',
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
