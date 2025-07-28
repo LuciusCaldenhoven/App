@@ -9,6 +9,9 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/
 import { MapPin, CircleCheck } from "lucide-react-native";
 import styles from "@/styles/feed.styles";
 import CenterMarker from "@/components/CenterMarker/CenterMarker";
+import { Platform } from 'react-native';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
+
 
 const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY!;
 
@@ -141,29 +144,53 @@ export default function LocationPickerModal({
                             <Text style={styles.secondaryButtonText}>Ver ubicación actual</Text>
                         </TouchableOpacity>
 
-                        <View style={styles.sliderContainer} >
+                        <View style={styles.sliderContainer}>
+  {Platform.OS === "ios" ? (
+    <Slider
+      style={styles.slider}
+      minimumValue={1}
+      maximumValue={100}
+      value={km}
+      step={1}
+      onValueChange={(value: number) => {
+        const roundedKm = Number(value.toFixed(0));
+        setKm(roundedKm);
+        const delta = kmToDelta(value);
+        setRegion(prev => ({
+          ...prev,
+          latitudeDelta: delta,
+          longitudeDelta: delta,
+        }));
+      }}
+      minimumTrackTintColor="#333"
+      maximumTrackTintColor="#ccc"
+      thumbTintColor="#555"
+    />
+  ) : (
+    <MultiSlider
+      values={[km]}
+      min={1}
+      max={100}
+      step={1}
+      onValuesChange={(values: number[]) => {
+        const value = values[0];
+        setKm(value);
+        const delta = kmToDelta(value);
+        setRegion(prev => ({
+          ...prev,
+          latitudeDelta: delta,
+          longitudeDelta: delta,
+        }));
+      }}
+      selectedStyle={{ backgroundColor: '#333' }}
+      unselectedStyle={{ backgroundColor: '#ccc' }}
+      containerStyle={{ marginHorizontal: 10 }}
+      trackStyle={{ height: 6 }}
+      markerStyle={{ backgroundColor: '#555', height: 20, width: 20, marginTop: 2, borderRadius: 10 }}
+    />
+  )}
+</View>
 
-                            <Slider
-                                style={styles.slider}
-                                minimumValue={1}
-                                maximumValue={100}
-                                value={km}
-                                step={1}
-                                onValueChange={(value: number) => {
-                                    const roundedKm = Number(value.toFixed(0));
-                                    setKm(roundedKm);
-                                    const delta = kmToDelta(value);
-                                    setRegion(prev => ({
-                                        ...prev,
-                                        latitudeDelta: delta,
-                                        longitudeDelta: delta,
-                                    }));
-                                }}
-                                minimumTrackTintColor="#333"
-                                maximumTrackTintColor="#ccc"
-                                thumbTintColor="#555"
-                            />
-                        </View>
 
                         <Text style={styles.kmLabel}>
                             Radio: <Text style={styles.kmValue}>{km} km</Text>

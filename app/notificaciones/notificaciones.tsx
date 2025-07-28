@@ -19,57 +19,54 @@ export default function NotificationsScreen() {
     _creationTime: new Date(n._creationTime),
   }));
 
-  if (!notifications) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <LottieView
-          source={snap}
-          autoPlay
-          loop
-          style={{
-            width: 220,
-            height: 220,
-          }}
-        />
-      </View>
-    );
-  }
-
-
   return (
     <View style={styles.container}>
-               <TouchableOpacity onPress={() => router.back()}>
-          <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7, }} />
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.back()}>
+        <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7 }} />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Notificaciones</Text>
 
-      {(!notifications || notifications.length === 0) ? (
+   
+      {notifications === undefined ? (
+        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 200 }}>
+          <LottieView
+            source={snap}
+            autoPlay
+            loop
+            style={{
+              width: 240,
+              height: 240,
+            }}
+          />
+        </View>
+      ) : notifications.length === 0 ? (
         <NoNotificationsFound />
       ) : (
         <FlatList
-      style={{ flex: 1 }}
-      data={formattedNotifications}
-      renderItem={({ item }) => (
-        <NotificationItem
-          item={item}
-          onDelete={async (notification) => {
-            try {
-              await deleteNotification({ notificationId: notification._id });
-            } catch (err) {
-              console.error("Error al eliminar notificación:", err);
-            }
-          }}
+          style={{ flex: 1 }}
+          data={formattedNotifications}
+          renderItem={({ item }) => (
+            <NotificationItem
+              item={item}
+              onDelete={async (notification) => {
+                try {
+                  await deleteNotification({ notificationId: notification._id });
+                } catch (err) {
+                  console.error("Error al eliminar notificación:", err);
+                }
+              }}
+            />
+          )}
+          keyExtractor={(item) => item._id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
         />
       )}
-      keyExtractor={(item) => item._id}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.listContainer}
-    />
-      )}
-
     </View>
   );
 }
+
 
 function NoNotificationsFound() {
   return (

@@ -11,13 +11,9 @@ export default function TabLayout() {
 
   useEffect(() => {
     if (isSignedIn) {
-      try {
-        registerPush(); // solo si ya estás autenticado
-      } catch (error) {
-        console.error("Failed to register push token", error);
-      }
+      registerPush();
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, registerPush]);
 
   return (
     <Tabs

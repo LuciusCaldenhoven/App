@@ -24,22 +24,6 @@ export default function MyProducts() {
   const posts = useQuery(api.posts.getNotSoldPostsByUser, {});
   const postsSold = useQuery(api.posts.getSoldPostsByUser, {});
 
-  if (!posts ) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <LottieView
-          source={snap}
-          autoPlay
-          loop
-          style={{
-            width: 220,
-            height: 220,
-          }}
-        />
-      </View>
-    );
-  }
-
 
 
 
@@ -148,7 +132,19 @@ export default function MyProducts() {
           <Text style={[styles.buttonText, selectedTab === "Vendidos" && styles.activeButtonText]} > Vendidos </Text>
         </TouchableOpacity>
       </View>
-      {renderContent()}
+      {posts === undefined || postsSold === undefined ? (
+        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 200 }}>
+          <LottieView
+            source={snap}
+            autoPlay
+            loop
+            style={{ width: 240, height: 240 }}
+          />
+        </View>
+      ) : (
+        renderContent()
+      )}
+
     </View>
   );
 

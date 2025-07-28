@@ -13,8 +13,6 @@ export default function Login() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
 

@@ -13,7 +13,6 @@ import AnimatedSelectableBox from "@/components/tagSelector/tagSelector";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import PriceRangeInput from "@/components/PriceRangeInput";
-import WaveDotsLoader from "@/components/loaders/WaveDotsLoader";
 import LottieView from "lottie-react-native";
 
 

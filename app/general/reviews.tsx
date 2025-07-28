@@ -11,76 +11,76 @@ import snap from "@/assets/animations/Chasquido.json";
 import { router } from 'expo-router';
 
 
-const filters = ['Most recent', 'Highest rating', 'Lowest rating'];
-
 export default function ReviewsScreen() {
-    const [selectedFilter, setSelectedFilter] = useState('Most recent');
-    const { userId } = useAuth();
+  const [selectedFilter, setSelectedFilter] = useState('Most recent');
+  const { userId } = useAuth();
 
-    const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
-    const reviews = useQuery(
-        api.reviews.getReviewsByUser,
-        currentUser?._id ? { userId: currentUser._id } : "skip"
-    );
-    if (!reviews ) {
-      return (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+  const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
+  const reviews = useQuery(
+    api.reviews.getReviewsByUser,
+    currentUser?._id ? { userId: currentUser._id } : "skip"
+  );
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <ArrowLeft size={28} color="#000" />
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Reseñas</Text>
+
+      {/* Animación de carga mientras se obtienen los reviews */}
+      {reviews === undefined ? (
+        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 200 }}>
           <LottieView
             source={snap}
             autoPlay
             loop
             style={{
-              width: 220,
-              height: 220,
+              width: 240,
+              height: 240,
             }}
           />
         </View>
-      );
-    }
-    return (
-        <View style={styles.container}>
-             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                <ArrowLeft size={28} color="#000" />
-      </TouchableOpacity>
-            <Text style={styles.title}>Reseñas</Text>
-
-            {reviews.length === 0 ? (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: '#777', fontSize: 16, textAlign: 'center' }}>
-                        Aún no hay reseñas.
-                    </Text>
-                </View>
-            ) : (
-                <FlatList
-                    data={reviews}
-                    keyExtractor={(item) => item._id}
-                    renderItem={({ item }) => (
-                        <View style={styles.reviewCard}>
-                            <View style={styles.headerRow}>
-                                <Image source={{ uri: item.user.image }} style={styles.avatar} />
-                                <View>
-                                    <Text style={styles.name}>{item.user.fullname.split(' ')[0]}</Text>
-                                    <Text style={styles.date}>{formatDistanceToNow(item._creationTime, { addSuffix: true })}</Text>
-                                </View>
-                            </View>
-
-                            <View style={styles.stars}>
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <Text key={i} style={{ fontSize: 16 }}>
-                                        {i < item.rating ? '★' : '☆'}
-                                    </Text>
-                                ))}
-                            </View>
-
-                            <Text style={styles.comment}>{item.comment}</Text>
-
-                        </View>
-                    )}
-                />
-            )}
+      ) : reviews.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: '#777', fontSize: 16, textAlign: 'center' }}>
+            Aún no hay reseñas.
+          </Text>
         </View>
-    );
+      ) : (
+        <FlatList
+          data={reviews}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <View style={styles.reviewCard}>
+              <View style={styles.headerRow}>
+                <Image source={{ uri: item.user.image }} style={styles.avatar} />
+                <View>
+                  <Text style={styles.name}>{item.user.fullname.split(' ')[0]}</Text>
+                  <Text style={styles.date}>
+                    {formatDistanceToNow(item._creationTime, { addSuffix: true })}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.stars}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Text key={i} style={{ fontSize: 16 }}>
+                    {i < item.rating ? '★' : '☆'}
+                  </Text>
+                ))}
+              </View>
+
+              <Text style={styles.comment}>{item.comment}</Text>
+            </View>
+          )}
+        />
+      )}
+    </View>
+  );
 }
+
 
 const styles = StyleSheet.create({
     container: {

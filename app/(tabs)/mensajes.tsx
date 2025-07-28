@@ -18,32 +18,31 @@ export default function MessagesScreen() {
   const { userId } = useAuth();
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
 
-  if (!chats) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <LottieView
-          source={snap}
-          autoPlay
-          loop
-          style={{
-            width: 220,
-            height: 220,
-          }}
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Mensajes</Text>
+
       <InputComponent
         onChangeText={(e) => console.log(e)}
         leftAction={<MaterialIcons color={COLORS.gray} name="search" size={scale(22)} />}
         placeholder="Buscar mensajes"
         containerStyle={styles.input}
       />
-      {(!chats || chats.length === 0) ? (
+
+      {/* Animación de carga si chats aún no ha llegado */}
+      {chats === undefined ? (
+        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 200 }}>
+          <LottieView
+            source={snap}
+            autoPlay
+            loop
+            style={{
+              width: 240,
+              height: 240,
+            }}
+          />
+        </View>
+      ) : chats.length === 0 ? (
         <NoMessagesFound />
       ) : (
         <FlatList
@@ -54,10 +53,12 @@ export default function MessagesScreen() {
           keyExtractor={(chat) => chat._id}
         />
       )}
-      {renderBorderBottom(90)}
+
+    
     </View>
   );
 }
+
 
 function NoMessagesFound() {
   return (
