@@ -35,7 +35,6 @@ Sentry.init({
 
 export default Sentry.wrap(function RootLayout() {
   const [fontsLoaded] = useFonts({
-    "JetBrainsMono-Medium": require("../assets/fonts/JetBrainsMono-Medium.ttf"),
     Regular: require("../assets/fonts/Poppins-Regular.ttf"),
     Light: require("../assets/fonts/Poppins-Light.ttf"),
     Bold: require("../assets/fonts/Poppins-Bold.ttf"),
@@ -77,7 +76,7 @@ export default Sentry.wrap(function RootLayout() {
               <Stack
                 screenOptions={{
                   headerShown: false,
-                  animation: "none",
+                  animation: "default",
                 }}
               >
                 <Stack.Screen name="(auth)/login" />
@@ -103,7 +102,7 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen name="working/working" />
               </Stack>
               <Toast config={toastConfig} />
-              <StatusBar style="auto" />
+              <StatusBar style="dark" />
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

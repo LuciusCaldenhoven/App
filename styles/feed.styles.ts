@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
 
   primaryButton: {
-    backgroundColor: '#7ea437',
+    backgroundColor: '#adc92b',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

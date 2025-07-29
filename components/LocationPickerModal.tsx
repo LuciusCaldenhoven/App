@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
 import MapView from 'react-native-maps';
-import Slider from '@react-native-community/slider';
 import * as Location from 'expo-location';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { MapPin, CircleCheck } from "lucide-react-native";
@@ -11,7 +10,8 @@ import styles from "@/styles/feed.styles";
 import CenterMarker from "@/components/CenterMarker/CenterMarker";
 import { Platform } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-
+import { useSharedValue } from "react-native-reanimated";
+import { Slider  } from 'react-native-awesome-slider';
 
 const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY!;
 
@@ -33,7 +33,10 @@ export default function LocationPickerModal({
     });
 
     const [km, setKm] = useState(currentUser?.km || 10);
-
+    
+    const progress = useSharedValue(currentUser?.km || 10);
+    const min = useSharedValue(10);
+    const max = useSharedValue(400);
     useEffect(() => {
         const getDeviceLocation = async () => {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -65,6 +68,7 @@ export default function LocationPickerModal({
     function kmToDelta(km: number) {
         return Number((km / 111).toFixed(4));
     }
+    
 
     async function guardarUbicacion({ latitude, longitude }: { latitude: number, longitude: number }) {
         try {
@@ -145,51 +149,33 @@ export default function LocationPickerModal({
                         </TouchableOpacity>
 
                         <View style={styles.sliderContainer}>
-  {Platform.OS === "ios" ? (
-    <Slider
-      style={styles.slider}
-      minimumValue={1}
-      maximumValue={100}
-      value={km}
-      step={1}
-      onValueChange={(value: number) => {
-        const roundedKm = Number(value.toFixed(0));
+   <Slider
+        progress={progress}
+        style={styles.slider}
+        minimumValue={min}
+        maximumValue={max}
+        theme={{
+    minimumTrackTintColor: '#adc92b', // Color del progreso (relleno)
+    maximumTrackTintColor: '#E0E0E0', 
+    cacheTrackTintColor: '#f39c12',
+  bubbleBackgroundColor: '#fff',
+  bubbleTextColor: '#333',
+  disableMinTrackTintColor: '#ddd',
+  
+
+  }}
+
+        onValueChange={(progress: number) => {
+        const roundedKm = Number(progress.toFixed(0));
         setKm(roundedKm);
-        const delta = kmToDelta(value);
+        const delta = kmToDelta(progress);
         setRegion(prev => ({
           ...prev,
           latitudeDelta: delta,
           longitudeDelta: delta,
         }));
       }}
-      minimumTrackTintColor="#333"
-      maximumTrackTintColor="#ccc"
-      thumbTintColor="#555"
-    />
-  ) : (
-    <MultiSlider
-      values={[km]}
-      min={1}
-      max={100}
-      step={1}
-      onValuesChange={(values: number[]) => {
-        const value = values[0];
-        const roundedKm = Number(value.toFixed(0));
-        setKm(roundedKm);
-        const delta = kmToDelta(value);
-        setRegion(prev => ({
-          ...prev,
-          latitudeDelta: delta,
-          longitudeDelta: delta,
-        }));
-      }}
-      selectedStyle={{ backgroundColor: '#333' }}
-      unselectedStyle={{ backgroundColor: '#ccc' }}
-      containerStyle={{ marginHorizontal: 10 }}
-      trackStyle={{ height: 6 }}
-      markerStyle={{ backgroundColor: '#555', height: 20, width: 20, marginTop: 2, borderRadius: 10 }}
-    />
-  )}
+      />
 </View>
 
 
