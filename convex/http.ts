@@ -4,7 +4,7 @@ import { Webhook } from "svix";
 import { api } from "./_generated/api";
 
 const http = httpRouter();
-console.log("holaa=");
+
 http.route({
     path: '/clerk-users-webhook',
     method: "POST",

@@ -1,0 +1,7 @@
+{
+  "plugins": ["react-hooks"],
+  "extends": [],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error"
+  }
+}

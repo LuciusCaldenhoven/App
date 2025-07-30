@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, useWindowDimensions, ScrollView, Dimensions, } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView, Dimensions, } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router"; // si usas expo-router
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";

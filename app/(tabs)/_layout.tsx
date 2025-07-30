@@ -6,8 +6,9 @@ import { usePushRegistration } from "@/lib/usePushRegistration";
 import { useAuth } from "@clerk/clerk-expo";
 
 export default function TabLayout() {
-  const { registerPush } = usePushRegistration();
   const { isSignedIn } = useAuth();
+  const { registerPush } = usePushRegistration();
+
 
   useEffect(() => {
     if (isSignedIn) {
