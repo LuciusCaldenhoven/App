@@ -122,10 +122,9 @@ function ResolvedImage({ item }: { item: string | Id<"_storage"> }) {
   // Si es string con file:// o http(s), es una URI directa
   const isUri = typeof item === "string" && (item.startsWith("file://") || item.startsWith("http"));
   // Solo busca el URL si NO es una URI directa
-  const imageUrl = useQuery(
-    api.posts.getImageUrl,
-    !isUri ? { storageId: item as Id<"_storage"> } : "skip"
-  );
+  const storageId = !isUri ? { storageId: item as Id<"_storage"> } : "skip";
+  const imageUrl = useQuery(api.posts.getImageUrl, storageId);
+
   
   // Solo muestra imagen si hay URI válida
   const uri: string | null =
