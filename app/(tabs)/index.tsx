@@ -79,36 +79,10 @@ export default function Index() {
         scrollEventThrottle={16}
       >
         <View style={styles.scrollContent}>
-          <View style={{ paddingHorizontal: 20 }}>
+          <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
             <SearchBar query={searchInput} />
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.HorizontalContainer}
-          >
-            {tabItems.map((tab) => {
-              const isActive = tab === activeTab;
-              return (
-                <TouchableOpacity
-                  key={tab}
-                  style={[styles.tab, isActive && styles.activeTab]}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/search/searchResults",
-                      params: { title: tab },
-                    })
-                  }
-                >
-                  <Text
-                    style={[styles.tabText, isActive && styles.activeTabText]}
-                  >
-                    {tab}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+         
 
       
           <HorizontalPostSection title="Bicicletas" category="Bicicletas" />

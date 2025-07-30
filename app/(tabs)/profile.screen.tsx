@@ -8,20 +8,17 @@ import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Pressable } from "react-native";
 import { Image } from "expo-image";
-import ReviewComponent from "@/components/review/component";
 import { renderMarginBottom, renderMarginTop } from "@/constants/ui-utils";
 import { router } from "expo-router";
 import { scale } from "@/constants/scale";
 import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
-import LoaderPosts from "@/components/loaders/loaderPosts";
-import ReviewComponentVertical from "@/components/ReviewComponentVertical/ReviewComponentVertical";
 import { LogOut, Mail, Megaphone, MessageCircleQuestion, PackageSearch, Star } from "lucide-react-native";
 
 function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [showAllReviews, setShowAllReviews] = useState(false);
+  
 
   const currentUser = useQuery(api.users.getUserByClerkId, userId ? { clerkId: userId } : "skip");
 

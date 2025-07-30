@@ -85,10 +85,10 @@ function NoNotificationsFound() {
         color={COLORS.main}
         style={{ marginBottom: 20 }}
       />
-      <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
+      <Text style={{ fontSize: 22, color: COLORS.main, marginBottom: 8, fontFamily: "Medium" }}>
         Sin notificaciones
       </Text>
-      <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24 }}>
+      <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24, fontFamily: "Medium"  }}>
         Aún no tienes actividad reciente.
       </Text>
     </View>

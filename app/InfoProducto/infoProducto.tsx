@@ -172,14 +172,12 @@ export default function CreateScreen() {
         setPrice(formatted);
     };
     return (
-
+        
         <View style={styles.contentContainer}>
             <View>
-                <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
-                    <TouchableOpacity onPress={() => router.back()}>
-                        <ChevronLeft size={35} color={COLORS.black} />
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} >
+                    <ChevronLeft size={35} color={COLORS.black} />
+                </TouchableOpacity>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={styles.title}>Nuevo Producto</Text>
@@ -193,7 +191,7 @@ export default function CreateScreen() {
                 </View>
             </View>
             {/* Contenido */}
-            <ScrollView ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 3000 }} keyboardShouldPersistTaps="handled" nestedScrollEnabled={true} >
+            <ScrollView ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 500 }} keyboardShouldPersistTaps="handled" nestedScrollEnabled={true} >
                 <View style={[styles.content, isSharing && styles.contentDisabled]}>
                     {/* Carrusel de imágenes */}
                     <View style={styles.imageCarousel}>

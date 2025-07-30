@@ -95,7 +95,7 @@ export default function SellerScreen() {
                       onPress={() => setActiveTab("Reviews")}
                   >
                       <Text style={[styles.buttonText, activeTab === "Reviews" && styles.activeButtonText]}>
-                          Reviews
+                          Reseñas
                       </Text>
                   </TouchableOpacity>
               </View>

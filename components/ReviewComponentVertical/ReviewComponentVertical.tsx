@@ -80,7 +80,7 @@ export default function ReviewComponentVertical({ visible, onClose, sellerId }: 
 
                     {reviews.length === 0 ? (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#777', fontSize: 16, textAlign: 'center' }}>
+                            <Text style={{ color: '#777', fontSize: 16, textAlign: 'center', fontFamily: 'Medium' }}>
                                 Aún no hay reseñas.
                             </Text>
                         </View>

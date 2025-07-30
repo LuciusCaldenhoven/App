@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   SectionContainer: {
     paddingHorizontal: 20,
-    
+
     marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",

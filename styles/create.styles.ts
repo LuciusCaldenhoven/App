@@ -7,7 +7,7 @@ const { width } = Dimensions.get("window");
 export const styles = StyleSheet.create({
 
   contentContainer: {
-    flex: 1,
+   
     backgroundColor: COLORS.white, 
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
   },
