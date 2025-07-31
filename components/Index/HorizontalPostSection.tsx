@@ -7,6 +7,7 @@ import Post from "@/components/Post";
 import styles from "@/styles/feed.styles";
 import { router } from "expo-router";
 import ProductSkeleton from "../loaders/ProductSkeleton";
+import { Bike } from "lucide-react-native";
 
 type Props = {
   title: string;
@@ -29,7 +30,10 @@ const HorizontalPostSection = ({ title, category = "", initialItems = 8 }: Props
   return (
     <View>
       <View style={styles.SectionContainer}>
+       <View style={{flexDirection: "row", alignItems: "center", gap: 12, }}>
+         <Bike size={27} color="#adc92b" strokeWidth={2.2}/>
         <Text style={styles.sectionTitle}>{title}</Text>
+       </View>
         <TouchableOpacity style={styles.iconWrapper2} onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: category }, })} >
 
           <Ionicons name="chevron-forward" size={18} color="#111" />

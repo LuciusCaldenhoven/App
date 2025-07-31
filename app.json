@@ -80,7 +80,8 @@
           "project": "react-native",
           "organization": "diuna"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

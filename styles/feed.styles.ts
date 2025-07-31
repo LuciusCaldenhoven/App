@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontFamily: 'Medium',
-    color: "#111",
+    color: "#adc92b",
   },
 
   iconWrapper2: {
@@ -54,17 +54,17 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    backgroundColor: "#F5F7FA",
-    borderRadius: 999,
+    backgroundColor: "#f5fae9",
+    borderRadius: 10,
     paddingHorizontal: 14,
-     paddingVertical: Platform.OS === 'ios' ? 10 : 0,
+    paddingVertical: Platform.OS === 'ios' ? 15 : 0,
     alignItems: "center",
     marginVertical: 10,
   },
   input: {
     flex: 1,
     fontSize: 16,
-    color: "#000",
+    color: "#4e5443",
     fontFamily: "Regular",
   },
 
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 
   },
   scrollContent: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: -HEADER_HEIGHT / 2,

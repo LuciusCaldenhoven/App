@@ -48,7 +48,7 @@ export default function Index() {
   
 
   return (
-    <View style={{flex:1}}>
+    <View style={{flex:1,}}>
 
       <LinearGradient
         colors={["#F5F5F5", "#F5F5F5", "#fff"]}

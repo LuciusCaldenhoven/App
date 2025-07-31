@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { styles } from "./EditProduct.styles";
+import { styles } from "../../../styles/EditProduct.styles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { Entypo, Feather } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";

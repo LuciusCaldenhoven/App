@@ -1,4 +1,4 @@
-import { styles } from "@/app/(auth)/auth.style";
+import { styles } from "@/styles/auth.style";
 import { useSignUp } from "@clerk/clerk-expo";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, ImageBackground, Alert, Image } from "react-native";

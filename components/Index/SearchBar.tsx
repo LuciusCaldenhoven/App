@@ -8,10 +8,10 @@ export default function SearchBar({ query }: { query: string }) {
     <View style={styles.searchContainer}>
 
         <TouchableOpacity style={{flexDirection: "row", alignItems: "center",}} onPress={() => router.push({ pathname: "/search/searchOverlay", params: { query } })}>
-          <Ionicons name="search" size={18} color="#666" style={{ marginRight: 8 }} />
+          <Ionicons name="search" size={20} color="#4e5443" style={{ marginRight: 8 }} />
           <TextInput
             placeholder="¿Qué quieres comprar?"
-            placeholderTextColor="#666"
+            placeholderTextColor="#4e5443"
             style={styles.input}
             pointerEvents="none"
           />
