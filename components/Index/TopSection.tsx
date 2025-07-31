@@ -8,13 +8,13 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 import { router } from "expo-router";
-
+import SearchBar from "@/components/Index/SearchBar";
 
 const items = [
-  { id: "1", image: require("@/assets/images/banners/image_4.jpg") },
-  { id: "2", image: require("@/assets/images/banners/image_5.jpg") },
-  { id: "3", image: require("@/assets/images/banners/image_6.jpg") },
-  { id: "4", image: require("@/assets/images/banners/image_7.jpg") },
+  { id: "1", image: require("@/assets/images/banners/1.jpg") },
+  { id: "2", image: require("@/assets/images/banners/2.jpg") },
+  { id: "3", image: require("@/assets/images/banners/3.jpg") },
+  { id: "4", image: require("@/assets/images/banners/4.jpg") },
 ];
 
 const { width } = Dimensions.get("window");
@@ -46,7 +46,7 @@ const iconOpacityStyle = useAnimatedStyle(() => {
       <View style={styles.header}>
         <Animated.View style={[styles.iconWrapper, iconOpacityStyle]} >
           <TouchableOpacity onPress={openBottomSheet}>
-            <MapPin size={24} strokeWidth={2.2} color="#222" />
+            <MapPin size={24} strokeWidth={2.2} color="#adc92b" />
           </TouchableOpacity>
         </Animated.View>
         <View style={{ alignItems: "center", maxWidth: "65%" }}>
@@ -59,7 +59,7 @@ const iconOpacityStyle = useAnimatedStyle(() => {
         </View>
         <Animated.View style={[styles.iconWrapper, iconOpacityStyle]} >
           <TouchableOpacity onPress={() => router.push("/notificaciones/notificaciones")}>
-            <Bell size={24} strokeWidth={2.2} color="#222" />
+            <Bell size={24} strokeWidth={2.2} color="#adc92b" />
           </TouchableOpacity>
         </Animated.View>
       </View>

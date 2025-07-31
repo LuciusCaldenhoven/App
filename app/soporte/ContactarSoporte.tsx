@@ -8,7 +8,7 @@ import Toast from 'react-native-toast-message';
 
 export default function ContactarSoporteScreen() {
     const handleEmailPress = () => {
-        Linking.openURL('mailto:soporte@diuna.com').catch(() =>
+        Linking.openURL('mailto:soporte@diuna.lat').catch(() =>
             Alert.alert('Error', 'No se pudo abrir el cliente de correo.')
         );
     };
@@ -47,7 +47,7 @@ export default function ContactarSoporteScreen() {
                 <Mail color="#333" size={24} />
                 <View style={styles.textBox}>
                     <Text style={styles.optionTitle}>Correo electrónico</Text>
-                    <Text style={styles.optionText}>soporte@diuna.com</Text>
+                    <Text style={styles.optionText}>soporte@diuna.lat</Text>
                 </View>
             </TouchableOpacity>
 

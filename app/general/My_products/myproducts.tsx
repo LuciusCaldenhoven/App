@@ -154,26 +154,15 @@ export default function MyProducts() {
 function NoProductsFound() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, }} >
-      <Text style={{ color: COLORS.main, fontSize: 20, fontWeight: '600', marginBottom: 6 }}>
+      <Text style={{ color: COLORS.main, fontSize: 20, fontFamily: "Medium", marginBottom: 6 }}>
         Aún no has publicado productos
       </Text>
-      <Text style={{ fontSize: 14, color: '#666', marginBottom: 24, textAlign: 'center' }}>
+      <Text style={{ fontSize: 14, color: '#666', marginBottom: 24, textAlign: 'center', fontFamily: "Regular" }}>
         Empieza a vender o alquilar algo en minutos
       </Text>
-      <TouchableOpacity
-        onPress={() => router.replace('/publicar')}
-        style={{
-          flexDirection: 'row',
-          backgroundColor: COLORS.main,
-          paddingVertical: 12,
-          paddingHorizontal: 20,
-          borderRadius: 10,
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
+      <TouchableOpacity onPress={() => router.replace('/publicar')} style={{ flexDirection: 'row', backgroundColor: COLORS.main, paddingVertical: 12, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center', gap: 8, }} >
         <Plus size={18} color="#fff" />
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>Publicar ahora</Text>
+        <Text style={{ color: '#fff', fontFamily: "Medium", fontSize: 15 }}>Publicar ahora</Text>
       </TouchableOpacity>
     </View>
   );

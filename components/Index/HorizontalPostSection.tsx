@@ -13,9 +13,10 @@ type Props = {
   title: string;
   category: string;
   initialItems?: number;
+  icon: React.ComponentType<any>;
 };
 
-const HorizontalPostSection = ({ title, category = "", initialItems = 8 }: Props) => {
+const HorizontalPostSection = ({ title, category = "", initialItems = 8, icon }: Props) => {
   const {
     results: filteredPosts,
     loadMore,
@@ -31,7 +32,7 @@ const HorizontalPostSection = ({ title, category = "", initialItems = 8 }: Props
     <View>
       <View style={styles.SectionContainer}>
        <View style={{flexDirection: "row", alignItems: "center", gap: 12, }}>
-         <Bike size={27} color="#adc92b" strokeWidth={2.2}/>
+         {React.createElement(icon, { size: 27, color: "#adc92b", strokeWidth: 2.2 })}
         <Text style={styles.sectionTitle}>{title}</Text>
        </View>
         <TouchableOpacity style={styles.iconWrapper2} onPress={() => router.push({ pathname: "/search/searchCategory", params: { category: category }, })} >

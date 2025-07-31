@@ -65,11 +65,11 @@ function NoBookmarksFound() {
         style={{ marginBottom: 20 }}
       />
 
-      <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
+      <Text style={{ fontSize: 22, fontFamily:"Medium", color: COLORS.main, marginBottom: 8 }}>
         Sin favoritos aún
       </Text>
 
-      <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24 }}>
+      <Text style={{ fontSize: 16, color: "#888", textAlign: "center", marginBottom: 24, fontFamily:"Regular" }}>
         Todavía no has guardado ninguna publicación.
       </Text>
 

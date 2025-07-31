@@ -14,7 +14,7 @@ import SearchBar from "@/components/Index/SearchBar";
 import { usePaginatedQuery } from "convex/react";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Sentry from '@sentry/react-native';
+import { Bike,Monitor,Shirt,Dumbbell,Car,Tv } from "lucide-react-native";
 
 const tabItems = ["Recomendacion", "Celulares", "Motos", "Servicios"];
 
@@ -79,18 +79,18 @@ export default function Index() {
         scrollEventThrottle={16}
       >
         <View style={styles.scrollContent}>
-          <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+                <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
             <SearchBar query={searchInput} />
           </View>
          
 
       
-          <HorizontalPostSection title="Bicicletas" category="Bicicletas" />
-          <HorizontalPostSection title="Electronica" category="Electronica" />
-          <HorizontalPostSection title="Ropa" category="Ropa" />
-          <HorizontalPostSection title="Deportes" category="Deportes" />
-          <HorizontalPostSection title="Vehículos" category="Vehículos" />
-          <HorizontalPostSection title="Electrodomésticos" category="Electrodomésticos" />
+          <HorizontalPostSection icon = {Bike} title="Bicicletas" category="Bicicletas" />
+          <HorizontalPostSection icon = {Monitor} title="Electronica" category="Electronica" />
+          <HorizontalPostSection icon = {Shirt} title="Ropa" category="Ropa" />
+          <HorizontalPostSection icon = {Dumbbell} title="Deportes" category="Deportes" />
+          <HorizontalPostSection icon = {Car} title="Vehículos" category="Vehículos" />
+          <HorizontalPostSection icon = {Tv} title="Electrodomésticos" category="Electrodomésticos" />
 
             
 {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}

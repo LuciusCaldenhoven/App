@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    backgroundColor: "#f5fae9",
+    backgroundColor: "#F5F5F5",
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: Platform.OS === 'ios' ? 15 : 0,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 
   },
   scrollContent: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: -HEADER_HEIGHT / 2,
