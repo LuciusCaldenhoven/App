@@ -91,8 +91,7 @@ export default function Index() {
           <HorizontalPostSection icon = {Dumbbell} title="Deportes" category="Deportes" />
           <HorizontalPostSection icon = {Car} title="Vehículos" category="Vehículos" />
           <HorizontalPostSection icon = {Tv} title="Electrodomésticos" category="Electrodomésticos" />
-
-            
+         
 {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
         </View>
 

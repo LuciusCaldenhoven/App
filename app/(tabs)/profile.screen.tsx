@@ -83,17 +83,17 @@ function Profile() {
         <Text style={styles.title}>General</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<PackageSearch size={scale(24)} color={COLORS.black} />}
+          component={<PackageSearch size={scale(24)} color={"#adc92b"} />}
           text="Mis Productos"
           onPress={() => router.push("/general/My_products/myproducts")}
         />
         <SingleList
-          component={<Star size={scale(24)} color={COLORS.black} />}
+          component={<Star size={scale(24)} color={"#adc92b"} />}
           text="Mis Reviews"
           onPress={() => router.push("/general/reviews")}
         />
         <SingleList
-          component={<Megaphone size={scale(24)} color={COLORS.black} />}
+          component={<Megaphone size={scale(24)} color={"#adc92b"} />}
           text="Publicitar"
           onPress={() => router.push("/working/working")}
         />
@@ -101,17 +101,17 @@ function Profile() {
         <Text style={styles.title}>Soporte</Text>
         {renderMarginBottom(6)}
         <SingleList
-          component={<MessageCircleQuestion size={scale(24)} color={COLORS.black} />}
+          component={<MessageCircleQuestion size={scale(24)} color={"#adc92b"} />}
           text="Preguntas frecuentes"
           onPress={() => router.push("/soporte/PreguntasFrecuentes")}
         />
         <SingleList
-          component={<Feather name="tool" size={scale(24)} color={COLORS.black} />}
+          component={<Feather name="tool" size={scale(24)} color={"#adc92b"} />}
           text="Reportar un problema"
           onPress={() => router.push("/soporte/ReportarProblema")}
         />
         <SingleList
-          component={<Mail size={scale(22)} color={COLORS.black} />}
+          component={<Mail size={scale(22)} color={"#adc92b"} />}
           text="Contactar soporte"
           onPress={() => router.push("/soporte/ContactarSoporte")}
         />
