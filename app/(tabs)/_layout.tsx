@@ -22,27 +22,22 @@ export default function TabLayout() {
         tabBarShowLabel: true,
         headerShown: false,
         tabBarActiveTintColor: '#7ea437',
-        tabBarInactiveTintColor: COLORS.black,
+        tabBarInactiveTintColor: "#6a6a6a",
         tabBarStyle: {
           position: "absolute",
           right: 10,
           left: 10,
-          borderTopWidth: 0,
-          elevation: 5,
+          borderTopWidth: 0.9,
+          borderTopColor: "#e0e0e0",
           height: 90,
           backgroundColor: COLORS.white,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.25,
-          shadowRadius: 5,
+         
+         
         },
         tabBarLabelStyle: {
           fontSize: 10 ,
           fontFamily: "Medium",
         },
-        // animation: 'shift',
       }}
     >
       <Tabs.Screen
@@ -50,7 +45,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Explorar",
           tabBarIcon: ({ color, size, focused }) => (
-            <Search size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
+            <Search size={size} strokeWidth={focused ? 2.2 : 1.5} color={color} />
           ),
         }}
       />
@@ -59,7 +54,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Favoritos",
           tabBarIcon: ({ color, size, focused }) => (
-            <Heart size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
+            <Heart size={size} strokeWidth={focused ? 2.2 : 1.5} color={color} />
           ),
         }}
       />
@@ -68,7 +63,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Subir",
           tabBarIcon: ({ color, size, focused }) => (
-            <Plus size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
+            <Plus size={size} strokeWidth={focused ? 2.2 : 1.5} color={color} />
           ),
         }}
       />
@@ -77,7 +72,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Mensajes",
           tabBarIcon: ({ color, size, focused }) => (
-            <MessageCircle size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
+            <MessageCircle size={size} strokeWidth={focused ? 2.2 : 1.5} color={color} />
           ),
         }}
       />
@@ -86,7 +81,7 @@ export default function TabLayout() {
         options={{
           tabBarLabel: "Perfil",
           tabBarIcon: ({ color, size, focused }) => (
-            <User size={size} strokeWidth={focused ? 2.4 : 1.8} color={color} />
+            <User size={size} strokeWidth={focused ? 2.2 : 1.5} color={color} />
           ),
         }}
       />

@@ -11,7 +11,7 @@
     "ios": {
       "bundleIdentifier": "com.elpibeluuu1.segundamano",
       "buildNumber": "7",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
         "NSCameraUsageDescription": "Se necesita para tomar fotos de productos.",

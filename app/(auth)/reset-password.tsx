@@ -5,6 +5,7 @@ import { styles } from "@/styles/auth.style";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
 import { ChevronLeft, MoveLeft } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 export default function ResetPasswordScreen() {
   const [code, setCode] = useState("");
@@ -33,19 +34,49 @@ export default function ResetPasswordScreen() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        Alert.alert("Listo", "¡Contraseña cambiada con éxito!");
+        Toast.show({
+            type: "success",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Contraseña cambiada con éxito`,
+            text2: "Ahora puedes iniciar sesión con tu nueva contraseña.",
+        });
         router.replace("/(tabs)");
       } else {
-        Alert.alert("Atención", "Se requiere verificación adicional.");
+        Toast.show({
+            type: "warning",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Falta completar`,
+            text2: "Por favor completa todos los campos requeridos.",
+        });
       }
     } catch (err: any) {
       const code = err?.errors?.[0]?.code;
       if (code === "form_code_incorrect" || code === "form_param_code_invalid") {
-        Alert.alert("Código incorrecto", "El código ingresado no es válido.");
+        Toast.show({
+            type: "error",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Código incorrecto`,
+            text2: "Por favor verifica el código ingresado.",
+        });
       } else if (code === "form_password_pwned") {
-        Alert.alert("Contraseña insegura", "Esa contraseña es demasiado común. Elige otra.");
+        Toast.show({
+            type: "warning",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Contraseña insegura`,
+            text2: "Esa contraseña es demasiado común. Elige otra.",
+        });
       } else {
-        Alert.alert("Error", err?.errors?.[0]?.message || "Ocurrió un error.");
+        Toast.show({
+            type: "error",
+            position: "top",
+            visibilityTime: 3000,
+            text1: "Llene todos los campos",
+            text2: "Por favor verifica.",
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -61,7 +92,7 @@ export default function ResetPasswordScreen() {
           resizeMode="cover"
         />
         <BlurView intensity={100} tint="light" style={styles.blurOverlayRegister}>
-        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 120,paddingTop: 80 }}>
+        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 50,paddingTop: 80 }}>
           <ChevronLeft size={35} color={"black"}  />
         </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>

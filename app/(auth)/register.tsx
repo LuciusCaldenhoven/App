@@ -62,7 +62,7 @@ export default function Register() {
         />
 
         <BlurView intensity={100} tint="light" style={styles.blurOverlayRegister}>
-        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 120,paddingTop: 80 }}>
+        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 50,paddingTop: 80 }}>
           <ChevronLeft size={35} color={"black"}  />
         </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>

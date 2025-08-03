@@ -16,7 +16,7 @@ type Props = {
   icon: React.ComponentType<any>;
 };
 
-const HorizontalPostSection = ({ title, category = "", initialItems = 8, icon }: Props) => {
+const HorizontalPostSection = ({ title, category = "", initialItems = 10, icon }: Props) => {
   const {
     results: filteredPosts,
     loadMore,
@@ -57,27 +57,7 @@ const HorizontalPostSection = ({ title, category = "", initialItems = 8, icon }:
         }
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 12, gap: 12 }}
-        ListFooterComponent={
-          !isLoading && status === "CanLoadMore" ? (
-            <TouchableOpacity
-              onPress={() => loadMore(initialItems)}
-              style={{
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 20,
-                marginRight: 20,
-                backgroundColor: "#111",
-                borderRadius: 8,
-                height: 140,
-                width: 120,
-              }}
-            >
-              <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
-                Ver más
-              </Text>
-            </TouchableOpacity>
-          ) : null
-        }
+        
       />
 
     </View>

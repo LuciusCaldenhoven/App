@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   },
   blurOverlay: {
     flex: 1,
-    paddingTop: 150,
+    paddingTop: 100,
     paddingHorizontal: 24,
     justifyContent: 'center',
     
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: '#555',
-    marginBottom: 100,
+    marginBottom: 60,
     fontFamily: 'Medium',
   },
   titleLogin: {
@@ -303,6 +303,7 @@ export const styles = StyleSheet.create({
     gap: 14
   },
   googleButton: {
+    marginTop: 30,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

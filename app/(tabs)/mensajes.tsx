@@ -12,6 +12,7 @@ import { renderBorderBottom } from "@/constants/ui-utils";
 import { useAuth } from "@clerk/clerk-expo";
 import LottieView from "lottie-react-native";
 import snap from "@/assets/animations/Chasquido.json";
+import { MessageSquareText } from "lucide-react-native";
 
 export default function MessagesScreen() {
   const chats = useQuery(api.chats.getChats);
@@ -62,8 +63,33 @@ export default function MessagesScreen() {
 
 function NoMessagesFound() {
   return (
-    <View style={styles.centered}>
-      <Text style={{ fontSize: 20, color: COLORS.black }}>No hay mensajes aún</Text>
+    <View style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#fff",
+      paddingHorizontal: 36,
+    }}>
+      <MessageSquareText size={40} color={COLORS.black} />
+      <Text style={{
+        fontSize: 18,
+        color: COLORS.black,
+        fontFamily: "Medium",
+        marginTop: 18,
+        marginBottom: 4,
+        textAlign: "center",
+      }}>
+        No tienes ningún mensaje
+      </Text>
+      <Text style={{
+        fontSize: 14,
+        color: COLORS.gray,
+        fontFamily: "Regular",
+        textAlign: "center",
+        lineHeight: 22,
+      }}>
+        Cuando recibas un nuevo mensaje, aparecerá acá
+      </Text>
     </View>
   );
 }

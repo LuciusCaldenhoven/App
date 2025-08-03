@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 import { COLORS, FontSize, SIZES } from "@/constants/theme";
 import { scale } from "@/constants/scale";
 
@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F4F8',
     justifyContent: "flex-end",
-    paddingTop: 30,
+    paddingTop: Platform.OS === "ios" ? 30 : 0,
   },
   sheet: {
     maxHeight: "100%",

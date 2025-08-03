@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     backgroundColor: "#F5F5F5",
-    borderRadius: 10,
+    borderRadius: 99,
     paddingHorizontal: 14,
     paddingVertical: Platform.OS === 'ios' ? 15 : 0,
     alignItems: "center",
@@ -116,6 +116,18 @@ const styles = StyleSheet.create({
     color: "#111",
     fontFamily: 'Medium'
   },
+  name: {
+    paddingLeft: 5,
+    fontSize: 20,
+    color: "#111",
+    fontFamily: 'Medium'
+  },
+  subName: {
+    paddingLeft: 5,
+    fontSize: 20,
+    color: "#111",
+    fontFamily: 'Medium'
+  },
   subtitle: {
     fontSize: 13,
     color: "#666",
@@ -139,7 +151,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     marginTop: -HEADER_HEIGHT / 2,
-    paddingVertical: 20,
+    paddingVertical: 10,
 
   },
 

@@ -191,7 +191,7 @@ export default function EditPostScreen() {
         </Animated.Text>
       </View>
 
-      <ScrollView style={styles.container} ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 3000 }} >
+      <ScrollView style={styles.container} ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 500 }} >
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
           <ImageCarousel selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
         </Animated.View>

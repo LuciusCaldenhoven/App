@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
   
     },
+
     date: {
         backgroundColor: '#dde2f3',
         color: '#445',
@@ -26,23 +27,37 @@ const styles = StyleSheet.create({
         fontSize: 13,
         overflow: 'hidden'
     },
-    headerContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
+ header: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingTop: 45,
+  paddingBottom: 10,
+  backgroundColor: '#FFFFFF',
+  borderBottomWidth: 1,
+  borderBottomColor: '#E0E0E0',
+  paddingHorizontal: 10,
+},
 
-        paddingRight: 115,
-    },
-    header: {
-        flexDirection: 'row',
-        paddingTop: scale(20),
-        height: 90,
-        backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
-        alignContent: 'center',
-        alignItems: 'center',
-        paddingRight: 150,
-    },
+icon2: {
+  marginTop: 23,
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+  backgroundColor: '#f5f5f5',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+headerContent: {
+  flex: 1,
+  flexDirection: 'row',
+  alignItems: 'center',
+ 
+  minWidth: 0, // Para textos largos, evita que rompa layout
+  justifyContent: 'flex-start', // <--- Ojo aquí
+},
+
     inputContainer: {
         padding: 10,
         backgroundColor: '#fff',
@@ -103,8 +118,8 @@ const styles = StyleSheet.create({
         paddingLeft: scale(10),
     },
     image: {
-        width: 37,
-        height: 37,
+        width: 40,
+        height: 40,
         borderRadius: 20,
         marginLeft: 20,
         marginRight: 10,

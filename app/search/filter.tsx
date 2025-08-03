@@ -1,6 +1,6 @@
 // app/search/filter.tsx
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, ScrollView, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Modal, ScrollView, Dimensions, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/filter.styles";
 import { COLORS, SIZES } from "@/constants/theme";
@@ -113,7 +113,8 @@ export default function Filter({ visible, onClose, onApplyFilters, category, tit
 
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => { onClose() }} >
+    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => { onClose() }}  >
+
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.header}>

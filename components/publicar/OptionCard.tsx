@@ -49,7 +49,7 @@ export default function OptionCard({
   });
   const height = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [75, CARD_IMG_SIZE + 35],
+    outputRange: [80, CARD_IMG_SIZE + 35],
   });
 
   const imageOpacity = anim.interpolate({

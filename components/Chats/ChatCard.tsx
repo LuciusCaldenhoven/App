@@ -7,6 +7,7 @@ import { api } from '@/convex/_generated/api';
 import ImageView from "react-native-image-viewing";
 import { scale } from '@/constants/scale';
 import { router } from 'expo-router';
+import { COLORS } from '@/constants/theme';
 
 interface IChatCardProps {
   isSelf: boolean;
@@ -39,7 +40,7 @@ return (
           <View>
             <Text style={styles.productTitle}>{productData.post.title}</Text>
             {productData.post.price && (
-              <Text style={styles.productPrice}>${productData.post.price}</Text>
+              <Text style={styles.productPrice}>${productData.post.price}.00</Text>
             )}
           </View>
         </TouchableOpacity>
@@ -122,9 +123,9 @@ const createStyles = (isSelf: boolean) => StyleSheet.create({
     color: '#222',
   },
   productPrice: {
-    color: '#888',
+    color: COLORS.main,
     fontSize: 13,
-    fontFamily: 'Medium',
+    fontFamily: 'SemiBold',
   },
   messageText: {
     fontSize: 15,

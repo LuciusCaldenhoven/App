@@ -87,7 +87,7 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({ imagePreview, setImagePrevi
           disabled={!newMessage.trim() && !selectedImage}
           style={[
             styles.sendButton,
-            { backgroundColor: newMessage.trim() || selectedImage ? '#B5F344' : '#ccc' },
+            { backgroundColor: newMessage.trim() || selectedImage ? '#adc92b' : '#ccc' },
           ]}
         >
           <View style={{ marginRight: 2 }}>

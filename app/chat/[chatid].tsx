@@ -11,6 +11,7 @@ import { scale } from '@/constants/scale';
 import styles from '../chat/chats.styles';
 import ChatInputBar from '@/components/Chats/ChatInputBar';
 import ChatCard from '@/components/Chats/ChatCard';
+import { ChevronLeft } from 'lucide-react-native';
 
 
 
@@ -144,16 +145,19 @@ const ChatPage = () => {
         <View style={styles.container}>
             <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10, marginTop: 23 }}>
-                        <Ionicons name="chevron-back" size={scale(28)} color={'black'} />
+                    <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
+                        <ChevronLeft  size={30} color={'black'} strokeWidth={1.7}/>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.headerContent} onPress={() => router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id }, })}>
+                    <View style={styles.headerContent}>
                         <Image source={{ uri: otherUser?.image || '' }} style={styles.image} />
                         <Text numberOfLines={1} style={styles.text}>
                             {otherUser?.fullname || 'Usuario Desconocido'}
                         </Text>
-                        <Ionicons name="information-circle-outline" size={scale(28)} color={'grey'} style={styles.icon} />
+                       
+                    </View>
+                    <TouchableOpacity onPress={() => router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id }, })} style={styles.icon2}>
+                        <Ionicons name="ellipsis-horizontal" size={25} color={'black'} />
                     </TouchableOpacity>
                 </View>
 

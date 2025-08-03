@@ -23,7 +23,7 @@ const OPTIONS = [
   },
   {
     title: "Servicio",
-    description: "Ofrece tus habilidades, tiempo o conocimiento.",
+    description: "Ofrece tu tiempo y conocimientos.",
     image: require("@/assets/images/prueba1.png"),
   },
 ];

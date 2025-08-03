@@ -5,6 +5,7 @@ import { styles } from "@/styles/auth.style";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
 import { ChevronLeft, MoveLeft } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const [password, setPassword] = useState("");
@@ -35,11 +36,14 @@ export default function LoginScreen() {
       strategy: "reset_password_email_code",
       identifier: email,
     });
+    Toast.show({
+                type: "info",
+                position: "top",
+                visibilityTime: 3000,
+                text1: `Revisa tu correo`,
+                text2: "Te hemos enviado un código para restablecer tu contraseña.",
+            });
 
-    Alert.alert(
-      "Revisa tu correo",
-      "Te hemos enviado un código para restablecer tu contraseña."
-    );
 
     // Redirige a la pantalla de reset de password, o muestra un input para el código + nueva contraseña
     // Por ejemplo:
@@ -97,7 +101,7 @@ export default function LoginScreen() {
           resizeMode="cover"
         />
         <BlurView intensity={100} tint="light" style={styles.blurOverlayRegister}>
-        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 120,paddingTop: 80 }}>
+        <TouchableOpacity onPress={() => router.back()} style={{ paddingBottom: 60,paddingTop: 80 }}>
           <ChevronLeft size={35} color={"black"}  />
         </TouchableOpacity>
           <View style={{ alignItems: 'center' }}>

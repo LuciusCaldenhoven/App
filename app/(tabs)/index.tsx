@@ -1,5 +1,4 @@
-import { Text, View, Dimensions, TouchableOpacity, Button, ScrollView, } from "react-native";
-import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, } from "react-native-reanimated"; 
+import { Text, View, Dimensions, } from "react-native"; import Animated, { useSharedValue, useAnimatedScrollHandler, } from "react-native-reanimated";
 import styles from "@/styles/feed.styles";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -8,15 +7,11 @@ import { Link, useRouter } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import LocationPickerModal from "@/components/LocationPickerModal";
-import { Ionicons } from "@expo/vector-icons";
 import TopSection from "@/components/Index/TopSection";
 import SearchBar from "@/components/Index/SearchBar";
-import { usePaginatedQuery } from "convex/react";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
 import { LinearGradient } from "expo-linear-gradient";
-import { Bike,Monitor,Shirt,Dumbbell,Car,Tv } from "lucide-react-native";
-
-const tabItems = ["Recomendacion", "Celulares", "Motos", "Servicios"];
+import { Bike, Monitor, Shirt, Dumbbell, Car, Tv } from "lucide-react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -37,7 +32,6 @@ export default function Index() {
     userId ? { clerkId: userId } : "skip"
   );
 
-
   const saveLocation = useMutation(api.users.saveLocation);
 
   const handleScroll = useAnimatedScrollHandler({
@@ -45,11 +39,9 @@ export default function Index() {
       scrollY.value = event.contentOffset.y;
     },
   });
-  
 
   return (
-    <View style={{flex:1,}}>
-
+    <View style={{ flex: 1 }}>
       <LinearGradient
         colors={["#F5F5F5", "#F5F5F5", "#fff"]}
         locations={[0, 0.5, 0.55]}
@@ -61,41 +53,56 @@ export default function Index() {
           bottom: 0,
         }}
       />
-        <TopSection
-          openBottomSheet={openBottomSheet}
-          currentUser={currentUser}
-          scrollY={scrollY}
-        />
- 
+      <TopSection
+        openBottomSheet={openBottomSheet}
+        currentUser={currentUser}
+        scrollY={scrollY}
+      />
 
-      <Animated.ScrollView 
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scroll}
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT + 230,
           paddingBottom: 100,
         }}
-        onScroll={handleScroll} 
+        onScroll={handleScroll}
         scrollEventThrottle={16}
       >
         <View style={styles.scrollContent}>
-                <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+
+          <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
+
             <SearchBar query={searchInput} />
           </View>
-         
 
-      
-          <HorizontalPostSection icon = {Bike} title="Bicicletas" category="Bicicletas" />
-          <HorizontalPostSection icon = {Monitor} title="Electronica" category="Electronica" />
-          <HorizontalPostSection icon = {Shirt} title="Ropa" category="Ropa" />
-          <HorizontalPostSection icon = {Dumbbell} title="Deportes" category="Deportes" />
-          <HorizontalPostSection icon = {Car} title="Vehículos" category="Vehículos" />
-          <HorizontalPostSection icon = {Tv} title="Electrodomésticos" category="Electrodomésticos" />
-         
-{/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
+          <HorizontalPostSection icon={Shirt} title="Ropa" category="Ropa" />
+          <HorizontalPostSection icon={Car} title="Vehículos" category="Vehículos" />
+          <HorizontalPostSection
+            icon={Bike}
+            title="Bicicletas"
+            category="Bicicletas"
+          />
+          <HorizontalPostSection
+            icon={Monitor}
+            title="Electrónica"
+            category="Electrónica"
+          />
+          
+          <HorizontalPostSection
+            icon={Dumbbell}
+            title="Deportes"
+            category="Deportes"
+          />
+          
+          <HorizontalPostSection
+            icon={Tv}
+            title="Electrodomésticos"
+            category="Electrodomésticos"
+          />
+
+
         </View>
-
- 
       </Animated.ScrollView>
 
       <LocationPickerModal
@@ -106,5 +113,3 @@ export default function Index() {
     </View>
   );
 }
-
-

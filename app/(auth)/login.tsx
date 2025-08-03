@@ -7,6 +7,7 @@ import { COLORS } from "@/constants/theme";
 import { styles } from "@/styles/auth.style";
 import { BlurView } from "expo-blur";
 import { UserRound } from "lucide-react-native";
+import Toast from "react-native-toast-message";
 export default function Login() {
   const { signIn, setActive } = useSignIn();
   const { startSSOFlow } = useSSO();
@@ -37,7 +38,14 @@ export default function Login() {
         // Correo no registrado → ir a registro
         router.push({ pathname: "/register", params: { email } });
       } else {
-        Alert.alert("Error", err?.errors?.[0]?.message || "Error al verificar el correo.");
+        Toast.show({
+            type: "warning",
+            position: "top",
+            visibilityTime: 3000,
+            text1: `Error, ${err?.errors?.[0]?.message || "No se pudo verificar el correo electrónico."}`,
+            text2: "No se pudo verificar el correo electrónico.",
+        });
+        
       }
     }
   };
@@ -57,23 +65,11 @@ export default function Login() {
     }
   };
 
-  const handleFacebookSignIn = async () => {
-    if (isDisabled) return;
-    setIsDisabled(true);
-    try {
-      const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_facebook" });
-      if (setActive && createdSessionId) {
-        setActive({ session: createdSessionId });
-        router.replace("/(tabs)");
-      }
-    } finally {
-      setIsDisabled(false);
-    }
-  };
 
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      
       <View style={styles.container}>
         <Image
           source={require('@/assets/images/background-balls.png')} 
@@ -119,13 +115,6 @@ export default function Login() {
                 <Image source={require('@/assets/images/Google.png')} style={styles.icon} resizeMode="contain" />
               </View>
               <Text style={styles.googleButtonText}>Continuar con Google</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.googleButton} disabled={isDisabled} onPress={handleFacebookSignIn}>
-              <View style={styles.googleIconContainer}>
-                <Image source={require('@/assets/images/facebook.png')} style={styles.icon} resizeMode="contain" />
-              </View>
-              <Text style={styles.googleButtonText}>Continuar con Facebook</Text>
             </TouchableOpacity>
 
             <Text style={styles.termsText}>

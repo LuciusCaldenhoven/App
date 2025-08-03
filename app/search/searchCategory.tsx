@@ -48,17 +48,17 @@ export default function SearchPage() {
     return (
         <View style={styles.container}>
             {/* Barra superior */}
-            <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10, paddingBottom: 10 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, paddingBottom: 10, borderBottomWidth: 1, borderColor: "#e0e0e0" }}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={20} style={{ marginRight: 20, paddingLeft: 20 }} />
+                    <Ionicons name="arrow-back" size={20} />
                 </TouchableOpacity>
 
                 <View style={{ flex: 1, alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'Medium', fontSize: 22 }}>{category}</Text>
+                    <Text style={{ fontFamily: 'Medium', fontSize: 21 }}>{category}</Text>
                 </View>
 
                 <TouchableOpacity onPress={() => setFilterVisible(true)}>
-                    <FontAwesome6 name="sliders" size={20} style={{ marginHorizontal: 10 }} />
+                    <FontAwesome6 name="sliders" size={20} />
                 </TouchableOpacity>
 
             </View>
