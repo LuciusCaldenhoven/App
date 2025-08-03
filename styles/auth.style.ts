@@ -261,7 +261,7 @@ export const styles = StyleSheet.create({
   divider: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 28,
+    marginBottom: 10,
   },
   line: {
     flex: 1,
@@ -315,6 +315,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 300,
     position: "relative",
+
   },
 
   googleIconContainer: {

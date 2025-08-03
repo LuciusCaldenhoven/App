@@ -100,7 +100,7 @@ export default function Login() {
           </TouchableOpacity>
 
 
-
+          
 
 
           <View style={styles.divider}>
