@@ -105,8 +105,8 @@ export const styles = StyleSheet.create({
   btnContainerStyle: {
  
     height: 48,
-    width: 170,
-    backgroundColor: COLORS.main,
+    width: 180,
+    backgroundColor: "#adc92b",
     borderRadius: scale(10),
     justifyContent: 'center',
     alignItems: 'center',

@@ -22,7 +22,7 @@ interface ChatInputBarProps {
 
 }
 
-const ChatInputBar: React.FC<ChatInputBarProps> = ({ imagePreview, setImagePreview, selectedImage, setSelectedImage, showProductBar,setShowProductBar, productId, imageUrl, newMessage, setNewMessage, captureImage, handleSendMessage, }) => {
+const   ChatInputBar: React.FC<ChatInputBarProps> = ({ imagePreview, setImagePreview, selectedImage, setSelectedImage, showProductBar,setShowProductBar, productId, imageUrl, newMessage, setNewMessage, captureImage, handleSendMessage, }) => {
   const styles = localStyles;
 
   return (

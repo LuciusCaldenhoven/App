@@ -89,7 +89,7 @@ function Profile() {
         />
         <SingleList
           component={<Star size={scale(24)} color={"#adc92b"} />}
-          text="Mis Reviews"
+          text="Mis Reseñas"
           onPress={() => router.push("/general/reviews")}
         />
         <SingleList

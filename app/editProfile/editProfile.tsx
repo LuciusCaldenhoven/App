@@ -61,7 +61,7 @@ const EditProfile = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 0.8,
+            quality: 0.1,
         });
 
         if (!result.canceled) {

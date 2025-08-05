@@ -19,7 +19,7 @@ export default function SearchPage() {
         category: category || "",
         type: "",
         condition: [],
-        priceRange: [0, 15000],
+        priceRange: [0, 10000000],
         date: "",
     });
 

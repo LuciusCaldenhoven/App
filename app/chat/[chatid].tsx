@@ -110,8 +110,8 @@ const ChatPage = () => {
     const captureImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.5,
-            allowsEditing: true,
+            quality: 0.1,
+            allowsEditing: false,
         });
 
         if (!result.canceled) {

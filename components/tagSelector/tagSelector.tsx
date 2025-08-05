@@ -13,12 +13,12 @@ type Props = {
 };
 
 export default function AnimatedSelectableBox({ label, isSelected, onToggle }: Props) {
-    const borderColor = useSharedValue(isSelected ? '#000' : '#ccc');
-    const backgroundColor = useSharedValue(isSelected ? '#E0E0E0' : '#fff');
+    const borderColor = useSharedValue(isSelected ? '#adc92b' : '#ccc');
+    const backgroundColor = useSharedValue(isSelected ? '#dfe8ab' : '#fff');
     
     React.useEffect(() => {
-      borderColor.value = withTiming(isSelected ? '#000' : '#ccc', { duration: 200 });
-      backgroundColor.value = withTiming(isSelected ? '#E0E0E0' : '#fff', { duration: 200 });
+        borderColor.value = withTiming(isSelected ? '#adc92b' : '#ccc', { duration: 200 });
+        backgroundColor.value = withTiming(isSelected ? '#dfe8ab' : '#fff', { duration: 200 });
     }, [isSelected]);
 
   const animatedStyle = useAnimatedStyle(() => ({
