@@ -4,6 +4,8 @@ import { COLORS } from "@/constants/theme";
 import { Heart, House, MessageCircle, Plus, Search, User } from "lucide-react-native";
 import { usePushRegistration } from "@/lib/usePushRegistration";
 import { useAuth } from "@clerk/clerk-expo";
+import { Platform, StatusBar } from "react-native";
+import { PlatformPressable } from '@react-navigation/elements';
 
 export default function TabLayout() {
   const { isSignedIn } = useAuth();
@@ -23,13 +25,21 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: '#7ea437',
         tabBarInactiveTintColor: "#6a6a6a",
+        tabBarButton: (props) => (
+      <PlatformPressable
+        {...props}
+        pressColor="transparent" //For android
+        pressOpacity={0.3} //For ios
+      />
+    ),
+
         tabBarStyle: {
           position: "absolute",
           right: 10,
           left: 10,
           borderTopWidth: 0.9,
           borderTopColor: "#e0e0e0",
-          height: 90,
+          height: Platform.OS === "android" ? 60 : 90,
           backgroundColor: COLORS.white,
          
          
@@ -38,6 +48,7 @@ export default function TabLayout() {
           fontSize: 10 ,
           fontFamily: "Medium",
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen

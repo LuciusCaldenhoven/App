@@ -43,7 +43,7 @@ export default function SearchPage() {
       // location: filters.location,
     },
     {
-      initialNumItems: 10,
+      initialNumItems: 20,
     }
   );
 

@@ -4,7 +4,7 @@ import { CircleX, Paperclip, Send } from 'lucide-react-native';
 import { scale } from '@/constants/scale';
 import { COLORS } from '@/constants/theme';
 import { Id } from '@/convex/_generated/dataModel';
-import product from '@/assets/index/data';
+import product from '@/assets/categoria/data';
 
 interface ChatInputBarProps {
   imagePreview: string | null;

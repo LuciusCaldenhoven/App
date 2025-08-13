@@ -48,8 +48,8 @@ export default Sentry.wrap(function RootLayout() {
     SplashScreen.preventAutoHideAsync().catch(console.warn);
 
     if (Platform.OS === "android") {
-      Navigation.setBackgroundColorAsync("transparent");
-      Navigation.setButtonStyleAsync("light");
+      Navigation.setBackgroundColorAsync("#ffffff");
+      Navigation.setButtonStyleAsync("dark");
     }
   }, []);
 

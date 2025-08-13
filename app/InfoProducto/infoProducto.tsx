@@ -9,7 +9,7 @@ import * as FileSystem from "expo-file-system";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import NewInput from "@/components/newInput/newInput";
-import product from "@/assets/index/data";
+import product from "@/assets/categoria/data";
 import moneda from "@/assets/precio/precio.data";
 import condicion from "@/assets/condicion/condicion.data";
 import { useLocalSearchParams } from "expo-router";
@@ -20,6 +20,7 @@ import InputLocation from "@/components/InputLocation/InputLocation";
 import Toast from "react-native-toast-message";
 import InputSelect from "@/components/InputSelect";
 import InputText from "@/components/InputText";
+import CategorySelect from "@/components/CategorySelect";
 
 export default function CreateScreen() {
 
@@ -229,7 +230,8 @@ export default function CreateScreen() {
                 </View>
 
                 <View style={styles.inputSection}>
-                    <InputSelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} data={product.products} />
+                    <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} />
+                    
                 </View>
 
 

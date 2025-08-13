@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, 
+    paddingTop: 40, 
   },
   tabContainer: {
     width: 200,

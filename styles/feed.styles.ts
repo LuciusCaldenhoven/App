@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     borderRadius: 99,
     paddingHorizontal: 14,
-    paddingVertical: Platform.OS === 'ios' ? 15 : 0,
+    paddingVertical: Platform.OS === 'ios' ? 15 : 10,
     alignItems: "center",
     marginVertical: 10,
   },

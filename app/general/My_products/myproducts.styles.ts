@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor: COLORS.white,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
+    paddingTop: 50,
   },
 
   title:{

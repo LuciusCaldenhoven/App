@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Keyboard, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { COLORS } from '@/constants/theme';
 import { scale } from '@/constants/scale';
 
 interface InputSelectProps {

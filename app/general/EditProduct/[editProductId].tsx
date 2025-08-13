@@ -15,9 +15,10 @@ import { Banknote, DollarSign, FileSliders, FileText, MapPinCheck, Pencil, Tag }
 import InputSelect from "@/components/InputSelect";
 import InputLocation from "@/components/InputLocation/InputLocation";
 import moneda from "@/assets/precio/precio.data";
-import product from "@/assets/index/data";
+import product from "@/assets/categoria/data";
 import condicion from "@/assets/condicion/condicion.data";
 import Toast from "react-native-toast-message";
+import CategorySelect from "@/components/CategorySelect";
 
 export default function EditPostScreen() {
   const { editProductId } = useLocalSearchParams();
@@ -210,7 +211,7 @@ export default function EditPostScreen() {
           </View>
 
           <View style={styles.inputSection}>
-            <InputSelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} data={product.products} />
+            <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} />
           </View>
 
           <View style={styles.inputSection}>

@@ -1,4 +1,4 @@
-import { Text, View, Dimensions, } from "react-native"; import Animated, { useSharedValue, useAnimatedScrollHandler, } from "react-native-reanimated";
+import { Text, View, Dimensions, TouchableOpacity, } from "react-native"; import Animated, { useSharedValue, useAnimatedScrollHandler, } from "react-native-reanimated";
 import styles from "@/styles/feed.styles";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -12,6 +12,7 @@ import SearchBar from "@/components/Index/SearchBar";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
 import { LinearGradient } from "expo-linear-gradient";
 import { Bike, Monitor, Shirt, Dumbbell, Car, Tv } from "lucide-react-native";
+import Button from "@/components/button/component";
 
 export default function Index() {
   const router = useRouter();
@@ -101,7 +102,7 @@ export default function Index() {
             category="Electrodomésticos"
           />
 
-
+          <Button text="Ver más" onPress={() => router.push("/try/try")} />
         </View>
       </Animated.ScrollView>
 

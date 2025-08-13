@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { History } from "lucide-react-native";
 import { COLORS } from "@/constants/theme";
-import product from "@/assets/index/data";
+import product from "@/assets/categoria/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TOP_SEARCHES = ["Zapatillas", "Laptop gamer", "Celular usado", "Moto"];

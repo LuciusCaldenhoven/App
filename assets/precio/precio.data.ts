@@ -1,6 +1,3 @@
-import { scale } from "@/constants/scale"
-import { COLORS } from "@/constants/theme"
-import { FontAwesome6 } from "@expo/vector-icons"
 
 const moneda = [
     {

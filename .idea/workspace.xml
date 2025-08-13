@@ -4,7 +4,22 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f38975f-9e87-490d-bc6d-9e6159636dcf" name="Changes" comment="" />
+    <list default="true" id="8f38975f-9e87-490d-bc6d-9e6159636dcf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/editProfile/editProfile.styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/editProfile/editProfile.styles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/general/My_products/myproducts.styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/general/My_products/myproducts.styles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/general/reviews.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/general/reviews.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/soporte/ContactarSoporte.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/soporte/ContactarSoporte.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/soporte/PreguntasFrecuentes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/soporte/PreguntasFrecuentes.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/soporte/ReportarProblema.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/soporte/ReportarProblema.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Index/SearchBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Index/SearchBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/notificationItem/notifications.styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/components/notificationItem/notifications.styles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles/feed.styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/styles/feed.styles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles/profile.styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/styles/profile.styles.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

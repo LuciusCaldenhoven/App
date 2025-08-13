@@ -170,26 +170,27 @@ export const getFilteredPosts = query({
 
     
     const currentUser = await getAuthenticatedUser(ctx);
-    let q = ctx.db.query("posts");
+    const tableQuery = ctx.db.query("posts");
 
+    let indexedQuery = tableQuery;
     if (args.category) {
-      q = q.filter((q) => q.eq(q.field("category"), args.category));
+      indexedQuery = indexedQuery.filter((q) => q.eq(q.field("category"), args.category));
     }
 
     if (args.type) {
-      q = q.filter((q) => q.eq(q.field("tipo"), args.type));
+      indexedQuery = indexedQuery.filter((q) => q.eq(q.field("tipo"), args.type));
     }
 
     if (args.condition) {
       const conditions = args.condition.split(",");
-      q = q.filter((q) =>
+      indexedQuery = indexedQuery.filter((q) =>
         q.or(...conditions.map((c) => q.eq(q.field("condition"), c)))
       );
     }
 
     if (args.priceRange) {
       const [min, max] = args.priceRange;
-      q = q.filter((q) =>
+      indexedQuery = indexedQuery.filter((q) =>
         q.and(q.gte(q.field("price"), min), q.lte(q.field("price"), max))
       );
     }
@@ -204,20 +205,25 @@ export const getFilteredPosts = query({
 
       if (days) {
         const limit = now - days * 24 * 60 * 60 * 1000;
-        q = q.filter((q) => q.gte(q.field("_creationTime"), limit));
+        indexedQuery = indexedQuery.filter((q) => q.gte(q.field("_creationTime"), limit));
       }
     }
 
+    const orderedQuery = indexedQuery.order("desc");
 
     // Obtener los resultados con paginación
-    const { page, isDone, continueCursor } = await q.paginate(args.paginationOpts);
+    const { page, isDone, continueCursor } = await orderedQuery.paginate({
+      ...args.paginationOpts,
+      numItems: 1000, 
+    });
+
 
     // Aplicar búsqueda por título usando Fuse.js si hay un título
     let filteredPage = page;
     if (args.title) {
       const fuseOptions = {
         keys: ['title'],
-        threshold: 0.4, // Ajusta este valor entre 0 y 1 (0 = coincidencia exacta, 1 = coincidencia más flexible)
+        threshold: 0.4, 
         includeScore: true,
 
       };

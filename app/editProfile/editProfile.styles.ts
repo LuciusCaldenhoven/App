@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
     paddingHorizontal: scale(2),
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
+    paddingTop:  50,
   },
   inputField: {
     height: 44,
