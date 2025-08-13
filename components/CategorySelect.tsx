@@ -4,9 +4,7 @@ import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@g
 import { scale } from '@/constants/scale';
 import DATA from '@/assets/categoria/all';
 
-// --------------------
-// Tipos de árbol (coinciden con tu definición de abajo)
-// --------------------
+// Tipos de árbol
 type Leaf = null | string;
 interface CategoryNodeObj { [key: string]: CategoryNode }
 type CategoryNode =
@@ -15,24 +13,19 @@ type CategoryNode =
   | CategoryNodeObj
   | (string | CategoryNodeObj)[];
 
-// --------------------
-// Props
-// --------------------
 interface CategorySelectProps {
   label: string;
-  value: string;                           // etiqueta mostrada (usamos `path.join(delimiter)`)
-  onChangeText: (value: string) => void;   // te damos "A > B > C"
+  value: string;                           // mostramos path.join(delimiter)
+  onChangeText: (value: string) => void;   // devuelve "A > B > C"
   iconComponent?: JSX.Element;
   onFocus?: () => void;
   duration?: number;
-  tree?: Record<string, CategoryNode>;     // por defecto usa DATA (debajo de este archivo)
-  delimiter?: string;                      // separador visual, por defecto " > "
-  onChangePath?: (path: string[]) => void; // opcional: te damos el array de segmentos ["A","B","C"]
+  tree?: Record<string, CategoryNode>;     // por defecto DATA
+  delimiter?: string;                      // por defecto " > "
+  onChangePath?: (path: string[]) => void; // opcional
 }
 
-// --------------------
-// Helpers de árbol
-// --------------------
+// Helpers
 type Item = { key: string; hasChildren: boolean; path: string[] };
 
 function getNodeByPath(root: Record<string, CategoryNode>, path: string[]): CategoryNode {
@@ -54,7 +47,7 @@ function getNodeByPath(root: Record<string, CategoryNode>, path: string[]): Cate
 }
 
 function getChildren(node: CategoryNode, path: string[]): Item[] {
-  if (!node) return []; // null → hoja sin hijos
+  if (!node) return [];
   const items: Item[] = [];
 
   if (Array.isArray(node)) {
@@ -83,9 +76,7 @@ function joinPath(path: string[], delimiter: string) {
   return path.join(delimiter);
 }
 
-// --------------------
 // Componente
-// --------------------
 const CategorySelect = ({
   label,
   value,
@@ -93,7 +84,7 @@ const CategorySelect = ({
   iconComponent,
   onFocus,
   duration = 200,
-  tree,                     // si no pasas, usamos DATA global
+  tree,
   delimiter = ' > ',
   onChangePath,
 }: CategorySelectProps) => {
@@ -101,15 +92,11 @@ const CategorySelect = ({
   const transY = useRef(new Animated.Value(0)).current;
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  // path seleccionado definitivo (lo que “guarda” el usuario)
   const [selectedPath, setSelectedPath] = useState<string[] | null>(null);
-  // path de navegación actual dentro del sheet
   const [currentPath, setCurrentPath] = useState<string[]>([]);
 
-  // Usa el árbol recibido o DATA (de abajo)
   const ROOT = useMemo(() => (tree ?? (DATA as Record<string, CategoryNode>)), [tree]);
 
-  // Derivar node e items actuales
   const currentNode = useMemo(() => {
     if (currentPath.length === 0) return ROOT as unknown as CategoryNode;
     return getNodeByPath(ROOT, currentPath);
@@ -117,7 +104,6 @@ const CategorySelect = ({
 
   const items = useMemo<Item[]>(() => {
     if (currentPath.length === 0) {
-      // top-level: keys del root
       return Object.keys(ROOT)
         .sort((a, b) => a.localeCompare(b, 'es'))
         .map<Item>((k) => ({ key: k, hasChildren: !!ROOT[k], path: [k] }));
@@ -144,7 +130,6 @@ const CategorySelect = ({
     }
   };
 
-  // Sincroniza animación con value entrante
   useEffect(() => {
     if (value?.trim() !== '') {
       animateTransform(-40);
@@ -154,7 +139,6 @@ const CategorySelect = ({
     }
   }, [value]);
 
-  // Abre el modal; por UX, entras en el nivel raíz (o en el seleccionado si existe)
   const handlePresentModalPress = useCallback(() => {
     Keyboard.dismiss();
     setCurrentPath(selectedPath ?? []);
@@ -186,9 +170,7 @@ const CategorySelect = ({
   };
 
   const goBack = () => setCurrentPath((p) => p.slice(0, -1));
-  const goHome = () => setCurrentPath([]);
 
-  // Texto mostrado en el input
   const displayText = useMemo(() => {
     if (selectedPath && selectedPath.length) return joinPath(selectedPath, delimiter);
     return value ?? '';
@@ -205,7 +187,7 @@ const CategorySelect = ({
 
       <Pressable onPress={() => { handleFocus(); handlePresentModalPress(); }} style={styles.input}>
         <Text style={{ flex: 1, fontFamily: 'Medium', fontSize: 14, color: 'black' }} numberOfLines={1}>
-          {displayText}
+          {displayText || 'Selecciona...'}
         </Text>
       </Pressable>
 
@@ -217,27 +199,13 @@ const CategorySelect = ({
           <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.6} pressBehavior="close" />
         )}
       >
-        {/* Header con breadcrumbs */}
-        <View style={styles.sheetHeader}>
-          <Pressable onPress={goHome} style={styles.crumb}>
-            <Text style={styles.crumbText}>Inicio</Text>
-          </Pressable>
-          {currentPath.map((seg, idx) => (
-            <View key={idx} style={styles.crumbWrap}>
-              <Text style={styles.crumbSep}>›</Text>
-              <Pressable onPress={() => setCurrentPath(currentPath.slice(0, idx + 1))} style={styles.crumb}>
-                <Text style={styles.crumbText}>{seg}</Text>
-              </Pressable>
-            </View>
-          ))}
-        </View>
+        {/* SIN breadcrumbs */}
 
         {currentPath.length > 0 && (
           <View style={styles.navRow}>
             <Pressable onPress={goBack} style={styles.backBtn}>
               <Text style={styles.backBtnText}>← Volver</Text>
             </Pressable>
-            <Text style={styles.levelTitle}>{currentPath[currentPath.length - 1]}</Text>
           </View>
         )}
 
@@ -256,9 +224,7 @@ const CategorySelect = ({
   );
 };
 
-// --------------------
 // Estilos
-// --------------------
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
@@ -277,38 +243,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: '#1A1A1A',
   },
-  sheetHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: scale(12),
-    paddingTop: scale(8),
-    paddingBottom: scale(4),
-  },
-  crumbWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  crumb: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    backgroundColor: 'rgba(0,0,0,0.06)',
-  },
-  crumbText: {
-    color: '#111827',
-    fontFamily: 'Medium',
-    fontSize: 12,
-  },
-  crumbSep: {
-    color: '#6B7280',
-  },
   navRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: scale(12),
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     paddingBottom: scale(4),
   },
   backBtn: {
@@ -321,11 +260,6 @@ const styles = StyleSheet.create({
   backBtnText: {
     fontFamily: 'Medium',
     fontSize: 13,
-    color: '#111827',
-  },
-  levelTitle: {
-    fontFamily: 'Medium',
-    fontSize: 14,
     color: '#111827',
   },
   itemContainer: {

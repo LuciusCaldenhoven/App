@@ -14,7 +14,7 @@ type CategoryNode =
 
 const DATA: Record<string, CategoryNode> = {
   "Motos": null,
-
+  "Otros": null,
   "Motor y accesorios": [
     "Sólo seleccionar \"Motor y accesorios\"",
     "GPS y electrónica",
