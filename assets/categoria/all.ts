@@ -14,11 +14,19 @@ type CategoryNode =
 
 const DATA: Record<string, CategoryNode> = {
   "Motos": null,
-  "Otros": null,
+  
   "Motor y accesorios": [
-    "Sólo seleccionar \"Motor y accesorios\"",
+   {
+    "Accesorios": [
+      "Casco",
+      "Botas de moto",
+      "Guantes",
+      "Chaqueta",
+      "Protectores"
+    ]
+  },
     "GPS y electrónica",
-    "Herramientas",
+    "Herramientas de moto",
     {
       "Recambios de coches y furgonetas": [
         "Accesorios",
@@ -41,15 +49,29 @@ const DATA: Record<string, CategoryNode> = {
         "Vestimenta y protección"
       ]
     },
-    "Otros"
   ],
 
   "Moda y accesorios": {
-    "Mujer": null,
-    "Hombre": [
-      "Calzado",
-      "Ropa"
-    ],
+  "Ropa": [
+    "Vestidos",
+    "Faldas",
+    "Pantalones",
+    "Camisas",
+    "Chaquetas",
+    "Abrigos",
+    "Sudaderas",
+    "Trajes",
+    "Ropa deportiva",
+    "Ropa interior",
+  ],
+  "Calzado": [
+    "Zapatillas",
+    "Zapatos",
+    "Botas",
+    "Sandalias",
+    "Chanclas",
+    "Tacones",
+  ],
     "Accesorios": [
       "Accesorios para el cabello",
       "Bolsos y mochilas",
@@ -68,10 +90,8 @@ const DATA: Record<string, CategoryNode> = {
           "Gorros",
           "Gorros de invierno",
           "Sombreros",
-          "Otros sombreros y gorras"
         ]
       },
-      "Otros accesorios"
     ],
     "Joyería": [
       "Anillos",
@@ -87,7 +107,6 @@ const DATA: Record<string, CategoryNode> = {
       "Piercings",
       "Pulseras",
       "Tobilleras",
-      "Otras joyas"
     ],
     "Belleza": [
       "Colonia",
@@ -100,7 +119,6 @@ const DATA: Record<string, CategoryNode> = {
           "Cuidado de las uñas",
           "Cuidado del cabello",
           "Cuidado facial",
-          "Otros productos de cuidado personal"
         ]
       },
       "Maquillaje",
@@ -121,10 +139,8 @@ const DATA: Record<string, CategoryNode> = {
           "Utensilios para el cuidado facial",
           "Utensilios para el cuidado personal",
           "Utensilios para las uñas",
-          "Otros utensilios"
         ]
       },
-      "Otros productos de belleza"
     ]
   },
 
@@ -139,11 +155,10 @@ const DATA: Record<string, CategoryNode> = {
           "Fundas",
           "Mandos a distancia",
           "Soportes",
-          "Otros accesorios de televisores y proyectores"
         ]
       }
     ],
-    "Sonido": [
+    "Sonido: auriculares y altavoces": [
       {
         "Dispositivos de sonido": [
           "Altavoces",
@@ -153,7 +168,6 @@ const DATA: Record<string, CategoryNode> = {
           "Radios",
           "Reproductores de CD",
           "Reproductores de vinilos",
-          "Otros dispositivos de sonido"
         ]
       },
       {
@@ -165,11 +179,10 @@ const DATA: Record<string, CategoryNode> = {
           "Micrófonos",
           "Monitores de estudio",
           "Platos DJ",
-          "Otros artículos de DJ y audio profesional"
         ]
       }
     ],
-    "Fotografía": [
+    "Fotografía: cámaras y drones": [
       {
         "Cámaras": [
           "Cámaras compactas",
@@ -177,7 +190,6 @@ const DATA: Record<string, CategoryNode> = {
           "Cámaras instantáneas",
           "Cámaras réflex",
           "Cámaras sin espejo",
-          "Otros tipos de cámaras"
         ]
       },
       {
@@ -189,7 +201,6 @@ const DATA: Record<string, CategoryNode> = {
           "Objetivos",
           "Tarjetas de memoria",
           "Trípodes",
-          "Otros accesorios de fotografía"
         ]
       }
     ],
@@ -198,7 +209,6 @@ const DATA: Record<string, CategoryNode> = {
       "Smartwatches y pulsera de actividad",
       "Teléfonos vintage",
       "Teléfonos fijos",
-      "Otros teléfonos",
       {
         "Accesorios de móviles y smartwatches": [
           "Cargadores y cables para móviles",
@@ -215,7 +225,6 @@ const DATA: Record<string, CategoryNode> = {
           "Amplificadores de pantalla para móviles",
           "Localizadores para móvil",
           "Piezas de recambio",
-          "Otros accesorios de móviles y smartwatches"
         ]
       }
     ],
@@ -233,7 +242,6 @@ const DATA: Record<string, CategoryNode> = {
           "Teclados",
           "Escáneres",
           "Webcams",
-          "Otros periféricos"
         ]
       },
       "Componentes y piezas de ordenador",
@@ -272,7 +280,6 @@ const DATA: Record<string, CategoryNode> = {
         ]
       },
       "Videojuegos y más",
-      "Otros artículos de gaming"
     ]
   },
 
@@ -314,7 +321,6 @@ const DATA: Record<string, CategoryNode> = {
     "Coleccionismo deportivo",
     "Arte y manualidades",
     "Juguetes y juegos",
-    "Otros artículos de ocio"
   ],
 
   "Bicicletas": {
@@ -352,7 +358,6 @@ const DATA: Record<string, CategoryNode> = {
       "Ropa ciclismo",
       "Zapatillas y cubrezapatillas"
     ],
-    "Otros": null
   },
 
   "Hogar y jardín": {
@@ -405,14 +410,12 @@ const DATA: Record<string, CategoryNode> = {
       "Sillas",
       "Sillones y sofás"
     ],
-    "Otros": null
   },
 
   "Cine, Libros y Música": {
     "Cine": [
       "Cine y películas",
       "Merchandising de cine",
-      "Otros"
     ],
     "Libros": [
       "Arte y diseño",
@@ -431,7 +434,6 @@ const DATA: Record<string, CategoryNode> = {
       "Infantil y juvenil",
       "Literatura",
       "Medicina",
-      "Otros",
       "Psicología y autoayuda",
       "Religión y espiritualidad",
       "Viajes y turismo"
@@ -452,7 +454,6 @@ const DATA: Record<string, CategoryNode> = {
         "Micrófonos y accesorios"
       ],
       "Instrumentos musicales": {
-        "Other type of instruments": null,
         "Instrumentos de Percusión": [
           "Cajas",
           "Claves",
@@ -498,27 +499,24 @@ const DATA: Record<string, CategoryNode> = {
       "Chupetes y mordedores",
       "Sillas de comer",
       "Termos y potitos",
-      "Otros"
+
     ],
     "Baño e higiene": [
       "Bañeras",
       "Esponjas y termómetros",
       "Orinales",
-      "Otros"
     ],
     "Carros, sillas y accesorios": [
       "Accesorios de carros y sillas",
       "Carros de bebé",
       "Mochilas portabebés",
       "Sillas de coche",
-      "Otros"
     ],
     "Habitación": [
       "Armarios y cómodas",
       "Cunas",
       "Decoración infantil",
       "Otros muebles",
-      "Otros"
     ],
     "Juguetes": [
       "Juguetes de aprendizaje",
@@ -528,7 +526,6 @@ const DATA: Record<string, CategoryNode> = {
       "Muñecas y accesorios",
       "Peluches",
       "Vehículos y pistas",
-      "Otros"
     ],
     "Ropa y calzado": [
       "Abrigos",
@@ -538,20 +535,17 @@ const DATA: Record<string, CategoryNode> = {
       "Pantalones y faldas",
       "Ropa interior",
       "Vestidos",
-      "Otros"
     ],
     "Seguridad": [
       "Barreras de seguridad",
       "Cámaras y vigilabebés",
       "Intercomunicadores",
-      "Otros"
     ],
     "Tronas y andadores": [
       "Andadores",
       "Correpasillos",
       "Tronas"
     ],
-    "Otros": null
   },
 
   "Coleccionismo": [
@@ -570,7 +564,6 @@ const DATA: Record<string, CategoryNode> = {
     "Naipes",
     "Postales y souvenirs",
     "Relojes",
-    "Otros"
   ],
 
   "Construcción y reformas": [
@@ -602,7 +595,6 @@ const DATA: Record<string, CategoryNode> = {
         "Ventanas"
       ]
     },
-    "Otros"
   ],
 
   "Propiedad": [
@@ -629,8 +621,9 @@ const DATA: Record<string, CategoryNode> = {
     "Motos acuáticas",
     "Aviones",
     "Ultraligeros",
-    "Otros"
-  ]
+  ],
+
+  "Otros": null,
 };
 
 

@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
     borderColor: "#ddd",
+    fontFamily: "Regular",
   },
   section: {
     marginBottom: 24,

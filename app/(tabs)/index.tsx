@@ -79,28 +79,10 @@ export default function Index() {
 
           <HorizontalPostSection icon={Shirt} title="Ropa" category="Ropa" />
           <HorizontalPostSection icon={Car} title="Vehículos" category="Vehículos" />
-          <HorizontalPostSection
-            icon={Bike}
-            title="Bicicletas"
-            category="Bicicletas"
-          />
-          <HorizontalPostSection
-            icon={Monitor}
-            title="Electrónica"
-            category="Electrónica"
-          />
-          
-          <HorizontalPostSection
-            icon={Dumbbell}
-            title="Deportes"
-            category="Deportes"
-          />
-          
-          <HorizontalPostSection
-            icon={Tv}
-            title="Electrodomésticos"
-            category="Electrodomésticos"
-          />
+          <HorizontalPostSection icon={Bike} title="Bicicletas" category="Bicicletas" />
+          <HorizontalPostSection icon={Monitor} title="Electrónica" category="Electrónica" />
+          <HorizontalPostSection icon={Dumbbell} title="Deportes" category="Deportes" />
+          <HorizontalPostSection icon={Tv} title="Electrodomésticos" category="Electrodomésticos" />
 
           <Button text="Ver más" onPress={() => router.push("/try/try")} />
         </View>

@@ -46,17 +46,22 @@
       "expo-camera",
       "expo-location",
       [
-        "expo-splash-screen",
+      "expo-splash-screen",
         {
-         
-          "image": "./assets/images/fondo.png",
-          "dark": {
+          "ios": {
             "image": "./assets/images/fondo.png",
-             "resizeMode": "contain"
+            "backgroundColor": "#000000",
+            "resizeMode": "cover",
+            "enableFullScreenImage_legacy": true
           },
-           "resizeMode": "contain"
+          "android": {
+            "backgroundColor": "#000000",
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 200
+          }
         }
       ],
+
       [
         "expo-maps",
         {

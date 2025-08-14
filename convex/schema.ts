@@ -29,6 +29,7 @@ export default defineSchema({
         price: v.number(),
         currency: v.string(),
         category: v.string(),
+        subcategory: v.optional(v.string()),
         location: v.string(),
         lat: v.number(),
         lng: v.number(),

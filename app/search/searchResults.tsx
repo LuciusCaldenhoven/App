@@ -51,7 +51,7 @@ export default function SearchPage() {
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.background, paddingTop: 50 }}>
       {/* Barra superior */}
-      <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 10,borderBottomWidth: 1, borderColor: "#e0e0e0" }}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={20} style={{ marginRight: 20, paddingLeft: 20 }} />
         </TouchableOpacity>

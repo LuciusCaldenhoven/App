@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Platform.OS === 'ios' ? 10 : 0,
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 5,
   },
   input: {
     flex: 1,
