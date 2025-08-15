@@ -1,7 +1,18 @@
 // ChatInputBar.tsx
-import React, { Dispatch, SetStateAction, useMemo, useRef, useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Animated, NativeSyntheticEvent, TextInputContentSizeChangeEventData, Platform } from 'react-native';
-import { CircleX, Plus, Image as ImageIcon, ArrowUp, ImagePlus } from 'lucide-react-native';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  NativeSyntheticEvent,
+  TextInputContentSizeChangeEventData,
+  Platform,
+  TextInput,
+} from 'react-native';
+import { CircleX, ArrowUp, ImagePlus } from 'lucide-react-native';
 import { scale } from '@/constants/scale';
 import { Id } from '@/convex/_generated/dataModel';
 import { COLORS } from '@/constants/theme';
@@ -21,13 +32,12 @@ interface ChatInputBarProps {
   handleSendMessage: () => void;
   isSending: boolean;
   uploading: boolean;
+  // Si usas fuente custom, pásame true cuando esté cargada
+  fontReady?: boolean;
 }
 
 const MIN_INPUT_H = 40;
 const MAX_INPUT_H = 120;
-const INPUT_GROW_MS = 140;
-
-const AnimatedTextInput = Animated.createAnimatedComponent(require('react-native').TextInput);
 
 const ChatInputBar: React.FC<ChatInputBarProps> = ({
   imagePreview,
@@ -44,24 +54,21 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
   handleSendMessage,
   isSending,
   uploading,
+  fontReady = true,
 }) => {
   const disabled = isSending || uploading || (!newMessage.trim() && !selectedImage);
 
-  // auto-grow
+  // Solo para habilitar scroll al llegar al tope (no controlamos height)
   const [contentH, setContentH] = useState(MIN_INPUT_H);
-  const inputH = useRef(new Animated.Value(MIN_INPUT_H)).current;
-  const targetH = useMemo(() => Math.min(Math.max(contentH, MIN_INPUT_H), MAX_INPUT_H), [contentH]);
-
-  useEffect(() => {
-    Animated.timing(inputH, { toValue: targetH, duration: INPUT_GROW_MS, useNativeDriver: false }).start();
-  }, [targetH, inputH]);
-
-  const onContentSizeChange = (e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-    setContentH(e.nativeEvent.contentSize.height);
+  const onContentSizeChange = (
+    e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>
+  ) => {
+    setContentH(Math.ceil(e.nativeEvent.contentSize.height));
   };
+  const reachedMax = contentH >= MAX_INPUT_H;
 
   return (
-    <View style={styles.sendMessageContainer}>
+    <View style={styles.sendMessageContainer} key={fontReady ? 'font-ready' : 'font-loading'}>
       {imagePreview && (
         <View style={styles.previewContainer}>
           <Image source={{ uri: imagePreview }} style={styles.previewImage} />
@@ -78,8 +85,10 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
         <View style={styles.productBar}>
           {imageUrl ? <Image source={{ uri: imageUrl }} style={styles.productImage} /> : null}
           <View style={{ flex: 1 }}>
-            <Text style={styles.productTitle}>{productId.post.title}</Text>
-            {productId.post.price != null && <Text style={styles.productPrice}>${productId.post.price}</Text>}
+            <Text style={styles.productTitle}>{productId.post?.title}</Text>
+            {productId.post?.price != null && (
+              <Text style={styles.productPrice}>${productId.post.price}</Text>
+            )}
           </View>
           <TouchableOpacity onPress={() => setShowProductBar(false)}>
             <CircleX size={30} color="black" />
@@ -88,49 +97,45 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
       )}
 
       <View style={styles.inputRow}>
-        {/* Píldora de input como iOS/Android Messages */}
         <View style={styles.pill}>
-
           <TouchableOpacity
             onPress={captureImage}
             disabled={uploading || isSending}
             hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            style={{paddingBottom:13}}
+            style={{ paddingBottom: 13 }}
           >
             <ImagePlus size={28} color={COLORS.main} strokeWidth={1.8} style={styles.pillIcon} />
           </TouchableOpacity>
 
-          <AnimatedTextInput
-            style={[styles.textInput, { height: inputH, textAlignVertical: 'top' }]}
-            value={newMessage}
-            onChangeText={setNewMessage}
-            placeholder="Mensaje"
-            placeholderTextColor="#888"
-            returnKeyType="send"
-            blurOnSubmit={false}
-            autoCorrect
-            autoCapitalize="sentences"
-            multiline
-            onContentSizeChange={onContentSizeChange}
-            scrollEnabled={targetH >= MAX_INPUT_H}
-            onSubmitEditing={() => { if (!disabled) handleSendMessage(); }}
-          />
-           <TouchableOpacity
-          onPress={handleSendMessage}
-          disabled={disabled}
-          style={[styles.sendBtnCircle, { opacity: disabled ? 0.5 : 1 }]}
-          activeOpacity={0.8}
-        >
-          {isSending ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <ArrowUp size={20} color="#fff" />
-          )}
-        </TouchableOpacity>
-        </View>
+          {/* 🚩 Clave: NO height fijado. Solo minHeight y maxHeight, y dejamos que iOS autogrow */}
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.textInput}
+              multiline
+              value={newMessage}
+              onChangeText={setNewMessage}
+              placeholder="Mensaje"
+              placeholderTextColor="#888"
+              returnKeyType="send"
+              blurOnSubmit={false}
+              autoCorrect
+              autoCapitalize="sentences"
+              onContentSizeChange={onContentSizeChange}
+              scrollEnabled={reachedMax}
+              onSubmitEditing={() => { if (!disabled) handleSendMessage(); }}
+              {...(Platform.OS === 'ios' ? { enablesReturnKeyAutomatically: true } : {})}
+            />
+          </View>
 
-        {/* Botón de enviar circular */}
-       
+          <TouchableOpacity
+            onPress={handleSendMessage}
+            disabled={disabled}
+            style={[styles.sendBtnCircle, { opacity: disabled ? 0.5 : 1 }]}
+            activeOpacity={0.8}
+          >
+            {isSending ? <ActivityIndicator size="small" color="#fff" /> : <ArrowUp size={20} color="#fff" />}
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -138,13 +143,8 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
 
 export default ChatInputBar;
 
-/* -------------------
-   🎨 ESTILOS
-------------------- */
 const styles = StyleSheet.create({
-  sendMessageContainer: {
-
-  },
+  sendMessageContainer: {},
 
   inputRow: {
     flexDirection: 'row',
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
 
-  // Píldora similar a la de la captura
   pill: {
     flex: 1,
     flexDirection: 'row',
@@ -171,31 +170,41 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
   },
+
   pillIcon: {
     marginHorizontal: 6,
     marginTop: 0,
   },
 
-  textInput: {
+  // Deja que el input ocupe el alto que necesite
+  inputWrapper: {
     flex: 1,
-    fontSize: 16,
-    color: '#000',
-    paddingVertical: 0,
-    paddingHorizontal: 6,
-    fontFamily: 'Regular',
+    justifyContent: 'flex-start',
+    alignSelf: 'stretch', // 👈 ayuda a que pueda “estirarse” vertical
   },
 
-  // botón circular a la derecha
+  textInput: {
+    // 👇 sin height
+    minHeight: MIN_INPUT_H,
+    maxHeight: MAX_INPUT_H,
+    fontSize: 16,
+    color: '#000',
+    paddingTop: 5,
+    paddingBottom: 0,
+    paddingHorizontal: 6,
+    ...(Platform.OS === 'android' ? { textAlignVertical: 'top' } : {}),
+    lineHeight: 20,
+  },
+
   sendBtnCircle: {
     width: 44,
     height: 44,
     borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#adc92b', // se ve como la bolita negra de la captura
+    backgroundColor: '#adc92b',
   },
 
-  /* Preview imagen + barra de producto (igual que tenías) */
   productBar: {
     padding: 10,
     backgroundColor: '#F5F5F5',
@@ -207,8 +216,8 @@ const styles = StyleSheet.create({
     borderColor: '#403c3c',
   },
   productImage: { width: 45, height: 45, borderRadius: 6, marginRight: 8 },
-  productTitle: { fontFamily: 'Medium', fontSize: 15, color: '#222' },
-  productPrice: { color: '#888', fontSize: 15, fontFamily: 'Medium' },
+  productTitle: { /* fontFamily: 'Medium', */ fontSize: 15, color: '#222' },
+  productPrice: { color: '#888', fontSize: 15 /* , fontFamily: 'Medium' */ },
 
   previewContainer: {
     width: 200,

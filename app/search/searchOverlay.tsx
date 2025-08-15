@@ -1,38 +1,73 @@
-import {
-  View,
-  TextInput,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, TextInput, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { History } from "lucide-react-native";
 import { COLORS } from "@/constants/theme";
-import product from "@/assets/categoria/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const TOP_SEARCHES = ["Zapatillas", "Laptop gamer", "Celular usado", "Moto"];
+// 👇 usamos tus datos e íconos actuales
+import DATA from "@/assets/categoria/all";
+import { CATEGORY_ICON_BY_SLUG, slugify } from "@/assets/categoria/iconMap";
+
 const HISTORY_KEY = "expo_app_search_history";
+
+// Ícono por defecto si algún slug no tiene ícono en el mapa
+const FallbackIcon = ({ size = 24, color = "#888", style }: any) => (
+  <Ionicons name="pricetag-outline" size={size} color={color} style={style} />
+);
+
+// (Opcional) orden destacado de “Top categorías” por slug.
+// Solo se mostrarán si existen en DATA. Ajusta el orden/nombres a tus slugs reales.
+const TOP_CATEGORY_SLUGS = [
+  "moda-y-accesorios",
+  "vehiculos",
+  "electronica",
+  "deportes",
+  "hogar-y-jardin",
+  "muebles",
+];
+
+type RootTree = Record<string, unknown>;
 
 export default function SearchOverlay() {
   const { query = "" } = useLocalSearchParams();
   const [search, setSearch] = useState(String(query));
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  // Cargar historial al montar
+  // --- Construimos las categorías desde tu DATA ---
+  const ROOT = DATA as RootTree;
+
+  const allCategories = useMemo(() => {
+    // Claves raíz de tu árbol (categorías de primer nivel)
+    return Object.keys(ROOT).map((title) => {
+      const slug = slugify(title);
+      const IconComp = CATEGORY_ICON_BY_SLUG[slug] || FallbackIcon;
+      return { id: slug, title, slug, IconComp };
+    });
+  }, [ROOT]);
+
+  const topCategories = useMemo(() => {
+    // Tomamos los slugs deseados y filtramos por los que existan en DATA
+    const bySlug: Record<string, (typeof allCategories)[number]> = {};
+    for (const cat of allCategories) bySlug[cat.slug] = cat;
+
+    const curated = TOP_CATEGORY_SLUGS
+      .map((slug) => bySlug[slug])
+      .filter(Boolean) as (typeof allCategories)[number][];
+
+    // Si ningún slug coincide, como fallback toma las 6 primeras
+    return curated.length ? curated : allCategories.slice(0, 6);
+  }, [allCategories]);
+
+  // --- Historial ---
   useEffect(() => {
-    AsyncStorage.getItem(HISTORY_KEY).then(stored => {
+    AsyncStorage.getItem(HISTORY_KEY).then((stored) => {
       if (stored) setRecentSearches(JSON.parse(stored));
     });
   }, []);
 
-  // Guardar historial cuando cambia
   useEffect(() => {
     AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(recentSearches));
   }, [recentSearches]);
@@ -51,15 +86,16 @@ export default function SearchOverlay() {
     }
   };
 
-  const onPressCategory = (title: string) => {
-    handleSearch(title);
-  };
   const removeRecentSearch = (itemToRemove: string) => {
-  setRecentSearches(prev =>
-    prev.filter(item => item !== itemToRemove)
-  );
-};
+    setRecentSearches((prev) => prev.filter((item) => item !== itemToRemove));
+  };
 
+  const goToCategory = (title: string) => {
+    router.push({
+      pathname: "/search/searchCategory",
+      params: { category: title },
+    });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -89,66 +125,59 @@ export default function SearchOverlay() {
             <History color={COLORS.main} size={18} />
             <Text style={styles.sectionTitle}> Búsquedas recientes</Text>
           </View>
-            {recentSearches.length === 0 ? (
-              <Text style={styles.item}>No hay historial</Text>
-            ) : (
-              recentSearches.map((item, index) => (
-                <View key={index} style={styles.recentItemContainer}>
-                  <TouchableOpacity style={{ flex: 1 }} onPress={() => handleSearch(item)}>
-                    <Text style={styles.item}>• {item}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => removeRecentSearch(item)}>
-                    <Ionicons name="close" size={18} color="#888" />
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
-
+          {recentSearches.length === 0 ? (
+            <Text style={styles.item}>No hay historial</Text>
+          ) : (
+            recentSearches.map((item, index) => (
+              <View key={`${item}-${index}`} style={styles.recentItemContainer}>
+                <TouchableOpacity style={{ flex: 1 }} onPress={() => handleSearch(item)}>
+                  <Text style={styles.item}>• {item}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => removeRecentSearch(item)}>
+                  <Ionicons name="close" size={18} color="#888" />
+                </TouchableOpacity>
+              </View>
+            ))
+          )}
         </View>
 
-        {/* Top Categorías (con imágenes) */}
+        {/* Top Categorías (desde DATA) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Categorías</Text>
-          {product.topProducts.map((item) => (
+          {topCategories.map((cat) => (
             <TouchableOpacity
-              key={item.id}
+              key={`top-${cat.slug}`}
               style={styles.itemContainer}
-              onPress={() =>
-                router.push({
-                  pathname: "/search/searchCategory",
-                  params: { category: item.title },
-                })
-              }
+              onPress={() => goToCategory(cat.title)}
             >
-              {/* Usa imagen */}
-              <item.icon size={24} color="#888" style={{ marginRight: 12 }} />
-              <Text style={styles.itemText}>{item.title}</Text>
+              {typeof cat.IconComp === "function" ? (
+                <cat.IconComp size={24} color="#888" style={{ marginRight: 12 }} />
+              ) : (
+                <Image source={cat.IconComp} style={{ width: 24, height: 24, marginRight: 12 }} resizeMode="contain" />
+              )}
+              <Text style={styles.itemText}>{cat.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Categorías (con imágenes) */}
+        {/* Todas las Categorías (desde DATA) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categorías</Text>
-          {product.products.map((item) => (
+          {allCategories.map((cat) => (
             <TouchableOpacity
-              key={item.id}
+              key={`all-${cat.slug}`}
               style={styles.itemContainer}
-              onPress={() =>
-                router.push({
-                  pathname: "/search/searchCategory",
-                  params: { category: item.title },
-                })
-              }
+              onPress={() => goToCategory(cat.title)}
             >
-              {/* Usa imagen */}
-              
-              <item.icon size={24} color="#888" style={{ marginRight: 12 }} />
-              <Text style={styles.itemText}>{item.title}</Text>
+              {typeof cat.IconComp === "function" ? (
+                <cat.IconComp size={24} color="#888" style={{ marginRight: 12 }} />
+              ) : (
+                <Image source={cat.IconComp} style={{ width: 24, height: 24, marginRight: 12 }} resizeMode="contain" />
+              )}
+              <Text style={styles.itemText}>{cat.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
-        
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -192,12 +221,11 @@ const styles = StyleSheet.create({
     fontFamily: "SemiBold",
   },
   recentItemContainer: {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingVertical: 4,
-},
-
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 4,
+  },
   item: {
     fontSize: 16,
     paddingVertical: 6,
@@ -213,11 +241,5 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: "#222",
     fontFamily: "Medium",
-  },
-  icon: {
-    width: 32,
-    height: 32,
-    marginRight: 12,
-    resizeMode: "contain",
   },
 });
