@@ -23,11 +23,28 @@ export const sendMessage = mutation({
       product,
     });
 
-    // Actualiza el chat con el último mensaje y la hora
+    /// dentro de tu mutation después de guardar el mensaje:
+    let lastMessage = '';
+
+    if (content) {
+      // había texto
+      lastMessage = file ? `📷 ${content}` : content;
+    } else if (file) {
+      // sin texto pero con imagen
+      lastMessage = '📷 Foto';
+    } else if (product) {
+      // sin texto ni imagen pero con producto adjunto
+      lastMessage = '🏷️ Producto';
+    } else {
+      // fallback
+      lastMessage = 'Mensaje';
+    }
+
     await ctx.db.patch(chatId, {
-      lastMessage: content,
+      lastMessage,
       lastTime: Date.now(),
     });
+
 
     return messageId;
   },

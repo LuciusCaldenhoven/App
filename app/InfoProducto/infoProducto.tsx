@@ -33,7 +33,7 @@ export default function CreateScreen() {
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
-
+    const [subcategory, setSubcategory] = useState("");
     const [condition, setCondition] = useState("");
     const [currency, setCurrency] = useState("");
     const [sold, setSold] = useState(false);
@@ -113,6 +113,7 @@ export default function CreateScreen() {
                 title,
                 price: parseFloat(price.replace(/,/g, "")),
                 category,
+                subcategory,
                 location,
                 condition,
                 currency,
@@ -230,8 +231,7 @@ export default function CreateScreen() {
                 </View>
 
                 <View style={styles.inputSection}>
-                    <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} />
-                    
+                    <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} valueCategory={category} onChangeTextCategory={setCategory} valueSub={subcategory} onChangeTextSub={setSubcategory} />
                 </View>
 
 

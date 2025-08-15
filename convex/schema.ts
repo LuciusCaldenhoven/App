@@ -39,6 +39,7 @@ export default defineSchema({
     })
         .index("by_user", ["userId"])
         .index("by_category", ["category"])
+        
         .index("by_price", ["price"]),
 
 

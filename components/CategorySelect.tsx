@@ -17,8 +17,10 @@ type CategoryNode =
 
 interface CategorySelectProps {
   label: string;
-  value: string;
-  onChangeText: (value: string) => void;
+  valueCategory: string;
+  onChangeTextCategory: (value: string) => void;
+  valueSub: string;
+  onChangeTextSub: (value: string) => void;
   iconComponent?: JSX.Element;
   onFocus?: () => void;
   duration?: number;
@@ -82,8 +84,10 @@ function joinPath(path: string[], delimiter: string) {
 // Componente
 const CategorySelect = ({
   label,
-  value,
-  onChangeText,
+  valueCategory,
+  onChangeTextCategory,
+  valueSub,
+  onChangeTextSub,
   iconComponent,
   onFocus,
   duration = 200,
@@ -132,13 +136,15 @@ const CategorySelect = ({
   };
 
   useEffect(() => {
-    if (value?.trim() !== '') {
-      animateTransform(-40);
-      animateBorderWidth(2);
-    } else {
-      handleBlur('');
-    }
-  }, [value]);
+  const hasSomething = Boolean(valueCategory?.trim() || valueSub?.trim());
+  if (hasSomething) {
+    animateTransform(-40);
+    animateBorderWidth(2);
+  } else {
+    handleBlur('');
+  }
+}, [valueCategory, valueSub]);
+
 
   const handlePresentModalPress = useCallback(() => {
     Keyboard.dismiss();
@@ -153,13 +159,19 @@ const CategorySelect = ({
 
   // Acciones
   const selectLeaf = (path: string[]) => {
-    const labelText = joinPath(path, delimiter);
+    const category = path[0] ?? '';
+    const sub = path[path.length - 1] ?? '';
+
     setSelectedPath(path);
-    onChangeText(labelText);
+    onChangeTextCategory(category);
+    onChangeTextSub(sub);
     onChangePath?.(path);
+
     bottomSheetModalRef.current?.dismiss();
-    handleBlur(labelText);
+    // mantiene animación “flotante” si hay algo seleccionado
+    handleBlur(`${category}${delimiter}${sub}`);
   };
+
 
   const onPressItem = (item: Item) => {
     const node = getNodeByPath(ROOT, item.path);
@@ -173,11 +185,11 @@ const CategorySelect = ({
   const goBack = () => setCurrentPath((p) => p.slice(0, -1));
 
   const displayText = useMemo(() => {
-    if (selectedPath && selectedPath.length) return joinPath(selectedPath, delimiter);
-    return value ?? '';
-  }, [selectedPath, value, delimiter]);
+    const parts = [valueCategory, valueSub].filter(Boolean);
+    return parts.join(delimiter);
+  }, [valueCategory, valueSub, delimiter]);
 
-  // Título actual (último segmento); en raíz quedará vacío
+
   const headerText = currentPath.length > 0 ? currentPath[currentPath.length - 1] : '';
 
   return (
@@ -199,7 +211,11 @@ const CategorySelect = ({
         ref={bottomSheetModalRef}
         snapPoints={['85%']}
         enableDynamicSizing={false}
-        onDismiss={() => { if (!selectedPath?.length && !value) handleBlur(''); }}
+        onDismiss={() => {
+          const hasSomething = Boolean(valueCategory?.trim() || valueSub?.trim());
+          if (!selectedPath?.length && !hasSomething) handleBlur('');
+        }}
+
         backdropComponent={(props) => (
           <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.6} pressBehavior="close" />
         )}

@@ -205,7 +205,7 @@ const DATA: Record<string, CategoryNode> = {
       }
     ],
     "Telefonía: móviles y smartwatches": [
-      "Smartphones",
+      "Celulares",
       "Smartwatches y pulsera de actividad",
       "Teléfonos vintage",
       "Teléfonos fijos",
@@ -229,7 +229,7 @@ const DATA: Record<string, CategoryNode> = {
       }
     ],
     "Informática: ordenadores y tablets": [
-      "Portátiles",
+      "Laptops",
       "Ordenadores de sobremesa",
       "Realidad virtual y aumentada",
       "Tablets",

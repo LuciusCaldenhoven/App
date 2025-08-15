@@ -16,10 +16,6 @@ export default function Post({ post }: PostProps) {
   const { user } = useUser();
   const { width } = useWindowDimensions();
 
-  const currentUser = useQuery(
-    api.users.getUserByClerkId,
-    user ? { clerkId: user.id } : "skip"
-  );
 
   const imageUrl = useQuery(api.posts.getImageUrl, {
     storageId: post.storageId,

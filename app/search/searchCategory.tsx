@@ -109,10 +109,10 @@ function NoSearchResults() {
                 color={COLORS.main}
                 style={{ marginBottom: 20 }}
             />
-            <Text style={{ fontSize: 22, fontWeight: "600", color: COLORS.main, marginBottom: 8 }}>
+            <Text style={{ fontSize: 22, fontFamily:"Medium", color: COLORS.main, marginBottom: 8 }}>
                 No se encontraron resultados
             </Text>
-            <Text style={{ fontSize: 16, color: "#888", textAlign: "center" }}>
+            <Text style={{ fontSize: 16, color: "#888", textAlign: "center" ,fontFamily:"Regular"}}>
                 Intenta modificar tu búsqueda o revisar los filtros aplicados.
             </Text>
         </View>

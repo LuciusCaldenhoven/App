@@ -45,6 +45,7 @@ export const createPost = mutation({
     price: v.number(),
     currency: v.string(),
     category: v.string(),
+    subcategory: v.string(),
     location: v.string(),
     condition: v.string(),
     imageUrls: v.array(v.id("_storage")),
@@ -65,6 +66,7 @@ export const createPost = mutation({
       title: args.title,
       price: args.price,
       category: args.category,
+      subcategory: args.subcategory,
       location: args.location,
       condition: args.condition,
       currency: args.currency,
@@ -84,48 +86,49 @@ export const createPost = mutation({
 
 
 
-export const getFeedPosts = query({
+export const getFeed = query({
   args: {
-    paginationOpts: paginationOptsValidator, // ✅ requerido
+    category: v.optional(v.string()),
+    subcategory: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const { category, subcategory } = args;
 
-    const currentUser = await getAuthenticatedUser(ctx);
+    // 1) Traer productos de esa categoría/subcategoría
+    const all = await ctx.db.query("posts").collect();
+    const filtered = all.filter(item => {
+      if (subcategory) return item.subcategory === subcategory;
+      if (category) return item.category === category;
+      return false;
+    });
 
-    const { page, isDone, continueCursor } = await ctx.db
-      .query("posts")
-      .order("desc")
-      .paginate(args.paginationOpts);
+    // 2) Filtrar recientes (últimos 7 días)
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const recent = filtered.filter(p => p._creationTime >= sevenDaysAgo);
 
-    const postsWithInfo = await Promise.all(
-      page.map(async (post) => {
-        const postAuthor = await ctx.db.get(post.userId);
-        const bookmark = await ctx.db
-          .query("bookmarks")
-          .withIndex("by_user_and_post", (q) =>
-            q.eq("userId", currentUser._id).eq("postId", post._id)
-          )
-          .first();
+    // 3) Elegir 6 recientes al azar
+    const recent6 = shuffle(recent).slice(0, 6);
 
-        return {
-          ...post,
-          author: {
-            _id: postAuthor?._id,
-            username: postAuthor?.username,
-            image: postAuthor?.image,
-          },
-          isBookmarked: !!bookmark,
-        };
-      })
-    );
+    // 4) Elegir 6 aleatorios del resto
+    const idsRecientes = new Set(recent6.map(p => p._id));
+    const resto = filtered.filter(p => !idsRecientes.has(p._id));
+    const random6 = shuffle(resto).slice(0, 6);
 
-    return {
-      page: postsWithInfo,
-      isDone,
-      continueCursor,
-    };
-  },
+    return { recent: recent6, random: random6 };
+  }
 });
+
+// Función para mezclar array
+function shuffle<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+
 
 function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; // Earth radius
@@ -144,6 +147,7 @@ export const getFilteredPosts = query({
   args: {
     title: v.optional(v.string()),
     category: v.optional(v.string()),
+    subcategory: v.optional(v.string()),
     type: v.optional(v.string()),
     condition: v.optional(v.string()),
     priceRange: v.optional(v.array(v.number())),
@@ -222,7 +226,7 @@ export const getFilteredPosts = query({
     let filteredPage = page;
     if (args.title) {
       const fuseOptions = {
-        keys: ['title'],
+        keys: ['title', 'subcategory'],
         threshold: 0.4, 
         includeScore: true,
 
@@ -562,6 +566,7 @@ export const updatePost = mutation({
     lat: v.float64(),
     lng: v.float64(),
     category: v.string(),
+    subcategory: v.string(),
     condition: v.string(),
     storageId: v.id("_storage"),
     imageUrls: v.array(v.id("_storage")),
@@ -582,6 +587,7 @@ export const updatePost = mutation({
       lat: args.lat,
       lng: args.lng,
       category: args.category,
+      subcategory: args.subcategory,
       condition: args.condition,
       storageId: args.storageId, // Primera imagen
       imageUrls: args.imageUrls, // Resto de imágenes

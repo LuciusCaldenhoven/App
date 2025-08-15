@@ -19,6 +19,7 @@ import product from "@/assets/categoria/data";
 import condicion from "@/assets/condicion/condicion.data";
 import Toast from "react-native-toast-message";
 import CategorySelect from "@/components/CategorySelect";
+import { set } from "date-fns";
 
 export default function EditPostScreen() {
   const { editProductId } = useLocalSearchParams();
@@ -39,6 +40,7 @@ export default function EditPostScreen() {
   const [lng, setLng] = useState<number>(0);
   const [caption, setCaption] = useState("");
   const [category, setCategory] = useState("");
+  const [subcategory, setSubcategory] = useState("");
   const [condition, setCondition] = useState("");
   const [selectedImages, setSelectedImages] = useState<(string | Id<"_storage">)[]>([]);
   const [originalImageIds, setOriginalImageIds] = useState<Id<"_storage">[]>([]);
@@ -55,6 +57,7 @@ export default function EditPostScreen() {
       setLng(post.lng ?? 0);
       setCaption(post.caption || "");
       setCategory(post.category || "");
+      setSubcategory(post.subcategory || "");
       setCondition(post.condition || "");
       setSelectedImages([
         ...(post.storageId ? [post.storageId] : []),
@@ -142,6 +145,7 @@ export default function EditPostScreen() {
         lat,
         lng,
         category,
+        subcategory,
         condition,
         storageId,
         imageUrls,
@@ -211,7 +215,7 @@ export default function EditPostScreen() {
           </View>
 
           <View style={styles.inputSection}>
-            <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} value={category} onChangeText={setCategory} />
+            <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} valueCategory={category} onChangeTextCategory={setCategory} valueSub={subcategory} onChangeTextSub={setSubcategory} />
           </View>
 
           <View style={styles.inputSection}>

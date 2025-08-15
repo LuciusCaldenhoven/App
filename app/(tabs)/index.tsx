@@ -11,7 +11,7 @@ import TopSection from "@/components/Index/TopSection";
 import SearchBar from "@/components/Index/SearchBar";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
 import { LinearGradient } from "expo-linear-gradient";
-import { Bike, Monitor, Shirt, Dumbbell, Car, Tv } from "lucide-react-native";
+import { Bike, Monitor, Shirt, Dumbbell, Car, Tv, Home, Book, Music } from "lucide-react-native";
 import Button from "@/components/button/component";
 
 export default function Index() {
@@ -77,14 +77,20 @@ export default function Index() {
             <SearchBar query={searchInput} />
           </View>
 
-          <HorizontalPostSection icon={Shirt} title="Ropa" category="Ropa" />
-          <HorizontalPostSection icon={Car} title="Vehículos" category="Vehículos" />
-          <HorizontalPostSection icon={Bike} title="Bicicletas" category="Bicicletas" />
-          <HorizontalPostSection icon={Monitor} title="Electrónica" category="Electrónica" />
-          <HorizontalPostSection icon={Dumbbell} title="Deportes" category="Deportes" />
-          <HorizontalPostSection icon={Tv} title="Electrodomésticos" category="Electrodomésticos" />
+        <HorizontalPostSection title="Celulares" subcategory="Celulares" />
+        <HorizontalPostSection title="Consolas y accesorios" subcategory="Consolas y accesorios" />
+        <HorizontalPostSection  title="Zapatillas" subcategory="Zapatillas" />
+        <HorizontalPostSection  title="Bolsos y mochilas" subcategory="Bolsos y mochilas" />
+        <HorizontalPostSection  title="Muebles" subcategory="Muebles" />
+        <HorizontalPostSection  title="Decoración" subcategory="Decoración" />
+        <HorizontalPostSection  title="Bicicletas" category="Bicicletas" />
+        <HorizontalPostSection  title="Material deportivo" category="Material Deporte y ocio" />
+        <HorizontalPostSection  title="Libros" subcategory="Libros" />
+        <HorizontalPostSection  title="Instrumentos musicales" subcategory="Instrumentos musicales" />
+        <HorizontalPostSection  title="Vehículos" category="Vehículos" />
+        <HorizontalPostSection  title="Accesorios de moto" subcategory="Accesorios de moto" />
 
-          <Button text="Ver más" onPress={() => router.push("/try/try")} />
+
         </View>
       </Animated.ScrollView>
 

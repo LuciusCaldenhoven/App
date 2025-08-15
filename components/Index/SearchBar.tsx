@@ -19,7 +19,7 @@ export default function SearchBar({ query }: { query: string }) {
           style={{ marginRight: 8 }}
         />
         <Text style={[styles.input, { color: "#4e5443" }]}>
-          ¿Qué quieres comprarrr?
+          ¿Qué quieres comprar?
         </Text>
       </View>
     </TouchableOpacity>
