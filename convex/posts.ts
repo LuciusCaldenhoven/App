@@ -235,8 +235,11 @@ export const getFilteredPosts = query({
       const searchResults = fuse.search(args.title);
 
       filteredPage = searchResults.map(result => result.item);
-
     }
+
+
+
+
 
     // Filtrar por ubicación si es necesario
     if (args.location) {

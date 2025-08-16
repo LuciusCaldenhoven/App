@@ -17,7 +17,6 @@ type Props = {
 const HorizontalPostSection = ({ title, category = "", subcategory = "" }: Props) => {
 
   const data = useQuery(api.posts.getFeed, { category: category, subcategory: subcategory });
-
   const feedItems = data ? [...data.recent, ...data.random] : [];
 
   const isLoading = !data;
@@ -33,7 +32,7 @@ const HorizontalPostSection = ({ title, category = "", subcategory = "" }: Props
           onPress={() =>
             router.push({
               pathname: "/search/searchCategory",
-              params: { category },
+              params: { category: category , subcategory: subcategory },
             })
           }
         >

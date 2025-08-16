@@ -23,7 +23,7 @@ export const CATEGORY_ICON_BY_SLUG: Record<string, ImageSourcePropType> = {
   'coleccionismo': require('@/assets/categoria/icons/mona-lisa.png'),
   'construccion-y-reformas': require('@/assets/categoria/icons/pared-de-ladrillo.png'),
   'propiedad': require('@/assets/categoria/icons/casa-nueva.png'),         
-  'vehiculo': require('@/assets/categoria/icons/coche.png') 
+  'vehiculos': require('@/assets/categoria/icons/coche.png') 
 };
 
 export const DEFAULT_ICON: ImageSourcePropType =

@@ -129,7 +129,7 @@ const createStyles = (isSelf: boolean) =>
       shadowOpacity: 0.06,
       shadowRadius: 6,
       shadowOffset: { width: 0, height: 2 },
-      elevation: 2,
+      elevation: 1,
     },
 
     /** ---------- PRODUCT STYLES (mejorado) ---------- */

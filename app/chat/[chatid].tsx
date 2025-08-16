@@ -14,7 +14,6 @@ import ChatCard from '@/components/Chats/ChatCard';
 import { ChevronLeft } from 'lucide-react-native';
 import { Easing } from 'react-native';
 
-
 const ChatPage = () => {
   const { chatid, Prod, text } = useLocalSearchParams();
 
@@ -30,7 +29,7 @@ const ChatPage = () => {
   const [isSending, setIsSending] = useState(false);
   const [optimistic, setOptimistic] = useState<any[]>([]);
   const lastSendRef = useRef(0);
-  const KEYBOARD_ANIM_MS = 2500;
+
   // --- AUTOSCROLL ---
   const listRef = useRef<FlatList>(null);
   const stickToBottomRef = useRef(false);
@@ -40,37 +39,69 @@ const ChatPage = () => {
     });
   }, []);
 
-  // --- ANIMACIÓN DE TECLADO (suave) ---
-  const keyboardOffset = useRef(new Animated.Value(0)).current;
+  // --- iOS: tu lógica original (paddingBottom animado) ---
+  const isIOS = Platform.OS === 'ios';
+  const KEYBOARD_ANIM_MS_IOS = 250; // puedes subir/bajar si quieres
+  const keyboardOffsetIOS = useRef(new Animated.Value(0)).current;
+
+  // --- Android (pan): usamos spacer animado para la FlatList (con inverted aparece abajo) ---
+  const spacerAndroid = useRef(new Animated.Value(0)).current;
+  const inputBarHeightRef = useRef(0); // base = altura de la barra
+
   useEffect(() => {
-    const showEvt = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvt = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    if (isIOS) {
+      const onShow = (e: any) => {
+        Animated.timing(keyboardOffsetIOS, {
+          toValue: e?.endCoordinates?.height ?? 0,
+          duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        }).start(() => (stickToBottomRef.current = true));
+      };
+      const onHide = (e: any) => {
+        Animated.timing(keyboardOffsetIOS, {
+          toValue: 0,
+          duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        }).start();
+      };
 
-    const onShow = (e: any) => {
-  Animated.timing(keyboardOffset, {
-    toValue: e?.endCoordinates?.height ?? 0,
-    duration: e?.duration ?? KEYBOARD_ANIM_MS,
-    easing: Easing.out(Easing.cubic),
-    useNativeDriver: false,
-  }).start();
-};
-const onHide = (e: any) => {
-  Animated.timing(keyboardOffset, {
-    toValue: 0,
-    duration: e?.duration ?? KEYBOARD_ANIM_MS,
-    easing: Easing.out(Easing.cubic),
-    useNativeDriver: false,
-  }).start();
-};
+      const subShow = Keyboard.addListener('keyboardWillShow', onShow);
+      const subHide = Keyboard.addListener('keyboardWillHide', onHide);
+      return () => {
+        subShow.remove();
+        subHide.remove();
+      };
+    } else {
+      const onShow = (e: any) => {
+        const kbd = e?.endCoordinates?.height ?? 0;
+        const base = inputBarHeightRef.current;
+        Animated.timing(spacerAndroid, {
+          toValue: kbd + base,
+          duration: 180,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        }).start(() => (stickToBottomRef.current = true));
+      };
+      const onHide = () => {
+        const base = inputBarHeightRef.current;
+        Animated.timing(spacerAndroid, {
+          toValue: base,
+          duration: 180,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        }).start();
+      };
 
-
-    const subShow = Keyboard.addListener(showEvt, onShow);
-    const subHide = Keyboard.addListener(hideEvt, onHide);
-    return () => {
-      subShow.remove();
-      subHide.remove();
-    };
-  }, [keyboardOffset]);
+      const subShow = Keyboard.addListener('keyboardDidShow', onShow);
+      const subHide = Keyboard.addListener('keyboardDidHide', onHide);
+      return () => {
+        subShow.remove();
+        subHide.remove();
+      };
+    }
+  }, [isIOS, keyboardOffsetIOS, spacerAndroid]);
 
   const productId = useQuery(api.posts.getPostIdById, Prod ? { postId: Prod as Id<'posts'> } : 'skip');
   const imageUrl = useQuery(
@@ -206,7 +237,6 @@ const onHide = (e: any) => {
     scrollToBottom,
   ]);
 
-
   const captureImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -263,7 +293,7 @@ const onHide = (e: any) => {
       </View>
 
       {/* Chat list */}
-      <View style={styles.main}>
+      <View style={[styles.main, { flex: 1 }]}>
         <FlatList
           ref={listRef}
           data={messagesWithSeparators}
@@ -273,8 +303,10 @@ const onHide = (e: any) => {
           windowSize={7}
           initialNumToRender={20}
           maxToRenderPerBatch={12}
-          removeClippedSubviews
-          maintainVisibleContentPosition={{ minIndexForVisible: 0, autoscrollToTopThreshold: 20 }}
+          removeClippedSubviews={false}
+          maintainVisibleContentPosition={
+            isIOS ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
+          }
           keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => {
             if (stickToBottomRef.current) {
@@ -282,6 +314,7 @@ const onHide = (e: any) => {
               stickToBottomRef.current = false;
             }
           }}
+         
           renderItem={({ item }: any) => {
             if (item.type === 'date') {
               return (
@@ -305,25 +338,67 @@ const onHide = (e: any) => {
         />
       </View>
 
-      {/* Barra de input con desplazamiento animado */}
-      <Animated.View style={{ paddingBottom: keyboardOffset }}>
-        <ChatInputBar
-          imagePreview={imagePreview}
-          setImagePreview={setImagePreview}
-          selectedImage={selectedImage}
-          setSelectedImage={setSelectedImage}
-          showProductBar={showProductBar}
-          setShowProductBar={setShowProductBar}
-          productId={productId}
-          imageUrl={imageUrl}
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-          captureImage={captureImage}
-          handleSendMessage={handleSendMessage}
-          isSending={isSending}
-          uploading={uploading}
-        />
-      </Animated.View>
+      {/* Barra de input */}
+      {isIOS ? (
+        // iOS: tu lógica original, barra sube con paddingBottom animado
+        <Animated.View style={{ paddingBottom: keyboardOffsetIOS }}>
+          <ChatInputBar
+            imagePreview={imagePreview}
+            setImagePreview={setImagePreview}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            showProductBar={showProductBar}
+            setShowProductBar={setShowProductBar}
+            productId={productId}
+            imageUrl={imageUrl}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            captureImage={captureImage}
+            handleSendMessage={handleSendMessage}
+            isSending={isSending}
+            uploading={uploading}
+          />
+        </Animated.View>
+      ) : (
+        // Android (pan): barra fija; medimos su altura para la base del spacer
+        <View
+          style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
+          pointerEvents="box-none"
+          onLayout={(e) => {
+            const newBase = e.nativeEvent.layout.height || 0;
+            const oldBase = inputBarHeightRef.current;
+            if (Math.abs(newBase - oldBase) > 0.5) {
+              inputBarHeightRef.current = newBase;
+              spacerAndroid.stopAnimation((curr) => {
+                const delta = newBase - oldBase;
+                Animated.timing(spacerAndroid, {
+                  toValue: Math.max(0, (curr as number) + delta),
+                  duration: 120,
+                  easing: Easing.out(Easing.cubic),
+                  useNativeDriver: false,
+                }).start();
+              });
+            }
+          }}
+        >
+          <ChatInputBar
+            imagePreview={imagePreview}
+            setImagePreview={setImagePreview}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            showProductBar={showProductBar}
+            setShowProductBar={setShowProductBar}
+            productId={productId}
+            imageUrl={imageUrl}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            captureImage={captureImage}
+            handleSendMessage={handleSendMessage}
+            isSending={isSending}
+            uploading={uploading}
+          />
+        </View>
+      )}
     </View>
   );
 };

@@ -607,7 +607,7 @@ const DATA: Record<string, CategoryNode> = {
     "Trastero"
   ],
 
-  "Vehículo": [
+  "Vehículos": [
     "Coches",
     "Camiones",
     "Furgonetas",

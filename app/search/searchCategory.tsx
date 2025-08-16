@@ -9,20 +9,22 @@ import Post from "@/components/Post";
 import { api } from "@/convex/_generated/api";
 import Filter from "./filter";
 import ProductSkeleton from "@/components/loaders/ProductSkeleton";
+import { sub } from "date-fns";
 
 
 export default function SearchPage() {
-    const { category } = useLocalSearchParams();
+    const { category, subcategory } = useLocalSearchParams();
+   
     const [filterVisible, setFilterVisible] = useState(false);
 
     const [filters, setFilters] = useState({
+        title: subcategory || "",
         category: category || "",
         type: "",
         condition: [],
         priceRange: [0, 10000000],
         date: "",
     });
-
     const {
         results: filteredPosts,
         loadMore,
@@ -32,6 +34,7 @@ export default function SearchPage() {
         api.posts.getFilteredPosts,
         {
             category: Array.isArray(filters.category) ? filters.category[0] : filters.category || undefined,
+            title: Array.isArray(filters.title) ? filters.title[0] : filters.title || undefined,
             type: filters.type || undefined,
             condition: filters.condition.length > 0 ? filters.condition.join(",") : undefined,
             priceRange: filters.priceRange,
@@ -54,7 +57,7 @@ export default function SearchPage() {
                 </TouchableOpacity>
 
                 <View style={{ flex: 1, alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'Medium', fontSize: 21 }}>{category}</Text>
+                    <Text style={{ fontFamily: 'Medium', fontSize: 21 }}>{category}{subcategory}</Text>
                 </View>
 
                 <TouchableOpacity onPress={() => setFilterVisible(true)}>

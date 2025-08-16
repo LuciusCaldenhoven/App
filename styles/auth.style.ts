@@ -85,8 +85,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     color: '#000',
     fontFamily: 'Medium',
-    height: 40,
-        alignItems: 'center',
+    paddingVertical: 12,
+    alignItems: 'center',
+    ...(Platform.OS === 'android' ? { textAlignVertical: 'top' } : {}),
   },
   forgotText: {
     color: '#007BFF',

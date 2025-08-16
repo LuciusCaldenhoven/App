@@ -26,6 +26,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.elpibeluuu1.Segunda_mano",
       "jsEngine": "hermes",
       "config": {
@@ -56,9 +57,10 @@
           },
           "android": {
             "backgroundColor": "#000000",
-            "image": "./assets/images/splash-icon.png",
-            "imageWidth": 200
+            "image": "./assets/images/fondo.png",
+            "resizeMode": "cover"
           }
+
         }
       ],
 
