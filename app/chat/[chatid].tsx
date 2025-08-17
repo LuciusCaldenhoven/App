@@ -8,6 +8,9 @@ import {
   Platform,
   Keyboard,
   Animated,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Dimensions,
   KeyboardAvoidingView,
 } from 'react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -35,54 +38,89 @@ const ChatPage = () => {
   const [uploading, setUploading] = useState(false);
   const [showProductBar, setShowProductBar] = useState(!!Prod);
 
-  // envío + optimista
+  // control envío + optimista
   const [isSending, setIsSending] = useState(false);
   const [optimistic, setOptimistic] = useState<any[]>([]);
   const lastSendRef = useRef(0);
 
   // --- AUTOSCROLL ---
-  const listRef = useRef<FlatList>(null);
-  const stickToBottomRef = useRef(false);
+  const listRef = useRef<FlatList<any>>(null);
+  const stickToBottomRef = useRef(false);       // marcar "después de enviar"
+  const isNearBottomRef = useRef(true);         // si el user está cerca del fondo
+
   const scrollToBottom = useCallback(() => {
+    // FlatList invertida: offset 0 = fondo visual
     requestAnimationFrame(() => {
       listRef.current?.scrollToOffset({ offset: 0, animated: true });
     });
   }, []);
 
-  // --- iOS: paddingBottom animado (Android usa resize) ---
+  // --- ANIMACIÓN DE TECLADO (suave solo en iOS) ---
+  const keyboardOffset = useRef(new Animated.Value(0)).current;
   const isIOS = Platform.OS === 'ios';
-  const KEYBOARD_ANIM_MS_IOS = 250;
-  const keyboardOffsetIOS = useRef(new Animated.Value(0)).current;
+  const DEFAULT_IOS_KEYBOARD_MS = 220;
 
   useEffect(() => {
-    if (!isIOS) return;
+    const showEvt = isIOS ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt = isIOS ? 'keyboardWillHide' : 'keyboardDidHide';
 
     const onShow = (e: any) => {
-      Animated.timing(keyboardOffsetIOS, {
-        toValue: e?.endCoordinates?.height ?? 0,
-        duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
+      const height = e?.endCoordinates?.height ?? 0;
+      const duration = isIOS ? (e?.duration ?? DEFAULT_IOS_KEYBOARD_MS) : 0;
+
+      Animated.timing(keyboardOffset, {
+        toValue: isIOS ? height : 0, // Android usa "resize": no sumamos padding
+        duration,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: false,
-      }).start(() => (stickToBottomRef.current = true));
+      }).start(() => {
+        if (stickToBottomRef.current || isNearBottomRef.current) {
+          scrollToBottom();
+        }
+      });
     };
+
     const onHide = (e: any) => {
-      Animated.timing(keyboardOffsetIOS, {
+      const duration = isIOS ? (e?.duration ?? DEFAULT_IOS_KEYBOARD_MS) : 0;
+      Animated.timing(keyboardOffset, {
         toValue: 0,
-        duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
+        duration,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: false,
       }).start();
     };
 
-    const subShow = Keyboard.addListener('keyboardWillShow', onShow);
-    const subHide = Keyboard.addListener('keyboardWillHide', onHide);
+    const subShow = Keyboard.addListener(showEvt, onShow);
+    const subHide = Keyboard.addListener(hideEvt, onHide);
     return () => {
       subShow.remove();
       subHide.remove();
     };
-  }, [isIOS, keyboardOffsetIOS]);
+  }, [keyboardOffset, isIOS, scrollToBottom]);
 
-  // data
+  // --- Verificador de que "resize" está activo (mira logs) ---
+  useEffect(() => {
+    const log = (tag: string) => {
+      const h = Dimensions.get('window').height;
+    };
+    const showEvt = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const subShow = Keyboard.addListener(showEvt, () => log('SHOW'));
+    const subHide = Keyboard.addListener(hideEvt, () => log('HIDE'));
+    const subDim = Dimensions.addEventListener('change', () => log('DIMENSIONS_CHANGED'));
+
+    log('MOUNT');
+
+    return () => {
+      subShow.remove();
+      subHide.remove();
+      // @ts-ignore (según versión RN)
+      subDim?.remove?.();
+    };
+  }, []);
+
+  // --- DATA & MUTATIONS ---
   const productId = useQuery(api.posts.getPostIdById, Prod ? { postId: Prod as Id<'posts'> } : 'skip');
   const imageUrl = useQuery(
     api.posts.getImageUrl,
@@ -157,7 +195,7 @@ const ChatPage = () => {
       content: trimmed,
       file: selectedImage || undefined,
       senderId: currentUser?._id,
-      product: showProductBar ? productId?.post?._id : undefined,
+      product: showProductBar ? productId?.post._id : undefined,
     };
 
     setIsSending(true);
@@ -195,7 +233,6 @@ const ChatPage = () => {
         setOptimistic((prev) => prev.filter((m) => m._id !== tempId));
       }, 5000);
     } catch (err) {
-      console.error('Error enviando mensaje o notificación:', err);
       setOptimistic((prev) => prev.filter((m) => m._id !== tempId));
       setNewMessage(trimmed);
       if (optimisticMsg.file) setSelectedImage(optimisticMsg.file);
@@ -231,6 +268,7 @@ const ChatPage = () => {
         setImagePreview(uri);
 
         const response = await fetch(uri);
+        // @ts-ignore: React Native fetch devuelve blob en plataformas compatibles
         const blob = await response.blob();
 
         const uploadUrl = await generateUploadUrl();
@@ -250,15 +288,38 @@ const ChatPage = () => {
     }
   };
 
-  const ANDROID_EXTRA = Platform.OS === 'android' ? 12 : 0;
+  // --- scroll handler para saber si estamos cerca del fondo ---
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e?.nativeEvent?.contentOffset?.y ?? 0;
+    isNearBottomRef.current = y < 40; // margen
+  }, []);
 
-  // -----------------------
-  // UI
-  // -----------------------
-  const Body = () => (
-    <>
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
+          <ChevronLeft size={30} color={'black'} strokeWidth={1.7} />
+        </TouchableOpacity>
+
+        <View style={styles.headerContent}>
+          <Image source={{ uri: otherUser?.image || '' }} style={styles.image} />
+          <Text numberOfLines={1} style={styles.text}>
+            {otherUser?.fullname || 'Usuario Desconocido'}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() =>
+            router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id } })
+          }
+          style={styles.icon2}
+        >
+          <Ionicons name="ellipsis-horizontal" size={25} color={'black'} />
+        </TouchableOpacity>
+      </View>
+
       {/* Chat list */}
-      <View style={[styles.main, { flex: 1 }]}>
+      <View style={styles.main}>
         <FlatList
           ref={listRef}
           data={messagesWithSeparators}
@@ -268,14 +329,13 @@ const ChatPage = () => {
           windowSize={7}
           initialNumToRender={20}
           maxToRenderPerBatch={12}
-          removeClippedSubviews={false}
-          maintainVisibleContentPosition={
-            isIOS ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
-          }
+          removeClippedSubviews
+          maintainVisibleContentPosition={{ minIndexForVisible: 0, autoscrollToTopThreshold: 20 }}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingTop: 8, paddingBottom: 8 + ANDROID_EXTRA }}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           onContentSizeChange={() => {
-            if (stickToBottomRef.current) {
+            if (stickToBottomRef.current || isNearBottomRef.current) {
               scrollToBottom();
               stickToBottomRef.current = false;
             }
@@ -284,12 +344,15 @@ const ChatPage = () => {
             if (item.type === 'date') {
               return (
                 <View style={{ alignItems: 'center', marginVertical: 10 }}>
-                  <Text style={styles.date}>{item.date}</Text>
+                  <Text style={styles.date}> {item.date} </Text>
                 </View>
               );
             }
             const isSelf = item.senderId === currentUser?._id;
-            const time = new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const time = new Date(item.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
             return (
               <ChatCard
                 message={item.content}
@@ -303,9 +366,9 @@ const ChatPage = () => {
         />
       </View>
 
-      {/* Barra de input */}
-      {isIOS ? (
-        <Animated.View style={{ paddingBottom: keyboardOffsetIOS }}>
+      {/* Barra de input (animada solo en iOS) */}
+      {Platform.OS === 'ios' ? (
+        <Animated.View style={{ paddingBottom: keyboardOffset }}>
           <ChatInputBar
             imagePreview={imagePreview}
             setImagePreview={setImagePreview}
@@ -324,7 +387,8 @@ const ChatPage = () => {
           />
         </Animated.View>
       ) : (
-        <View>
+        // Android con resize: sin padding animado
+        <KeyboardAvoidingView behavior="padding">
           <ChatInputBar
             imagePreview={imagePreview}
             setImagePreview={setImagePreview}
@@ -341,41 +405,7 @@ const ChatPage = () => {
             isSending={isSending}
             uploading={uploading}
           />
-        </View>
-      )}
-    </>
-  );
-
-  return (
-    <View style={[styles.container, { flex: 1 }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
-          <ChevronLeft size={30} color={'black'} strokeWidth={1.7} />
-        </TouchableOpacity>
-
-        <View style={styles.headerContent}>
-          <Image source={{ uri: otherUser?.image || '' }} style={styles.image} />
-          <Text numberOfLines={1} style={styles.text}>
-            {otherUser?.fullname || 'Usuario Desconocido'}
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          onPress={() => router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id } })}
-          style={styles.icon2}
-        >
-          <Ionicons name="ellipsis-horizontal" size={25} color={'black'} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Body: en Android usamos KeyboardAvoidingView con behavior="height" */}
-      {Platform.OS === 'android' ? (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
-          <Body />
         </KeyboardAvoidingView>
-      ) : (
-        <Body />
       )}
     </View>
   );

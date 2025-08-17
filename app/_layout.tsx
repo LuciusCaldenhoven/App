@@ -84,7 +84,6 @@ export default Sentry.wrap(function RootLayout() {
                     animation: 'fade', // aquí defines el tipo de animación
                   }}
                 />
-                <Stack.Screen name="(auth)/main" />
                 <Stack.Screen name="(auth)/register" />
                 <Stack.Screen name="(auth)/reset-password" />
                 <Stack.Screen

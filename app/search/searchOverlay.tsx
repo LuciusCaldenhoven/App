@@ -36,11 +36,9 @@ export default function SearchOverlay() {
   const [search, setSearch] = useState(String(query));
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  // --- Construimos las categorías desde tu DATA ---
   const ROOT = DATA as RootTree;
 
   const allCategories = useMemo(() => {
-    // Claves raíz de tu árbol (categorías de primer nivel)
     return Object.keys(ROOT).map((title) => {
       const slug = slugify(title);
       const IconComp = CATEGORY_ICON_BY_SLUG[slug] || FallbackIcon;
@@ -49,7 +47,6 @@ export default function SearchOverlay() {
   }, [ROOT]);
 
   const topCategories = useMemo(() => {
-    // Tomamos los slugs deseados y filtramos por los que existan en DATA
     const bySlug: Record<string, (typeof allCategories)[number]> = {};
     for (const cat of allCategories) bySlug[cat.slug] = cat;
 
@@ -57,7 +54,6 @@ export default function SearchOverlay() {
       .map((slug) => bySlug[slug])
       .filter(Boolean) as (typeof allCategories)[number][];
 
-    // Si ningún slug coincide, como fallback toma las 6 primeras
     return curated.length ? curated : allCategories.slice(0, 6);
   }, [allCategories]);
 
@@ -101,6 +97,7 @@ export default function SearchOverlay() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
+      
     >
       {/* Barra de búsqueda */}
       <View style={styles.searchBar}>
@@ -115,6 +112,7 @@ export default function SearchOverlay() {
           placeholder="¿Qué quieres comprar?"
           returnKeyType="search"
           onSubmitEditing={() => handleSearch(search)}
+          keyboardAppearance="light"
         />
       </View>
 

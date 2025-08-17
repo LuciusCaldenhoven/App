@@ -8,10 +8,21 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/fondo.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "bundleIdentifier": "com.elpibeluuu1.segundamano",
       "buildNumber": "7",
       "supportsTablet": false,
+      "splash": {
+        "image": "./assets/images/fondo.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#ffffff",
+        "enableFullScreenImage_legacy": true
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "Se necesita para tomar fotos de productos.",
         "NSLocationWhenInUseUsageDescription": "Se usa para mostrar productos cerca de ti.",
@@ -26,7 +37,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "resize",
+      "splash": {
+        "image": "./assets/images/fondo.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#ffffff"
+      },
       "package": "com.elpibeluuu1.Segunda_mano",
       "jsEngine": "hermes",
       "config": {
@@ -46,24 +61,6 @@
       "expo-notifications",
       "expo-camera",
       "expo-location",
-      [
-      "expo-splash-screen",
-        {
-          "ios": {
-            "image": "./assets/images/fondo.png",
-            "backgroundColor": "#000000",
-            "resizeMode": "cover",
-            "enableFullScreenImage_legacy": true
-          },
-          "android": {
-            "backgroundColor": "#000000",
-            "image": "./assets/images/fondo.png",
-            "resizeMode": "cover"
-          }
-
-        }
-      ],
-
       [
         "expo-maps",
         {

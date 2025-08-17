@@ -122,6 +122,7 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
               autoCapitalize="sentences"
               onContentSizeChange={onContentSizeChange}
               scrollEnabled={reachedMax}
+              keyboardAppearance="light"
               onSubmitEditing={() => { if (!disabled) handleSendMessage(); }}
               {...(Platform.OS === 'ios' ? { enablesReturnKeyAutomatically: true } : {})}
             />
