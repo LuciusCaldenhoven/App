@@ -1,5 +1,15 @@
 // ChatPage.tsx
-import { View, Text, TouchableOpacity, FlatList, Image, Platform, Keyboard, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  Platform,
+  Keyboard,
+  Animated,
+  KeyboardAvoidingView,
+} from 'react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery } from 'convex/react';
@@ -25,7 +35,7 @@ const ChatPage = () => {
   const [uploading, setUploading] = useState(false);
   const [showProductBar, setShowProductBar] = useState(!!Prod);
 
-  // optimista + control envío
+  // envío + optimista
   const [isSending, setIsSending] = useState(false);
   const [optimistic, setOptimistic] = useState<any[]>([]);
   const lastSendRef = useRef(0);
@@ -39,70 +49,40 @@ const ChatPage = () => {
     });
   }, []);
 
-  // --- iOS: tu lógica original (paddingBottom animado) ---
+  // --- iOS: paddingBottom animado (Android usa resize) ---
   const isIOS = Platform.OS === 'ios';
-  const KEYBOARD_ANIM_MS_IOS = 250; // puedes subir/bajar si quieres
+  const KEYBOARD_ANIM_MS_IOS = 250;
   const keyboardOffsetIOS = useRef(new Animated.Value(0)).current;
 
-  // --- Android (pan): usamos spacer animado para la FlatList (con inverted aparece abajo) ---
-  const spacerAndroid = useRef(new Animated.Value(0)).current;
-  const inputBarHeightRef = useRef(0); // base = altura de la barra
-
   useEffect(() => {
-    if (isIOS) {
-      const onShow = (e: any) => {
-        Animated.timing(keyboardOffsetIOS, {
-          toValue: e?.endCoordinates?.height ?? 0,
-          duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: false,
-        }).start(() => (stickToBottomRef.current = true));
-      };
-      const onHide = (e: any) => {
-        Animated.timing(keyboardOffsetIOS, {
-          toValue: 0,
-          duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: false,
-        }).start();
-      };
+    if (!isIOS) return;
 
-      const subShow = Keyboard.addListener('keyboardWillShow', onShow);
-      const subHide = Keyboard.addListener('keyboardWillHide', onHide);
-      return () => {
-        subShow.remove();
-        subHide.remove();
-      };
-    } else {
-      const onShow = (e: any) => {
-        const kbd = e?.endCoordinates?.height ?? 0;
-        const base = inputBarHeightRef.current;
-        Animated.timing(spacerAndroid, {
-          toValue: kbd + base,
-          duration: 180,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: false,
-        }).start(() => (stickToBottomRef.current = true));
-      };
-      const onHide = () => {
-        const base = inputBarHeightRef.current;
-        Animated.timing(spacerAndroid, {
-          toValue: base,
-          duration: 180,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: false,
-        }).start();
-      };
+    const onShow = (e: any) => {
+      Animated.timing(keyboardOffsetIOS, {
+        toValue: e?.endCoordinates?.height ?? 0,
+        duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start(() => (stickToBottomRef.current = true));
+    };
+    const onHide = (e: any) => {
+      Animated.timing(keyboardOffsetIOS, {
+        toValue: 0,
+        duration: e?.duration ?? KEYBOARD_ANIM_MS_IOS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start();
+    };
 
-      const subShow = Keyboard.addListener('keyboardDidShow', onShow);
-      const subHide = Keyboard.addListener('keyboardDidHide', onHide);
-      return () => {
-        subShow.remove();
-        subHide.remove();
-      };
-    }
-  }, [isIOS, keyboardOffsetIOS, spacerAndroid]);
+    const subShow = Keyboard.addListener('keyboardWillShow', onShow);
+    const subHide = Keyboard.addListener('keyboardWillHide', onHide);
+    return () => {
+      subShow.remove();
+      subHide.remove();
+    };
+  }, [isIOS, keyboardOffsetIOS]);
 
+  // data
   const productId = useQuery(api.posts.getPostIdById, Prod ? { postId: Prod as Id<'posts'> } : 'skip');
   const imageUrl = useQuery(
     api.posts.getImageUrl,
@@ -177,7 +157,7 @@ const ChatPage = () => {
       content: trimmed,
       file: selectedImage || undefined,
       senderId: currentUser?._id,
-      product: showProductBar ? productId?.post._id : undefined,
+      product: showProductBar ? productId?.post?._id : undefined,
     };
 
     setIsSending(true);
@@ -270,28 +250,13 @@ const ChatPage = () => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
-          <ChevronLeft size={30} color={'black'} strokeWidth={1.7} />
-        </TouchableOpacity>
+  const ANDROID_EXTRA = Platform.OS === 'android' ? 12 : 0;
 
-        <View style={styles.headerContent}>
-          <Image source={{ uri: otherUser?.image || '' }} style={styles.image} />
-          <Text numberOfLines={1} style={styles.text}>
-            {otherUser?.fullname || 'Usuario Desconocido'}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id } })}
-          style={styles.icon2}
-        >
-          <Ionicons name="ellipsis-horizontal" size={25} color={'black'} />
-        </TouchableOpacity>
-      </View>
-
+  // -----------------------
+  // UI
+  // -----------------------
+  const Body = () => (
+    <>
       {/* Chat list */}
       <View style={[styles.main, { flex: 1 }]}>
         <FlatList
@@ -308,18 +273,18 @@ const ChatPage = () => {
             isIOS ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
           }
           keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingTop: 8, paddingBottom: 8 + ANDROID_EXTRA }}
           onContentSizeChange={() => {
             if (stickToBottomRef.current) {
               scrollToBottom();
               stickToBottomRef.current = false;
             }
           }}
-         
           renderItem={({ item }: any) => {
             if (item.type === 'date') {
               return (
                 <View style={{ alignItems: 'center', marginVertical: 10 }}>
-                  <Text style={styles.date}> {item.date} </Text>
+                  <Text style={styles.date}>{item.date}</Text>
                 </View>
               );
             }
@@ -340,7 +305,6 @@ const ChatPage = () => {
 
       {/* Barra de input */}
       {isIOS ? (
-        // iOS: tu lógica original, barra sube con paddingBottom animado
         <Animated.View style={{ paddingBottom: keyboardOffsetIOS }}>
           <ChatInputBar
             imagePreview={imagePreview}
@@ -360,27 +324,7 @@ const ChatPage = () => {
           />
         </Animated.View>
       ) : (
-        // Android (pan): barra fija; medimos su altura para la base del spacer
-        <View
-          style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
-          pointerEvents="box-none"
-          onLayout={(e) => {
-            const newBase = e.nativeEvent.layout.height || 0;
-            const oldBase = inputBarHeightRef.current;
-            if (Math.abs(newBase - oldBase) > 0.5) {
-              inputBarHeightRef.current = newBase;
-              spacerAndroid.stopAnimation((curr) => {
-                const delta = newBase - oldBase;
-                Animated.timing(spacerAndroid, {
-                  toValue: Math.max(0, (curr as number) + delta),
-                  duration: 120,
-                  easing: Easing.out(Easing.cubic),
-                  useNativeDriver: false,
-                }).start();
-              });
-            }
-          }}
-        >
+        <View>
           <ChatInputBar
             imagePreview={imagePreview}
             setImagePreview={setImagePreview}
@@ -398,6 +342,40 @@ const ChatPage = () => {
             uploading={uploading}
           />
         </View>
+      )}
+    </>
+  );
+
+  return (
+    <View style={[styles.container, { flex: 1 }]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
+          <ChevronLeft size={30} color={'black'} strokeWidth={1.7} />
+        </TouchableOpacity>
+
+        <View style={styles.headerContent}>
+          <Image source={{ uri: otherUser?.image || '' }} style={styles.image} />
+          <Text numberOfLines={1} style={styles.text}>
+            {otherUser?.fullname || 'Usuario Desconocido'}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => router.push({ pathname: '../product/Profile_2', params: { authorId: otherUser?._id } })}
+          style={styles.icon2}
+        >
+          <Ionicons name="ellipsis-horizontal" size={25} color={'black'} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Body: en Android usamos KeyboardAvoidingView con behavior="height" */}
+      {Platform.OS === 'android' ? (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+          <Body />
+        </KeyboardAvoidingView>
+      ) : (
+        <Body />
       )}
     </View>
   );
