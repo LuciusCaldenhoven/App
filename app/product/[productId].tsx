@@ -191,16 +191,11 @@ export default function ProductDetail() {
                   >
                     <Image
                       source={item}
-                      style={styles.image}
+                      style={[styles.image, { width, height: 380, backgroundColor: "#f0f0f0" }]}
                       contentFit="cover"
                       transition={200}
-                      cachePolicy="memory"
+                      cachePolicy="memory-disk"
                     />
-                      {/* {post.sold && (
-                        <View style={styles.soldStamp}>
-                          <Text style={styles.soldStampText}>VENDIDO</Text>
-                        </View>
-                      )} */}
                   </Animated.View>
                 </TouchableOpacity>
               </View>

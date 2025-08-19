@@ -36,6 +36,8 @@ export const getAllImageUrls = query({
   },
 });
 
+
+
 export const createPost = mutation({
   args: {
     tipo: v.string(),
@@ -45,6 +47,9 @@ export const createPost = mutation({
     price: v.number(),
     currency: v.string(),
     category: v.string(),
+    nivel2: v.optional(v.string()),
+    nivel3: v.optional(v.string()),
+    nivel4: v.optional(v.string()),
     subcategory: v.string(),
     location: v.string(),
     condition: v.string(),
@@ -66,6 +71,9 @@ export const createPost = mutation({
       title: args.title,
       price: args.price,
       category: args.category,
+      nivel2: args.nivel2,
+      nivel3: args.nivel3,
+      nivel4: args.nivel4,
       subcategory: args.subcategory,
       location: args.location,
       condition: args.condition,
@@ -86,24 +94,35 @@ export const createPost = mutation({
 
 
 
+
+
 export const getFeed = query({
   args: {
     category: v.optional(v.string()),
     subcategory: v.optional(v.string()),
+    nivel2: v.optional(v.string()),
+    nivel3: v.optional(v.string()),
+    nivel4: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const { category, subcategory } = args;
+    const { category, subcategory, nivel2, nivel3, nivel4 } = args;
 
-    // 1) Traer productos de esa categoría/subcategoría
+    // 1) Traer productos
     const all = await ctx.db.query("posts").collect();
     const filtered = all.filter(item => {
       if (subcategory) return item.subcategory === subcategory;
       if (category) return item.category === category;
+      if (nivel2) return item.nivel2 === nivel2;
+      if (nivel3) return item.nivel3 === nivel3;
+      if (nivel4) return item.nivel4 === nivel4;
       return false;
     });
 
-    // 2) Filtrar recientes (últimos 7 días)
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    // 4) (Opcional) Fuzzy por título si también llega title
+    
+
+    // 5) Recientes (últimos 7 días)
+   const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const recent = filtered.filter(p => p._creationTime >= sevenDaysAgo);
 
     // 3) Elegir 6 recientes al azar
@@ -118,7 +137,7 @@ export const getFeed = query({
   }
 });
 
-// Función para mezclar array
+// Fisher–Yates
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -127,6 +146,7 @@ function shuffle<T>(array: T[]): T[] {
   }
   return arr;
 }
+
 
 
 
@@ -143,32 +163,23 @@ function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
+
 export const getFilteredPosts = query({
   args: {
+    search: v.optional(v.boolean()),
     title: v.optional(v.string()),
     category: v.optional(v.string()),
+    nivel2: v.optional(v.string()),
+    nivel3: v.optional(v.string()),
+    nivel4: v.optional(v.string()),
     subcategory: v.optional(v.string()),
     type: v.optional(v.string()),
     condition: v.optional(v.string()),
     priceRange: v.optional(v.array(v.number())),
     date: v.optional(v.string()),
-    order: v.optional(
-      v.union(
-        v.literal("recientes"),
-        v.literal("precio_asc"),
-        v.literal("precio_desc")
-      )
-    ),
-    location: v.optional(
-      v.object({
-        lat: v.number(),
-        lng: v.number(),
-        km: v.number(),
-      })
-    ),
     paginationOpts: paginationOptsValidator,
   },
-
+  
 
   handler: async (ctx, args) => {
 
@@ -177,10 +188,21 @@ export const getFilteredPosts = query({
     const tableQuery = ctx.db.query("posts");
 
     let indexedQuery = tableQuery;
-    if (args.category) {
+    if (args.category && !args.search) {
       indexedQuery = indexedQuery.filter((q) => q.eq(q.field("category"), args.category));
     }
-
+    if (args.nivel2 && !args.search) {
+      indexedQuery = indexedQuery.filter((q) => q.eq(q.field("nivel2"), args.nivel2));
+    }
+    if (args.nivel3 && !args.search) {
+      indexedQuery = indexedQuery.filter((q) => q.eq(q.field("nivel3"), args.nivel3));
+    }
+    if (args.nivel4 && !args.search) {
+      indexedQuery = indexedQuery.filter((q) => q.eq(q.field("nivel4"), args.nivel4));
+    }
+    if (args.subcategory && !args.search) {
+      indexedQuery = indexedQuery.filter((q) => q.eq(q.field("subcategory"), args.subcategory));
+    }
     if (args.type) {
       indexedQuery = indexedQuery.filter((q) => q.eq(q.field("tipo"), args.type));
     }
@@ -213,10 +235,7 @@ export const getFilteredPosts = query({
       }
     }
 
-    const orderedQuery = indexedQuery.order("desc");
-
-    // Obtener los resultados con paginación
-    const { page, isDone, continueCursor } = await orderedQuery.paginate({
+    const { page, isDone, continueCursor } = await indexedQuery.paginate({
       ...args.paginationOpts,
       numItems: 1000, 
     });
@@ -224,10 +243,10 @@ export const getFilteredPosts = query({
 
     // Aplicar búsqueda por título usando Fuse.js si hay un título
     let filteredPage = page;
-    if (args.title) {
+    if (args.title && args.search) {
       const fuseOptions = {
-        keys: ['title', 'subcategory'],
-        threshold: 0.4, 
+        keys: ['title', 'subcategory', 'caption'],
+        threshold: 0.35, 
         includeScore: true,
 
       };
@@ -237,20 +256,6 @@ export const getFilteredPosts = query({
       filteredPage = searchResults.map(result => result.item);
     }
 
-
-
-
-
-    // Filtrar por ubicación si es necesario
-    if (args.location) {
-      const { lat, lng, km } = args.location;
-      filteredPage = filteredPage.filter((post) => {
-        if (post.lat === undefined || post.lng === undefined) return false;
-        return distanceKm(lat, lng, post.lat, post.lng) <= km;
-      });
-    }
-
-    // Enriquecer con información de autor y bookmarks
     const postsWithInfo = await Promise.all(
       filteredPage.map(async (post) => {
         const postAuthor = await ctx.db.get(post.userId);
@@ -284,25 +289,36 @@ export const getFilteredPosts = query({
 
 export const getFilteredStats = query({
   args: {
+    search: v.boolean(),
     title: v.optional(v.string()),
     category: v.optional(v.string()),
+    subcategory: v.optional(v.string()),
+    nivel2: v.optional(v.string()),
+    nivel3: v.optional(v.string()),
+    nivel4: v.optional(v.string()),
     type: v.optional(v.string()),
     condition: v.optional(v.string()),
     priceRange: v.optional(v.array(v.number())),
     date: v.optional(v.string()),
-    location: v.optional(
-      v.object({
-        lat: v.number(),
-        lng: v.number(),
-        km: v.number(),
-      })
-    ),
+
   },
   handler: async (ctx, args) => {
     let q = ctx.db.query("posts");
-
-    if (args.category) {
+    
+    if (args.category && !args.search) {
       q = q.filter((q) => q.eq(q.field("category"), args.category));
+    }
+
+    if (args.nivel2 && !args.search) {
+      q = q.filter((q) => q.eq(q.field("nivel2"), args.nivel2));
+    }
+
+    if (args.nivel3 && !args.search) {
+      q = q.filter((q) => q.eq(q.field("nivel3"), args.nivel3));
+    }
+
+    if (args.nivel4 && !args.search) {
+      q = q.filter((q) => q.eq(q.field("nivel4"), args.nivel4));
     }
 
     if (args.type) {
@@ -338,23 +354,16 @@ export const getFilteredStats = query({
 
     let posts = await q.collect();
 
-    if (args.title) {
+    if (args.title && args.search) {
       const fuse = new Fuse(posts, {
-        keys: ['title'],
-        threshold: 0.4,
+        keys: ['title', 'subcategory', 'caption'],
+        threshold: 0.35,
         includeScore: true
       });
       posts = fuse.search(args.title).map(result => result.item);
     }
 
-    if (args.location) {
-      const { lat, lng, km } = args.location;
-      posts = posts.filter(post =>
-        post.lat !== undefined &&
-        post.lng !== undefined &&
-        distanceKm(lat, lng, post.lat, post.lng) <= km
-      );
-    }
+    
 
     return {
       totalPosts: posts.length
@@ -364,25 +373,74 @@ export const getFilteredStats = query({
 
 export const getFilteredPrices = query({
   args: {
+    search: v.boolean(),
     title: v.optional(v.string()),
     category: v.optional(v.string()),
-
+    subcategory: v.optional(v.string()),
+    nivel2: v.optional(v.string()),
+    nivel3: v.optional(v.string()),
+    nivel4: v.optional(v.string()),
+    type: v.optional(v.string()),
+    condition: v.optional(v.string()),
+    priceRange: v.optional(v.array(v.number())),
+    date: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     let q = ctx.db.query("posts");
-
-    if (args.category) {
+  
+    if (args.category && !args.search) {
       q = q.filter((q) => q.eq(q.field("category"), args.category));
     }
 
+    if (args.nivel2 && !args.search) {
+      q = q.filter((q) => q.eq(q.field("nivel2"), args.nivel2));
+    }
 
+    if (args.nivel3 && !args.search) {
+      q = q.filter((q) => q.eq(q.field("nivel3"), args.nivel3));
+    }
+
+    if (args.nivel4 && !args.search) {
+      q = q.filter((q) => q.eq(q.field("nivel4"), args.nivel4));
+    }
+
+    if (args.type) {
+      q = q.filter((q) => q.eq(q.field("tipo"), args.type));
+    }
+
+    if (args.condition) {
+      const conditions = args.condition.split(",");
+      q = q.filter((q) =>
+        q.or(...conditions.map((c) => q.eq(q.field("condition"), c)))
+      );
+    }
+
+    if (args.priceRange) {
+      const [min, max] = args.priceRange;
+      q = q.filter((q) =>
+        q.and(q.gte(q.field("price"), min), q.lte(q.field("price"), max))
+      );
+    }
+
+    if (args.date) {
+      const now = Date.now();
+      const days = {
+        "Ultimas 24 horas": 1,
+        "Ultimos 7 dias": 7,
+        "Ultimos 30 dias": 30,
+      }[args.date];
+      if (days) {
+        const limit = now - days * 24 * 60 * 60 * 1000;
+        q = q.filter((q) => q.gte(q.field("_creationTime"), limit));
+      }
+    }
 
     let posts = await q.collect();
 
-    if (args.title) {
+    if (args.title && args.search) {
       const fuse = new Fuse(posts, {
-        keys: ['title'],
-        threshold: 0.4,
+        keys: ['title', 'subcategory', 'caption'],
+        threshold: 0.35,
         includeScore: true
       });
       posts = fuse.search(args.title).map(result => result.item);
@@ -569,6 +627,9 @@ export const updatePost = mutation({
     lat: v.float64(),
     lng: v.float64(),
     category: v.string(),
+    nivel2: v.optional(v.string()),
+    nivel3: v.optional(v.string()),
+    nivel4: v.optional(v.string()),
     subcategory: v.string(),
     condition: v.string(),
     storageId: v.id("_storage"),
@@ -590,6 +651,9 @@ export const updatePost = mutation({
       lat: args.lat,
       lng: args.lng,
       category: args.category,
+      nivel2: args.nivel2,
+      nivel3: args.nivel3,
+      nivel4: args.nivel4,
       subcategory: args.subcategory,
       condition: args.condition,
       storageId: args.storageId, // Primera imagen

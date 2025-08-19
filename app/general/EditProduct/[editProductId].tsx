@@ -39,6 +39,9 @@ export default function EditPostScreen() {
   const [lat, setLat] = useState<number>(0);
   const [lng, setLng] = useState<number>(0);
   const [caption, setCaption] = useState("");
+  const [nivel2, setNivel2] = useState<string | undefined>(undefined);
+  const [nivel3, setNivel3] = useState<string | undefined>(undefined);
+  const [nivel4, setNivel4] = useState<string | undefined>(undefined);
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
   const [condition, setCondition] = useState("");
@@ -57,6 +60,9 @@ export default function EditPostScreen() {
       setLng(post.lng ?? 0);
       setCaption(post.caption || "");
       setCategory(post.category || "");
+      setNivel2(post.nivel2 || undefined);
+      setNivel3(post.nivel3 || undefined);
+      setNivel4(post.nivel4 || undefined);
       setSubcategory(post.subcategory || "");
       setCondition(post.condition || "");
       setSelectedImages([
@@ -142,6 +148,9 @@ export default function EditPostScreen() {
         price: cleanPrice,
         currency,
         location,
+         nivel2,
+                nivel3,
+                nivel4,
         lat,
         lng,
         category,
@@ -168,6 +177,20 @@ export default function EditPostScreen() {
       alert("Error al guardar cambios");
     }
   };
+
+  const handleCategoryPath = (path: string[]) => {
+    // path: [L1, L2, L3, L4, L5?]  (el último siempre es la hoja seleccionada)
+    const [l1, l2, l3, l4, l5] = path;
+
+    setCategory(l1 ?? "");
+    setNivel2(l2 || undefined);
+    setNivel3(l3 || undefined);
+    setNivel4(l4 || undefined);
+
+    // subcategory = último elemento si hay >1 nivel; si solo hay 1, la dejamos vacía
+    const last = path[path.length - 1] ?? "";
+    setSubcategory(path.length > 1 ? last : "");
+    };
 
   function formatNumberWithCommas(value: string) {
     const numericValue = value.replace(/\D/g, '');
@@ -215,7 +238,7 @@ export default function EditPostScreen() {
           </View>
 
           <View style={styles.inputSection}>
-            <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} valueCategory={category} onChangeTextCategory={setCategory} valueSub={subcategory} onChangeTextSub={setSubcategory} />
+            <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} valueCategory={category} onChangeTextCategory={setCategory} valueSub={subcategory} onChangeTextSub={setSubcategory} onChangePath={handleCategoryPath}/>
           </View>
 
           <View style={styles.inputSection}>

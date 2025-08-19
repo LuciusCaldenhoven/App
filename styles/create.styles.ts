@@ -29,12 +29,17 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-
-    paddingVertical: 12,
-    borderBottomWidth: 0.2,
-    borderBottomColor: COLORS.gray,
+    paddingVertical: 11,
+    borderBottomWidth: 1, 
+    borderColor: "#e0e0e0" 
 
   },
+  backBtn: {
+    marginLeft: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   headerTitle: {
     fontSize: 16,
     color: COLORS.black,
@@ -56,7 +61,7 @@ export const styles = StyleSheet.create({
     color: 'red'
   },
   shareText: {
-    fontSize: 15, // Tamaño del texto
+    fontSize: 17, // Tamaño del texto
     fontFamily: "Medium", // Fuente del texto
 
   },

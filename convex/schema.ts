@@ -29,6 +29,9 @@ export default defineSchema({
         price: v.number(),
         currency: v.string(),
         category: v.string(),
+        nivel2: v.optional(v.string()),
+        nivel3: v.optional(v.string()),
+        nivel4: v.optional(v.string()),
         subcategory: v.optional(v.string()),
         location: v.string(),
         lat: v.number(),
@@ -39,7 +42,6 @@ export default defineSchema({
     })
         .index("by_user", ["userId"])
         .index("by_category", ["category"])
-        
         .index("by_price", ["price"]),
 
 

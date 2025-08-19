@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Image,
-  ActivityIndicator,
+  Animated,
+  Easing,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
@@ -34,7 +35,7 @@ const S: Record<string, any> = {
   },
   
   input: { flex: 1, fontSize: 16, color: "#101828", fontFamily: "Regular" },
-    rightIconBtn: { paddingHorizontal: 4, paddingVertical: 6 },
+  rightIconBtn: { paddingHorizontal: 4, paddingVertical: 6 },
   viewText: { color: "#adc92b", fontFamily: "Medium", fontSize: 14 },
 
   loginBtn: {
@@ -70,10 +71,9 @@ const S: Record<string, any> = {
 export default function Register() {
   const { signUp, setActive } = useSignUp();
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const paramEmail = Array.isArray(params.email) ? params.email[0] : params.email;
+  
 
-  const [email, setEmail] = useState(paramEmail || "");
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -86,6 +86,66 @@ export default function Register() {
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // -----------------------
+  // ANIMACIONES (solo UI)
+  // -----------------------
+  const screenFade = useRef(new Animated.Value(0)).current;
+  const screenTransY = useRef(new Animated.Value(16)).current;
+  const logoBob = useRef(new Animated.Value(0)).current;
+
+  const emailScale = useRef(new Animated.Value(1)).current;
+  const nameScale = useRef(new Animated.Value(1)).current;
+  const pwdScale = useRef(new Animated.Value(1)).current;
+
+  const btnScale = useRef(new Animated.Value(1)).current;
+  const verifyBtnScale = useRef(new Animated.Value(1)).current;
+
+  const otpShake = useRef(new Animated.Value(0)).current;
+  const sectionFade = useRef(new Animated.Value(1)).current; // fade entre secciones
+
+  // scale por cada otpInput
+  const otpScales = useRef(Array.from({ length: 6 }, () => new Animated.Value(1))).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(screenFade, { toValue: 1, duration: 500, useNativeDriver: true }),
+      Animated.timing(screenTransY, { toValue: 0, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+
+    // logo bobbing
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoBob, { toValue: 1, duration: 1600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(logoBob, { toValue: 0, duration: 1600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  // fade cuando cambiamos de formulario a OTP
+  useEffect(() => {
+    sectionFade.setValue(0);
+    Animated.timing(sectionFade, { toValue: 1, duration: 260, useNativeDriver: true }).start();
+  }, [pendingVerification]);
+
+  const pressIn = (val: Animated.Value) =>
+    Animated.spring(val, { toValue: 0.96, useNativeDriver: true }).start();
+  const pressOut = (val: Animated.Value) =>
+    Animated.spring(val, { toValue: 1, useNativeDriver: true }).start();
+
+  const triggerOtpShake = () => {
+    otpShake.setValue(0);
+    const seq = [10, -10, 8, -8, 4, -4, 0];
+    Animated.sequence(seq.map(x => Animated.timing(otpShake, { toValue: x, duration: 40, useNativeDriver: true }))).start();
+  };
+
+  const onFocusScale = (val: Animated.Value) =>
+    Animated.spring(val, { toValue: 1.03, useNativeDriver: true }).start();
+  const onBlurScale = (val: Animated.Value) =>
+    Animated.spring(val, { toValue: 1, useNativeDriver: true }).start();
+
+  // -----------------------
+  // LÓGICA (como tu código)
+  // -----------------------
   const handleSignUp = async () => {
     try {
       if (!signUp) throw new Error("Clerk signUp no listo");
@@ -158,6 +218,7 @@ export default function Register() {
       }
     } catch (err: any) {
       const msg = err?.errors?.[0]?.message || "Código incorrecto.";
+      triggerOtpShake(); // anim: shake cuando falla verificación
       Toast.show({ type: "error", position: "top", text1: "Error de verificación", text2: msg });
     } finally {
       setVerifying(false);
@@ -165,7 +226,7 @@ export default function Register() {
   };
 
   const handleOtpChange = (val: string, idx: number) => {
-    const d = val.replace(/\D/g, "").slice(-1); // solo 1 caracter numérico
+    const d = val.replace(/\D/g, "").slice(-1); // solo 1 carácter numérico
     const next = [...otp];
     next[idx] = d;
     setOtp(next);
@@ -175,23 +236,25 @@ export default function Register() {
     }
   };
 
+  const logoY = logoBob.interpolate({ inputRange: [0, 1], outputRange: [0, -5] });
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={S.container}>
-        <Image
+      <Animated.View style={[S.container, { opacity: screenFade, transform: [{ translateY: screenTransY }] }]}>
+        <Animated.Image
           source={require("@/assets/images/icon-all.png")}
-          style={S.logo}
+          style={[S.logo, { transform: [{ translateY: logoY }] }]}
           resizeMode="contain"
         />
         <Text style={S.brand}>DiUna</Text>
 
         <Text style={S.subtitle}>Creamos tu nueva cuenta</Text>
 
-        {!pendingVerification ? (
-          <>
-
-            {!paramEmail && (
-              <View style={S.inputWrap}>
+        <Animated.View style={{ opacity: sectionFade }}>
+          {!pendingVerification ? (
+            <>
+              
+              <Animated.View style={[S.inputWrap, { transform: [{ scale: emailScale }] }]}>
                 <Mail size={24} style={S.leftIcon} strokeWidth={1.65}/>
                 <TextInput
                   style={S.input}
@@ -201,90 +264,117 @@ export default function Register() {
                   keyboardType="email-address"
                   value={email}
                   onChangeText={setEmail}
+                  onFocus={() => onFocusScale(emailScale)}
+                  onBlur={() => onBlurScale(emailScale)}
                 />
-              </View>
-            )}
+              </Animated.View>
+              
 
-            <View style={S.inputWrap}>
-              <User size={24} style={S.leftIcon} strokeWidth={1.65}/>
-              <TextInput
-                style={S.input}
-                placeholder="Nombre"
-                value={name}
-                onChangeText={setName}
-                placeholderTextColor="#A0A6B1"
-              />
-            </View>
-
-            <View style={S.inputWrap}>
-              <Ionicons name="lock-closed-outline" size={24} style={S.leftIcon} />
-              <TextInput
-                style={S.input}
-                placeholder="Contraseña"
-                placeholderTextColor="#A0A6B1"
-                secureTextEntry={!passwordVisible}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <TouchableOpacity style={S.rightIconBtn} onPress={() => setPasswordVisible((v) => !v)}>
-                <Ionicons name={passwordVisible ? "eye-off-outline" : "eye-outline"} size={20} />
-              </TouchableOpacity>
-      
-            </View>
-
-            <Text style={S.legalText}>
-              Al continuar aceptás nuestros <Text style={S.link}>Términos</Text> y{" "}
-              <Text style={S.link}>Política de privacidad</Text>.
-            </Text>
-
-            <TouchableOpacity style={S.loginBtn} onPress={handleSignUp} disabled={loading}>
-              {loading ? (
-                <LottieView
-                  source={require('@/assets/animations/Loading.json')}
-                  autoPlay
-                  loop
-                  style={{ width: 220, height: 220 }}
-                />
-              ) : (
-                <Text style={S.loginBtnText}>Aceptar y continuar</Text>
-              )}
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <Text style={S.introText}>
-              Te enviamos un código a <Text style={S.emailText}>{email}</Text>
-            </Text>
-
-            <View style={S.otpContainer}>
-              {otp.map((digit, idx) => (
+              <Animated.View style={[S.inputWrap, { transform: [{ scale: nameScale }] }]}>
+                <User size={24} style={S.leftIcon} strokeWidth={1.65}/>
                 <TextInput
-                  key={idx}
-                  ref={otpRefs[idx]}
-                  style={S.otpInput}
-                  keyboardType="number-pad"
-                  maxLength={1}
-                  value={digit}
-                  onChangeText={(val) => handleOtpChange(val, idx)}
+                  style={S.input}
+                  placeholder="Nombre"
+                  value={name}
+                  onChangeText={setName}
+                  placeholderTextColor="#A0A6B1"
+                  onFocus={() => onFocusScale(nameScale)}
+                  onBlur={() => onBlurScale(nameScale)}
                 />
-              ))}
-            </View>
+              </Animated.View>
 
-            <TouchableOpacity style={S.loginBtn} onPress={handleVerify} disabled={verifying}>
-              {verifying ? (
-                <LottieView
-                  source={require('@/assets/animations/Loading.json')}
-                  autoPlay
-                  loop
-                  style={{ width: 220, height: 220 }}
-                />
-              ) : (
-                <Text style={S.loginBtnText}>Verificar código</Text>
-              )}
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+              <Animated.View style={{ transform: [{ scale: pwdScale }] }}>
+                <View style={S.inputWrap}>
+                  <Ionicons name="lock-closed-outline" size={24} style={S.leftIcon} />
+                  <TextInput
+                    style={S.input}
+                    placeholder="Contraseña"
+                    placeholderTextColor="#A0A6B1"
+                    secureTextEntry={!passwordVisible}
+                    value={password}
+                    onChangeText={setPassword}
+                    onFocus={() => onFocusScale(pwdScale)}
+                    onBlur={() => onBlurScale(pwdScale)}
+                  />
+                  <TouchableOpacity style={S.rightIconBtn} onPress={() => setPasswordVisible((v) => !v)}>
+                    <Ionicons name={passwordVisible ? "eye-off-outline" : "eye-outline"} size={20} />
+                  </TouchableOpacity>
+                </View>
+              </Animated.View>
+
+              <Text style={S.legalText}>
+                Al continuar aceptás nuestros <Text style={S.link}>Términos</Text> y{" "}
+                <Text style={S.link}>Política de privacidad</Text>.
+              </Text>
+
+              <Animated.View style={{ transform: [{ scale: btnScale }] }}>
+                <TouchableOpacity
+                  style={S.loginBtn}
+                  onPressIn={() => pressIn(btnScale)}
+                  onPressOut={() => pressOut(btnScale)}
+                  onPress={handleSignUp}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <LottieView
+                      source={require('@/assets/animations/Loading.json')}
+                      autoPlay
+                      loop
+                      style={{ width: 220, height: 220 }}
+                    />
+                  ) : (
+                    <Text style={S.loginBtnText}>Aceptar y continuar</Text>
+                  )}
+                </TouchableOpacity>
+              </Animated.View>
+            </>
+          ) : (
+            <>
+              <Text style={S.introText}>
+                Te enviamos un código a <Text style={S.emailText}>{email}</Text>
+              </Text>
+
+              <Animated.View style={[S.otpContainer, { transform: [{ translateX: otpShake }] }]}>
+                {otp.map((digit, idx) => (
+                  <Animated.View key={idx} style={{ transform: [{ scale: otpScales[idx] }] }}>
+                    <TextInput
+                      ref={otpRefs[idx]}
+                      style={S.otpInput}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      value={digit}
+                      onFocus={() => onFocusScale(otpScales[idx])}
+                      onBlur={() => onBlurScale(otpScales[idx])}
+                      onChangeText={(val) => handleOtpChange(val, idx)}
+                    />
+                  </Animated.View>
+                ))}
+              </Animated.View>
+
+              <Animated.View style={{ transform: [{ scale: verifyBtnScale }] }}>
+                <TouchableOpacity
+                  style={S.loginBtn}
+                  onPressIn={() => pressIn(verifyBtnScale)}
+                  onPressOut={() => pressOut(verifyBtnScale)}
+                  onPress={handleVerify}
+                  disabled={verifying}
+                >
+                  {verifying ? (
+                    <LottieView
+                      source={require('@/assets/animations/Loading.json')}
+                      autoPlay
+                      loop
+                      style={{ width: 220, height: 220 }}
+                    />
+                  ) : (
+                    <Text style={S.loginBtnText}>Verificar código</Text>
+                  )}
+                </TouchableOpacity>
+              </Animated.View>
+            </>
+          )}
+        </Animated.View>
+      </Animated.View>
     </TouchableWithoutFeedback>
   );
 }

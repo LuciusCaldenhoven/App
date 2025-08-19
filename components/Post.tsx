@@ -74,7 +74,7 @@ export default function Post({ post }: PostProps) {
             style={styles.image}
             contentFit="cover"
             transition={200}
-            cachePolicy="memory"
+            cachePolicy="memory-disk"
           />
         </View>
         <View style={styles.details}>

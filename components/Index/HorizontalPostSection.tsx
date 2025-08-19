@@ -12,11 +12,14 @@ type Props = {
   title: string;
   category?: string;
   subcategory?: string;
+  nivel2?: string;
+  nivel3?: string;
+  nivel4?: string;
 };
 
-const HorizontalPostSection = ({ title, category = "", subcategory = "" }: Props) => {
+const HorizontalPostSection = ({ title, category = "", subcategory = "", nivel2 = "", nivel3 = "", nivel4 = "" }: Props) => {
 
-  const data = useQuery(api.posts.getFeed, { category: category, subcategory: subcategory });
+  const data = useQuery(api.posts.getFeed, { category: category, subcategory: subcategory, nivel2: nivel2, nivel3: nivel3, nivel4: nivel4 });
   const feedItems = data ? [...data.recent, ...data.random] : [];
 
   const isLoading = !data;
@@ -32,7 +35,7 @@ const HorizontalPostSection = ({ title, category = "", subcategory = "" }: Props
           onPress={() =>
             router.push({
               pathname: "/search/searchCategory",
-              params: { category: category , subcategory: subcategory },
+              params: { category: category , subcategory: subcategory, nivel2: nivel2, nivel3: nivel3, nivel4: nivel4 },
             })
           }
         >
