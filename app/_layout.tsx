@@ -16,21 +16,13 @@ import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
   dsn: "https://72764997257966ae36443d94dd37d6e4@o4509735474495488.ingest.us.sentry.io/4509735477116928",
-
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
-
-  // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
   integrations: [
     Sentry.mobileReplayIntegration(),
     Sentry.feedbackIntegration(),
   ],
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
 });
 
 export default Sentry.wrap(function RootLayout() {
@@ -73,25 +65,11 @@ export default Sentry.wrap(function RootLayout() {
               onLayout={onLayoutRootView}
             >
               <InitialLayout />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  animation: "default",
-                }}
-              >
-                <Stack.Screen name="(auth)/login" 
-                options={{
-                    animation: 'fade', // aquí defines el tipo de animación
-                  }}
-                />
+              <Stack screenOptions={{ headerShown: false, animation: "default", }} >
+                <Stack.Screen name="(auth)/login" options={{ animation: 'fade', }} />
                 <Stack.Screen name="(auth)/register" />
                 <Stack.Screen name="(auth)/reset-password" />
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    animation: 'fade', // aquí defines el tipo de animación
-                  }}
-                />
+                <Stack.Screen name="(tabs)" options={{ animation: 'fade', }} />
                 <Stack.Screen name="product/[productId]" />
                 <Stack.Screen name="InfoProducto/infoProducto" />
                 <Stack.Screen name="editProfile/editProfile" />
@@ -110,7 +88,7 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen name="working/working" />
               </Stack>
               <Toast config={toastConfig} />
-              <StatusBar style="dark" />
+              <StatusBar style="auto" />
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

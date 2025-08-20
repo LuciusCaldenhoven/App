@@ -20,7 +20,6 @@ export default function Index() {
   const scrollY = useSharedValue(0);
 
   const [searchInput, setSearchInput] = useState("");
-  const [activeTab, setActiveTab] = useState("Recomendacion");
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const openBottomSheet = useCallback(() => {
     bottomSheetRef.current?.present();
@@ -74,20 +73,13 @@ export default function Index() {
 
             <SearchBar query={searchInput} />
           </View>
-
+        <HorizontalPostSection  title="Zapatillas" nivel3="Zapatillas" />
         <HorizontalPostSection title="Celulares" nivel3="Celulares" />
-        <HorizontalPostSection title="Consolas y accesorios" subcategory="Consolas y accesorios" />
-        <HorizontalPostSection  title="Zapatillas" subcategory="Zapatillas" />
-        <HorizontalPostSection  title="Bolsos y mochilas" subcategory="Bolsos y mochilas" />
-        <HorizontalPostSection  title="Muebles" subcategory="Muebles" />
-        <HorizontalPostSection  title="Decoración" subcategory="Decoración" />
-        <HorizontalPostSection  title="Bicicletas" category="Bicicletas" />
-        <HorizontalPostSection  title="Libros" nivel2="Libros" />
-        <HorizontalPostSection  title="Instrumentos musicales" nivel3="Instrumentos musicales" />
+        <HorizontalPostSection title="Consolas y accesorios" nivel3="Consolas y accesorios" />
+        <HorizontalPostSection  title="Ropa" nivel2="Ropa" />
         <HorizontalPostSection  title="Vehículos" category="Vehículos" />
-        <HorizontalPostSection  title="Accesorios de moto" subcategory="Accesorios de moto" />
-
-
+        <HorizontalPostSection  title="Motos" category="Motos" />
+        <HorizontalPostSection  title="Electrodomésticos" category="Electrodomésticos" />
         </View>
       </Animated.ScrollView>
 

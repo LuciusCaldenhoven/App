@@ -63,6 +63,7 @@ const DATA: Record<string, CategoryNode> = {
     "Trajes",
     "Ropa deportiva",
     "Ropa interior",
+    "Casaca",
   ],
   "Calzado": [
     "Zapatillas",
@@ -316,7 +317,6 @@ const DATA: Record<string, CategoryNode> = {
     "Voleibol",
     "Otros deportes",
     "Material de gimnasio y fitness",
-    "Instrumentos musicales",
     "Entradas y eventos",
     "Coleccionismo deportivo",
     "Arte y manualidades",
@@ -411,6 +411,65 @@ const DATA: Record<string, CategoryNode> = {
       "Sillones y sofás"
     ],
   },
+  "Electrodomésticos": [
+
+  {
+    "Electrodomésticos de cocina": [
+      "Refrigeradoras y congeladoras",
+      "Cocinas y hornos",
+      "Microondas",
+      "Campanas extractoras",
+      "Lavavajillas"
+    ]
+  },
+
+  {
+    "Lavandería y plancha": [
+      "Lavadoras",
+      "Secadoras",
+      "Centros de lavado",
+      "Planchas",
+      "Centros de planchado",
+      "Vaporizadores"
+    ]
+  },
+
+  {
+    "Pequeños electrodomésticos": [
+      "Licuadoras",
+      "Batidoras",
+      "Procesadores de alimentos",
+      "Cafeteras",
+      "Tostadoras",
+      "Sandwicheras",
+      "Freidoras de aire",
+      "Ollas arroceras",
+      "Exprimidores",
+      "Hervidores eléctricos",
+      "Parrillas eléctricas",
+      "Aspiradoras",
+      "Secadores de pelo",
+      "Planchas de cabello"
+    ]
+  },
+
+  {
+    "Piezas y recambios": [
+      "Filtros",
+      "Motores",
+      "Bandejas",
+      "Puertas",
+      "Accesorios"
+    ]
+  },
+
+  {
+    "Vitrocerámica": [
+      "Cocinas vitrocerámicas",
+      "Repuestos de vitrocerámica"
+    ]
+  },
+],
 
   "Cine, Libros y Música": {
     "Cine": [
@@ -622,6 +681,173 @@ const DATA: Record<string, CategoryNode> = {
     "Aviones",
     "Ultraligeros",
   ],
+  "Industria y agricultura": [
+
+  {
+    "Maquinaria industrial": [
+      "Compresores",
+      "Generadores y plantas eléctricas",
+      "Soldadoras",
+      "Montacargas",
+      "Máquinas CNC",
+      "Bombas industriales",
+      "Tornos y fresadoras",
+      "Compresores de aire"
+    ]
+  },
+
+  {
+    "Herramientas profesionales": [
+      "Taladros y rotomartillos",
+      "Esmeriles y amoladoras",
+      "Sierras eléctricas",
+      "Atornilladores",
+      "Herramienta manual",
+      "Kits y estuches de herramientas"
+    ]
+  },
+
+  {
+    "Seguridad industrial (EPP)": [
+      "Cascos y caretas",
+      "Lentes y protección facial",
+      "Guantes",
+      "Botas de seguridad",
+      "Arneses y líneas de vida",
+      "Protectores auditivos",
+      "Ropa ignífuga y de alta visibilidad"
+    ]
+  },
+
+  {
+    "Instrumentación y medición": [
+      "Multímetros y pinzas amperimétricas",
+      "Manómetros",
+      "Termómetros y pirómetros",
+      "Medidores láser y niveles",
+      "Básculas y balanzas",
+      "Registradores de datos (dataloggers)"
+    ]
+  },
+
+  {
+    "Suministros y consumibles": [
+      "Abrasivos y discos",
+      "Adhesivos y selladores",
+      "Lubricantes y grasas",
+      "Electrodos y alambres de soldadura",
+      "Tornillería y fijaciones",
+      "Cadenas, correas y poleas",
+      "Mangueras y conectores"
+    ]
+  },
+
+  {
+    "Neumática e hidráulica": [
+      "Cilindros y actuadores",
+      "Válvulas y distribuidores",
+      "Compresores",
+      "Mangueras y racores",
+      "Unidades hidráulicas",
+      "Filtros y reguladores"
+    ]
+  },
+
+  {
+    "Energía y bombeo": [
+      "Bombas de agua",
+      "Bombas sumergibles",
+      "Hidrolavadoras",
+      "Motores eléctricos",
+      "Paneles solares",
+      "Controladores e inversores",
+      "Baterías"
+    ]
+  },
+
+  {
+    "Agricultura": [
+      {
+        "Maquinaria agrícola": [
+          "Tractores",
+          "Cosechadoras",
+          "Sembradoras",
+          "Arados y rastras",
+          "Pulverizadoras",
+          "Motocultores"
+        ]
+      },
+      {
+        "Riego": [
+          "Sistemas de goteo",
+          "Aspersores",
+          "Bombas para riego",
+          "Tuberías y fittings",
+          "Temporizadores y controladores"
+        ]
+      },
+      {
+        "Insumos agrícolas": [
+          "Semillas",
+          "Fertilizantes",
+          "Sustratos",
+          "Control de plagas"
+        ]
+      },
+      {
+        "Herramientas agrícolas": [
+          "Machetes",
+          "Palas y picos",
+          "Azadones",
+          "Carretillas",
+          "Cosecha y poda"
+        ]
+      },
+      {
+        "Invernaderos y viveros": [
+          "Estructuras y túneles",
+          "Mallas y plásticos",
+          "Bandejas y macetas",
+          "Sistemas de ventilación"
+        ]
+      },
+      {
+        "Ganadería": [
+          "Alimento animal",
+          "Bebederos y comederos",
+          "Cercos eléctricos",
+          "Ordeñadoras",
+          "Identificación (aretes)",
+          "Medicinas y suplementos"
+        ]
+      },
+      {
+        "Avicultura y porcicultura": [
+          "Incubadoras",
+          "Criadoras y calefactores",
+          "Comederos y bebederos",
+          "Jaulas y corrales"
+        ]
+      },
+      {
+        "Apicultura": [
+          "Colmenas",
+          "Trajes y protección",
+          "Extractores de miel",
+          "Herramientas de apicultor"
+        ]
+      },
+      {
+        "Acuicultura": [
+          "Aireadores",
+          "Bombas y filtros",
+          "Redes",
+          "Tanques y liners"
+        ]
+      }
+    ]
+  },
+],
 
   "Otros": null,
 };

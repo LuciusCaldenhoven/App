@@ -18,12 +18,14 @@ export const CATEGORY_ICON_BY_SLUG: Record<string, ImageSourcePropType> = {
   'deporte-y-ocio': require('@/assets/categoria/icons/deportes.png'),
   'bicicletas': require('@/assets/categoria/icons/bicicleta-2.png'),
   'hogar-y-jardin': require('@/assets/categoria/icons/sofa.png'),
+  'electrodomesticos': require('@/assets/categoria/icons/lavadora-inteligente.png'),
   'cine-libros-y-musica': require('@/assets/categoria/icons/musica-en-vivo.png'),
   'ninos-y-bebes': require('@/assets/categoria/icons/carrito-de-bebe.png'),
   'coleccionismo': require('@/assets/categoria/icons/mona-lisa.png'),
   'construccion-y-reformas': require('@/assets/categoria/icons/pared-de-ladrillo.png'),
   'propiedad': require('@/assets/categoria/icons/casa-nueva.png'),         
-  'vehiculos': require('@/assets/categoria/icons/coche.png') 
+  'vehiculos': require('@/assets/categoria/icons/coche.png'),
+  'industria-y-agricultura': require('@/assets/categoria/icons/pala.png')
 };
 
 export const DEFAULT_ICON: ImageSourcePropType =

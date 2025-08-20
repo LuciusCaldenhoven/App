@@ -38,15 +38,15 @@
         "backgroundColor": "#ffffff"
       },
       "splash": {
-        "image": "./assets/images/fondo.png",
+        "image": "./assets/images/icon.png",
         "resizeMode": "cover",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#adc92b"
       },
       "package": "com.elpibeluuu1.Segunda_mano",
       "jsEngine": "hermes",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM"
+          "apiKey": "process.env.EXPO_PUBLIC_GOOGLE_API_KEY"
         }
       }
     },

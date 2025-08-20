@@ -150,20 +150,6 @@ function shuffle<T>(array: T[]): T[] {
 
 
 
-function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371; // Earth radius
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * (Math.PI / 180)) *
-    Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLon / 2) ** 2;
-
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-}
-
-
 export const getFilteredPosts = query({
   args: {
     search: v.optional(v.boolean()),
@@ -245,10 +231,10 @@ export const getFilteredPosts = query({
     let filteredPage = page;
     if (args.title && args.search) {
       const fuseOptions = {
-        keys: ['title', 'subcategory', 'caption'],
-        threshold: 0.35, 
+        keys: ['title', 'subcategory', 'nivel2', 'nivel3', 'nivel4'],
+        threshold: 0.20, 
         includeScore: true,
-
+        
       };
       const fuse = new Fuse(filteredPage, fuseOptions);
       const searchResults = fuse.search(args.title);
@@ -356,9 +342,10 @@ export const getFilteredStats = query({
 
     if (args.title && args.search) {
       const fuse = new Fuse(posts, {
-        keys: ['title', 'subcategory', 'caption'],
-        threshold: 0.35,
-        includeScore: true
+        keys: ['title', 'subcategory', 'nivel2', 'nivel3', 'nivel4'],
+        threshold: 0.20,
+        includeScore: true,
+        
       });
       posts = fuse.search(args.title).map(result => result.item);
     }
@@ -439,9 +426,10 @@ export const getFilteredPrices = query({
 
     if (args.title && args.search) {
       const fuse = new Fuse(posts, {
-        keys: ['title', 'subcategory', 'caption'],
-        threshold: 0.35,
-        includeScore: true
+        keys: ['title', 'subcategory', 'nivel2', 'nivel3', 'nivel4'],
+        threshold: 0.20,
+        includeScore: true,
+        
       });
       posts = fuse.search(args.title).map(result => result.item);
     }

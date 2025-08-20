@@ -136,7 +136,7 @@ export default function Filter({
       category: category || "",
       type: "",
       condition: [],
-      priceRange: [0, highestPrice || 2000],
+      priceRange: [0, highestPrice || 15000],
       date: "",
     });
   };

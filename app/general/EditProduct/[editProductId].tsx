@@ -19,11 +19,11 @@ import product from "@/assets/categoria/data";
 import condicion from "@/assets/condicion/condicion.data";
 import Toast from "react-native-toast-message";
 import CategorySelect from "@/components/CategorySelect";
-import { set } from "date-fns";
 
 export default function EditPostScreen() {
   const { editProductId } = useLocalSearchParams();
   const postId = Array.isArray(editProductId) ? editProductId[0] : editProductId;
+
   const markAsSold = useMutation(api.posts.markAsSold);
   const updatePost = useMutation(api.posts.updatePost);
   const generateUploadUrl = useMutation(api.posts.generateUploadUrl);
@@ -107,27 +107,26 @@ export default function EditPostScreen() {
     if (!post) return;
 
     const requiredFields = [
-    { value: selectedImages.length > 0, name: "imágenes" },
-    { value: title.trim(), name: "título" },
-    { value: price.trim(), name: "precio" },
-    { value: currency.trim(), name: "moneda" },
-    { value: category.trim(), name: "categoría" },
-    { value: location.trim(), name: "ubicación" },
-    { value: condition.trim(), name: "condición" },
-    { value: caption.trim(), name: "descripción" },
-  ];
-  const emptyField = requiredFields.find(field => !field.value);
-  if (emptyField) {
-    Toast.show({
-      type: "warning",
-      position: "top",
-      visibilityTime: 3000,
-      text1: `Falta completar: ${emptyField.name}`,
-      text2: "Por favor completa todos los campos requeridos.",
-    });
-    return;
-  }
-
+      { value: selectedImages.length > 0, name: "imágenes" },
+      { value: title.trim(), name: "título" },
+      { value: price.trim(), name: "precio" },
+      { value: currency.trim(), name: "moneda" },
+      { value: category.trim(), name: "categoría" },
+      { value: location.trim(), name: "ubicación" },
+      { value: condition.trim(), name: "condición" },
+      { value: caption.trim(), name: "descripción" },
+    ];
+    const emptyField = requiredFields.find(field => !field.value);
+    if (emptyField) {
+      Toast.show({
+        type: "warning",
+        position: "top",
+        visibilityTime: 3000,
+        text1: `Falta completar: ${emptyField.name}`,
+        text2: "Por favor completa todos los campos requeridos.",
+      });
+      return;
+    }
 
     setIsSaving(true);
 
@@ -141,6 +140,11 @@ export default function EditPostScreen() {
       );
 
       const cleanPrice = Number(price.replace(/,/g, ""));
+
+      // Fallback defensivo: si por cualquier motivo subcategory está vacío,
+      // lo igualamos a category para cumplir la regla de "último nivel".
+      const effectiveSubcategory = subcategory || category;
+
       await updatePost({
         postId: post._id,
         title,
@@ -148,13 +152,13 @@ export default function EditPostScreen() {
         price: cleanPrice,
         currency,
         location,
-         nivel2,
-                nivel3,
-                nivel4,
+        nivel2,
+        nivel3,
+        nivel4,
         lat,
         lng,
         category,
-        subcategory,
+        subcategory: effectiveSubcategory,
         condition,
         storageId,
         imageUrls,
@@ -166,10 +170,10 @@ export default function EditPostScreen() {
 
       setIsSaving(false);
       Toast.show({
-          type: "success",
-          position: "top",
-          text1: "¡Producto editado!",
-          text2: "Tu publicación se ha guardado con éxito.",
+        type: "success",
+        position: "top",
+        text1: "¡Producto editado!",
+        text2: "Tu publicación se ha guardado con éxito.",
       });
       router.back();
     } catch (e) {
@@ -179,7 +183,7 @@ export default function EditPostScreen() {
   };
 
   const handleCategoryPath = (path: string[]) => {
-    // path: [L1, L2, L3, L4, L5?]  (el último siempre es la hoja seleccionada)
+    // path: [L1, L2, L3, L4, L5?] (el último SIEMPRE es la hoja seleccionada)
     const [l1, l2, l3, l4, l5] = path;
 
     setCategory(l1 ?? "");
@@ -187,19 +191,21 @@ export default function EditPostScreen() {
     setNivel3(l3 || undefined);
     setNivel4(l4 || undefined);
 
-    // subcategory = último elemento si hay >1 nivel; si solo hay 1, la dejamos vacía
+    // subcategory SIEMPRE es el último tramo, incluso si solo hay un nivel (p. ej., "Motos")
     const last = path[path.length - 1] ?? "";
-    setSubcategory(path.length > 1 ? last : "");
-    };
+    setSubcategory(last);
+  };
 
   function formatNumberWithCommas(value: string) {
     const numericValue = value.replace(/\D/g, '');
     return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
+
   const handlePriceChange = (text: string) => {
     const formatted = formatNumberWithCommas(text);
     setPrice(formatted);
   };
+
   const scrollViewRef = useRef<ScrollView>(null);
   const handleFocus = (y: number) => {
     scrollViewRef.current?.scrollTo({
@@ -210,35 +216,63 @@ export default function EditPostScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <View style={{ paddingTop: 50, }}>
+      <View style={{ paddingTop: 50 }}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7, }} />
+          <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7 }} />
         </TouchableOpacity>
         <Animated.Text entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
           Editar publicación
         </Animated.Text>
       </View>
 
-      <ScrollView style={styles.container} ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 500 }} >
+      <ScrollView style={styles.container} ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 500 }}>
         <Animated.View entering={FadeInDown.delay(200).duration(400)}>
           <ImageCarousel selectedImages={selectedImages} setSelectedImages={setSelectedImages} />
         </Animated.View>
-        <View >
+
+        <View>
           <View style={styles.inputSection}>
-            <InputText label="Título del producto" iconComponent={<Pencil size={20} />} value={title} onChangeText={setTitle} onFocus={() => handleFocus(100)} />
+            <InputText
+              label="Título del producto"
+              iconComponent={<Pencil size={20} />}
+              value={title}
+              onChangeText={setTitle}
+              onFocus={() => handleFocus(100)}
+            />
           </View>
 
           <View style={[styles.inputSection, { flexDirection: "row", paddingLeft: 20, paddingRight: 10 }]}>
             <View style={{ flex: 2.5 }}>
-              <InputText label="Precio" iconComponent={<Banknote size={20} />} keyboardType="numeric" value={price} onChangeText={handlePriceChange} />
+              <InputText
+                label="Precio"
+                iconComponent={<Banknote size={20} />}
+                keyboardType="numeric"
+                value={price}
+                onChangeText={handlePriceChange}
+              />
             </View>
             <View style={{ flex: 1.7 }}>
-              <InputSelect label="Moneda" iconComponent={<DollarSign size={18} />} value={currency} onChangeText={setCurrency} data={moneda} onFocus={() => handleFocus(100)} />
+              <InputSelect
+                label="Moneda"
+                iconComponent={<DollarSign size={18} />}
+                value={currency}
+                onChangeText={setCurrency}
+                data={moneda}
+                onFocus={() => handleFocus(100)}
+              />
             </View>
           </View>
 
           <View style={styles.inputSection}>
-            <CategorySelect label="Categoría" iconComponent={<Tag size={20} />} valueCategory={category} onChangeTextCategory={setCategory} valueSub={subcategory} onChangeTextSub={setSubcategory} onChangePath={handleCategoryPath}/>
+            <CategorySelect
+              label="Categoría"
+              iconComponent={<Tag size={20} />}
+              valueCategory={category}
+              onChangeTextCategory={setCategory}
+              valueSub={subcategory}
+              onChangeTextSub={setSubcategory}
+              onChangePath={handleCategoryPath}
+            />
           </View>
 
           <View style={styles.inputSection}>
@@ -257,14 +291,28 @@ export default function EditPostScreen() {
           </View>
 
           <View style={styles.inputSection}>
-            <InputSelect label="Condición" iconComponent={<FileSliders size={18} />} value={condition} onChangeText={setCondition} data={condicion} />
+            <InputSelect
+              label="Condición"
+              iconComponent={<FileSliders size={18} />}
+              value={condition}
+              onChangeText={setCondition}
+              data={condicion}
+            />
           </View>
 
           <View style={styles.inputSection}>
-            <InputText label="Descripción" iconComponent={<FileText size={18} />} value={caption} onChangeText={setCaption} onFocus={() => handleFocus(500)} minHeight={120} multiline />
+            <InputText
+              label="Descripción"
+              iconComponent={<FileText size={18} />}
+              value={caption}
+              onChangeText={setCaption}
+              onFocus={() => handleFocus(500)}
+              minHeight={120}
+              multiline
+            />
           </View>
 
-          <Animated.View entering={FadeInDown.delay(800).duration(400)} style={{paddingHorizontal:20}}>
+          <Animated.View entering={FadeInDown.delay(800).duration(400)} style={{ paddingHorizontal: 20 }}>
             <TouchableOpacity
               style={[styles.button, isSaving && { opacity: 0.7 }]}
               onPress={handleSave}
@@ -273,12 +321,7 @@ export default function EditPostScreen() {
             >
               <View style={{ maxHeight: 25, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                 {isSaving ? (
-                  <LottieView
-                    source={savingAnimation}
-                    autoPlay
-                    loop
-                    style={{ width: 250, height: 250 }}
-                  />
+                  <LottieView source={savingAnimation} autoPlay loop style={{ width: 250, height: 250 }} />
                 ) : (
                   <>
                     <Feather name="check-circle" size={20} color="#fff" />
@@ -289,7 +332,7 @@ export default function EditPostScreen() {
             </TouchableOpacity>
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(900).duration(400)} style={{paddingHorizontal:20}}>
+          <Animated.View entering={FadeInDown.delay(900).duration(400)} style={{ paddingHorizontal: 20 }}>
             <TouchableOpacity
               style={styles.soldButton}
               onPress={() => {
