@@ -88,7 +88,7 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen name="working/working" />
               </Stack>
               <Toast config={toastConfig} />
-              <StatusBar style="auto" />
+              <StatusBar style="dark" />
             </View>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
