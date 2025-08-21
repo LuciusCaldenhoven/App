@@ -46,7 +46,7 @@
       "jsEngine": "hermes",
       "config": {
         "googleMaps": {
-          "apiKey": "process.env.EXPO_PUBLIC_GOOGLE_API_KEY"
+          "apiKey": "AIzaSyA6acFNK1uCyE4_g2n0DwY0ok9k4LIs8AM"
         }
       }
     },
