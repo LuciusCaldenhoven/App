@@ -51,11 +51,7 @@ const EditProfile = () => {
     };
 
     const handlePickImage = async () => {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!permissionResult.granted) {
-            alert("Se requiere acceso a la galería.");
-            return;
-        }
+
 
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,

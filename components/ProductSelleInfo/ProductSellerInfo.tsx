@@ -49,7 +49,7 @@ const ProductSellerInfo = ({ author, post,bottomSheetRef,openBottomSheet}: Selle
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 10 }}>
           <Text style={styles.title}>{post.title}</Text>
             <Text style={styles.priceText}>
-              {post.currency === "USD" ? "$" : "S/"} {post.price}
+              {post.currency === "Dolares" ? "$" : "S/"} {post.price}
             </Text>
         </View>
       </View>

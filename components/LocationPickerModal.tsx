@@ -26,8 +26,8 @@ export default function LocationPickerModal({
 }) {
 
     const [region, setRegion] = useState({
-        latitude: 0,
-        longitude: 0,
+        latitude: -12.0464,
+        longitude: -77.0428,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
     });
@@ -56,6 +56,13 @@ export default function LocationPickerModal({
                     ...prev,
                     latitude: currentUser.lat,
                     longitude: currentUser.lng,
+                }));
+            } else {
+                // Fallback: Lima
+                setRegion(prev => ({
+                    ...prev,
+                    latitude: -12.0464,
+                    longitude: -77.0428,
                 }));
             }
         };

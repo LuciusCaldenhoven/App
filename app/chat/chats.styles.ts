@@ -130,6 +130,7 @@ headerContent: {
         fontFamily: 'Regular',
         color: COLORS.black,
         marginTop: 23,
+        width: '70%',
     },
     inputRow: {
         flexDirection: 'row',

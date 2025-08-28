@@ -78,7 +78,7 @@ export default function Post({ post }: PostProps) {
           />
         </View>
         <View style={styles.details}>
-          <Text style={styles.price}>S/{post.price}.00</Text>
+          <Text style={styles.price}>{post.currency === "Soles" ? `S/${post.price}.00` : `$${post.price}.00`}</Text>
           <Text style={styles.title} numberOfLines={1}>
             {post.title}
           </Text>
