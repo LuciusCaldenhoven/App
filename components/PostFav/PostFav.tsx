@@ -8,7 +8,6 @@ import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { styles } from "../PostFav/PostFav.styles";
 
-
 type PostProps = {
     post: {
         tipo: string;
@@ -36,9 +35,11 @@ type PostProps = {
 export default function PostFav({ post }: PostProps) {
     const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+    const toggleBookmarkCount = useMutation(api.posts.toggleBookmarkCount); // ← añadido
 
     const handleBookmark = async () => {
         const newIsBookmarked = await toggleBookmark({ postId: post._id });
+        await toggleBookmarkCount({ postId: post._id, add: newIsBookmarked }); // ← añadido
         setIsBookmarked(newIsBookmarked);
     };
 
@@ -67,18 +68,16 @@ export default function PostFav({ post }: PostProps) {
                 <Text numberOfLines={1} style={styles.category}>
                     {post.category}
                 </Text>
-
             </View>
 
             {/* Favorito */}
             <TouchableOpacity style={styles.bookmark} onPress={handleBookmark}>
                 <Ionicons
                     name={isBookmarked ? "heart" : "heart-outline"}
-                    size={24} // Aumentado el tamaño
-                    color={isBookmarked ? "#FF5A7A" : "#555"} // Color rosa al estar marcado
+                    size={24}
+                    color={isBookmarked ? "#FF5A7A" : "#555"}
                 />
             </TouchableOpacity>
         </TouchableOpacity>
     );
 }
-

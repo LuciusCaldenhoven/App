@@ -1,12 +1,5 @@
-import React, { useState, useRef, useCallback } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  Share,
-  Modal,
-} from "react-native";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { View, Text, TouchableOpacity, Dimensions, Share, Modal, } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -14,27 +7,12 @@ import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
-import { Loader } from "@/components/Loader";
-import Animated, {
-  interpolate,
-  runOnJS,
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useScrollViewOffset,
-  useSharedValue,
-} from "react-native-reanimated";
-import { StatusBar } from "expo-status-bar";
+import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useScrollViewOffset, useSharedValue, } from "react-native-reanimated";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
 import ImageView from "react-native-image-viewing";
 import LoaderProductDetail from "@/components/loaders/loaderPosts";
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { Leaf, PiggyBank, Recycle } from "lucide-react-native";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView, } from "@gorhom/bottom-sheet";
 import DiscountModal from "@/components/DiscountInfo/DiscountModal";
 
 const { width } = Dimensions.get("window");
@@ -87,10 +65,16 @@ export default function ProductDetail() {
 
 
 
-  const post = useQuery(
-    api.posts.getBookmarkedPostById,
-    productId ? { postId: productId as Id<"posts"> } : "skip"
-  );
+  const post = useQuery( api.posts.getBookmarkedPostById, productId ? { postId: productId as Id<"posts"> } : "skip" );
+  
+  const incrementViews = useMutation(api.posts.incrementViews);
+
+  useEffect(() => {
+    if (post?._id) {
+      incrementViews({ postId: post._id });
+    }
+  }, [post?._id]);
+
 
   const author = useQuery(
     api.users.getUserProfile,
@@ -98,6 +82,19 @@ export default function ProductDetail() {
   );
 
   const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+  const toggleBookmarkCount = useMutation(api.posts.toggleBookmarkCount);
+
+  const handleBookmark = async () => {
+    if (!post) return;
+
+    await toggleBookmark({ postId: post._id });
+
+    await toggleBookmarkCount({
+      postId: post._id,
+      add: !post.isBookmarked, 
+    });
+  };
+
 
   const { userId } = useAuth();
   const currentUser = useQuery(
@@ -113,15 +110,13 @@ export default function ProductDetail() {
     .filter((url): url is string => !!url)
     .map((url) => ({ uri: url }));
 
-  const handleBookmark = async () => {
-    await toggleBookmark({ postId: post!._id });
-  };
+
 
   const shareListing = async () => {
     try {
       await Share.share({
         title: post?.title || "Mira este producto",
-        url: `https://Diuna.com/post/${post?._id}`,
+        url: `https://Diuna.lat/post/${post?._id}`,
       });
     } catch (err) {
       console.log(err);

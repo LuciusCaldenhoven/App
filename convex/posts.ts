@@ -82,6 +82,8 @@ export const createPost = mutation({
       sold: args.sold,
       lat: args.lat,
       lng: args.lng,
+      views: 0,
+      numBookmarks: 0,
     });
 
     await ctx.db.patch(currentUser._id, {
@@ -94,6 +96,34 @@ export const createPost = mutation({
 
 
 
+export const incrementViews = mutation({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+
+    await ctx.db.patch(args.postId, {
+      views: (post.views ?? 0) + 1,
+    });
+  },
+});
+
+export const toggleBookmarkCount = mutation({
+  args: {
+    postId: v.id("posts"),
+    add: v.boolean(), // true = agregar, false = quitar
+  },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+
+    const current = post.numBookmarks ?? 0;
+
+    await ctx.db.patch(args.postId, {
+      numBookmarks: args.add ? current + 1 : Math.max(0, current - 1),
+    });
+  },
+});
 
 
 export const getFeed = query({

@@ -39,6 +39,8 @@ export default defineSchema({
         condition: v.string(),
         imageUrls: v.array(v.id("_storage")),
         sold: v.boolean(),
+        views: v.number(),
+        numBookmarks: v.number(),
     })
         .index("by_user", ["userId"])
         .index("by_category", ["category"])

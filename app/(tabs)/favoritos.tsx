@@ -12,7 +12,8 @@ import snap from "@/assets/animations/Chasquido.json";
 
 export default function Bookmarks() {
   const bookmarkedPosts = useQuery(api.bookmarks.getBookmarkedPosts);
-
+  
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
