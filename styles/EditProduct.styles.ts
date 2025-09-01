@@ -9,13 +9,48 @@ export const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     header: {
-        fontSize: 28,
-        fontFamily: "SemiBold",
-        color: COLORS.black,
-        marginBottom: 5,
-        paddingHorizontal: 10,
-        paddingTop: 20,
-    },
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 11,
+    borderBottomWidth: 1, 
+    borderColor: "#e0e0e0" 
+
+  },
+  backBtn: {
+    marginLeft: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  headerTitle: {
+    fontSize: 16,
+    color: COLORS.black,
+    fontFamily: "Medium",
+    paddingLeft: 50,
+  },
+  contentDisabled: {
+    opacity: 0.7, 
+  },
+  shareButton: {
+    paddingHorizontal: 12,
+    
+    minWidth: 60, 
+    alignItems: "center", 
+    justifyContent: "center", // Centra el contenido dentro del botón
+  },
+  shareButtonDisabled: {
+    opacity: 0.5, 
+    color: 'red'
+  },
+  shareText: {
+    fontSize: 17, // Tamaño del texto
+    fontFamily: "Medium", // Fuente del texto
+
+  },
+  shareTextDisabled: {
+    color: COLORS.grey, // Color del texto cuando está deshabilitado
+  },
 
     title: {
         fontSize: 28,

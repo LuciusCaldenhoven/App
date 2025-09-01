@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Platform, StatusBar } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -11,7 +11,7 @@ import LottieView from "lottie-react-native";
 import savingAnimation from "@/assets/animations/Loading.json";
 import ImageCarousel from "@/components/ImageCarosel/ImageCarosel";
 import InputText from "@/components/InputText";
-import { Banknote, DollarSign, FileSliders, FileText, MapPinCheck, Pencil, Tag } from "lucide-react-native";
+import { Banknote, ChevronLeft, DollarSign, FileSliders, FileText, MapPinCheck, Pencil, Tag } from "lucide-react-native";
 import InputSelect from "@/components/InputSelect";
 import InputLocation from "@/components/InputLocation/InputLocation";
 import moneda from "@/assets/precio/precio.data";
@@ -19,6 +19,7 @@ import product from "@/assets/categoria/data";
 import condicion from "@/assets/condicion/condicion.data";
 import Toast from "react-native-toast-message";
 import CategorySelect from "@/components/CategorySelect";
+import { COLORS } from "@/constants/theme";
 
 export default function EditPostScreen() {
   const { editProductId } = useLocalSearchParams();
@@ -215,14 +216,27 @@ export default function EditPostScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <View style={{ paddingTop: 50 }}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Feather name="chevron-left" size={35} color={"black"} style={{ paddingLeft: 7 }} />
+    <View style={{ flex: 1, backgroundColor: "#fff",paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40, }}>
+       <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <ChevronLeft size={32} color={COLORS.black} />
         </TouchableOpacity>
-        <Animated.Text entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
-          Editar publicación
-        </Animated.Text>
+
+        <TouchableOpacity
+          style={[styles.shareButton, isSaving && styles.shareButtonDisabled]}
+          onPress={handleSave}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <ActivityIndicator size="small" color={COLORS.primary} />
+          ) : (
+            <Text style={styles.shareText}>Guardar</Text>
+          )}
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.container} ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 500 }}>
@@ -312,41 +326,10 @@ export default function EditPostScreen() {
             />
           </View>
 
-          <Animated.View entering={FadeInDown.delay(800).duration(400)} style={{ paddingHorizontal: 20 }}>
-            <TouchableOpacity
-              style={[styles.button, isSaving && { opacity: 0.7 }]}
-              onPress={handleSave}
-              disabled={isSaving}
-              activeOpacity={0.8}
-            >
-              <View style={{ maxHeight: 25, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                {isSaving ? (
-                  <LottieView source={savingAnimation} autoPlay loop style={{ width: 250, height: 250 }} />
-                ) : (
-                  <>
-                    <Feather name="check-circle" size={20} color="#fff" />
-                    <Text style={styles.buttonText}>Guardar cambios</Text>
-                  </>
-                )}
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+         
 
-          <Animated.View entering={FadeInDown.delay(900).duration(400)} style={{ paddingHorizontal: 20 }}>
-            <TouchableOpacity
-              style={styles.soldButton}
-              onPress={() => {
-                if (post) {
-                  markAsSold({ postId: post._id });
-                  router.back();
-                }
-              }}
-              disabled={!post}
-            >
-              <Entypo name="check" size={20} color="#fff" />
-              <Text style={styles.buttonText}>Vendido</Text>
-            </TouchableOpacity>
-          </Animated.View>
+
+         
         </View>
       </ScrollView>
     </View>

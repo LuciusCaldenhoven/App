@@ -47,11 +47,7 @@ export default function MyProducts() {
           contentContainerStyle={styles.listContainer}
           renderItem={({ item: post }) => (
             <PostProduct
-              post={{
-                ...post,
-                isBookmarked: false,
-                author: { _id: userId || "", username: "Tú", image: "" },
-              }}
+              post={post}
             />
           )}
         refreshControl={
