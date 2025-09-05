@@ -84,6 +84,7 @@ export const createPost = mutation({
       lng: args.lng,
       views: 0,
       numBookmarks: 0,
+      numShares: 0,
     });
 
     await ctx.db.patch(currentUser._id, {
@@ -104,6 +105,17 @@ export const incrementViews = mutation({
 
     await ctx.db.patch(args.postId, {
       views: (post.views ?? 0) + 1,
+    });
+  },
+});
+export const incrementShares = mutation({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId);
+    if (!post) throw new Error("Post not found");
+
+    await ctx.db.patch(args.postId, {
+      numShares: (post.numShares ?? 0) + 1,
     });
   },
 });
@@ -620,7 +632,7 @@ export const getNotSoldPostsByUser = query({
   },
 });
 
-export const markAsSold = mutation({
+export const toggleSold = mutation({
   args: { postId: v.id("posts") },
   handler: async (ctx, { postId }) => {
     const user = await getAuthenticatedUser(ctx);
@@ -629,9 +641,10 @@ export const markAsSold = mutation({
     if (!post) throw new Error("Post not found");
     if (post.userId !== user._id) throw new Error("No autorizado");
 
-    await ctx.db.patch(postId, { sold: true });
+    await ctx.db.patch(postId, { sold: !post.sold });
   },
 });
+
 
 
 export const updatePost = mutation({

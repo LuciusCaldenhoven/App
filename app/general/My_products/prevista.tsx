@@ -1,11 +1,25 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, FlatList, StatusBar, Share, Alert, SafeAreaView, ScrollView, } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  FlatList,
+  StatusBar,
+  Share,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams, router } from "expo-router";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import ImageView from "react-native-image-viewing";
+import { Rocket } from "lucide-react-native";
 
 const W = Dimensions.get("window").width;
 
@@ -43,7 +57,8 @@ export default function ManageProductScreen() {
 
   // Mutations
   const deletePost = useMutation(api.posts.deletePost);
-  const markAsSold = useMutation(api.posts.markAsSold);
+  const toggleSold = useMutation(api.posts.toggleSold);
+
   // Estado local
   const [deleting, setDeleting] = useState(false);
   const [marking, setMarking] = useState(false);
@@ -70,21 +85,20 @@ export default function ManageProductScreen() {
   }
 
   function formatPrice(amount: number | string, currency: string) {
-  const n =
-    typeof amount === "number"
-      ? amount
-      : Number(String(amount).replace(/[^\d.-]/g, "")) || 0;
+    const n =
+      typeof amount === "number"
+        ? amount
+        : Number(String(amount).replace(/[^\d.-]/g, "")) || 0;
 
-  // miles con comas (1,234)
-  const withCommas = Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // miles con comas (1,234)
+    const withCommas = Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-  const c = currency?.trim().toLowerCase();
-  const isSoles =
-    c === "soles" || c === "sol" || c === "s/." || c === "s/";
+    const c = currency?.trim().toLowerCase();
+    const isSoles = c === "soles" || c === "sol" || c === "s/." || c === "s/";
 
-  // si no es soles, lo tratamos como dólares
-  return isSoles ? `S/ ${withCommas}` : `$ ${withCommas}`;
-}
+    // si no es soles, lo tratamos como dólares
+    return isSoles ? `S/ ${withCommas}` : `$ ${withCommas}`;
+  }
 
   const galleryData = Array.isArray(gallery) ? gallery.filter(Boolean) : [];
   const imagesForModal = galleryData.map((uri) => ({ uri }));
@@ -108,9 +122,8 @@ export default function ManageProductScreen() {
         onPress: async () => {
           try {
             setDeleting(true);
-             router.back();
+            router.back();
             await deletePost({ postId: post._id });
-           
           } finally {
             setDeleting(false);
           }
@@ -119,13 +132,27 @@ export default function ManageProductScreen() {
     ]);
   };
 
-  
-
   const handleScroll = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x || 0;
     const index = Math.round(contentOffsetX / W);
     setCurrentIndex(index);
   };
+
+  // --- helpers UI ---
+  function abbreviate(n: number) {
+    if (n === null || n === undefined) return "0";
+    const abs = Math.abs(n);
+    if (abs < 1000) return `${n}`;
+    const units = ["k", "M", "B", "T"];
+    let u = -1;
+    let num = abs;
+    while (num >= 1000 && u < units.length - 1) {
+      num /= 1000;
+      u++;
+    }
+    const sign = n < 0 ? "-" : "";
+    return `${sign}${num.toFixed(num < 10 ? 1 : 0)}${units[u]}`;
+  }
 
   return (
     <View style={styles.container}>
@@ -162,8 +189,6 @@ export default function ManageProductScreen() {
             )}
             ListEmptyComponent={
               <View style={[styles.heroImage, styles.heroPlaceholder]}>
-                <Feather name="image" size={32} color="#9CA3AF" />
-                <Text style={{ color: "#9CA3AF", marginTop: 6 }}>Sin imagen</Text>
               </View>
             }
           />
@@ -193,96 +218,135 @@ export default function ManageProductScreen() {
           </Text>
         </View>
 
-        {/* Acciones */}
-       {/* CTA Boost */}
+        {/* CTA Boost */}
         <View style={styles.boostWrap}>
-          <TouchableOpacity style={styles.boostBtn} activeOpacity={0.9} onPress={() => {router.push("/working/working")}}>
-            <Feather name="zap" size={18} color="#fff" />
+          <TouchableOpacity
+            style={styles.boostBtn}
+            activeOpacity={0.9}
+            onPress={() => {
+              router.push("/working/working");
+            }}
+          >
+            <Rocket size={18} color="#fff" strokeWidth={2.5} />
             <Text style={styles.boostLabel}>Impulsar publicación</Text>
             <Feather name="chevron-right" size={18} color="#fff" />
-        </TouchableOpacity>
+          </TouchableOpacity>
         </View>
 
-{/* Acciones en grilla 2x2 */}
-<View style={styles.actionsGrid}>
-  <TouchableOpacity
-    onPress={() =>
-      router.push({
-        pathname: "/general/EditProduct/[editProductId]",
-        params: { editProductId: post._id },
-      })
-    }
-    style={[styles.actionTile, { marginRight: 10 }]}
-    activeOpacity={0.85}
-  >
-    <Feather name="edit-3" size={18} color="#111827" />
-    <Text style={styles.actionTileLabel}>Editar</Text>
-  </TouchableOpacity>
+        {/* Acciones en grilla 2x2 */}
+        <View style={styles.actionsGrid}>
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/general/EditProduct/[editProductId]",
+                params: { editProductId: post._id },
+              })
+            }
+            style={[styles.actionTile, { marginRight: 10 }]}
+            activeOpacity={0.85}
+          >
+            <Feather name="edit-3" size={18} color="#111827" />
+            <Text style={styles.actionTileLabel}>Editar</Text>
+          </TouchableOpacity>
 
-  <TouchableOpacity
-    onPress={() => {
-                    if (post) {
-                      markAsSold({ postId: post._id });
-                      router.back();
-                    }
-                  }}
-    style={styles.actionTile}
-    activeOpacity={0.85}
-  >
-    <Feather name="check-circle" size={18} color="#111827" />
-    <Text style={styles.actionTileLabel}>{post.sold ? "Vendido" : "Marcar vendido"}</Text>
-  </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (post) {
+                toggleSold({ postId: post._id });
+              }
+            }}
+            style={styles.actionTile}
+            activeOpacity={0.85}
+          >
+            <Feather name="check-circle" size={18} color="#111827" />
+            <Text style={styles.actionTileLabel}>
+              {post.sold ? "Vendido" : "Marcar vendido"}
+            </Text>
+          </TouchableOpacity>
 
-  <TouchableOpacity
-    onPress={onShare}
-    style={[styles.actionTile, { marginRight: 10, marginTop: 10 }]}
-    activeOpacity={0.85}
-  >
-    <Feather name="share-2" size={18} color="#111827" />
-    <Text style={styles.actionTileLabel}>Compartir</Text>
-  </TouchableOpacity>
+          <TouchableOpacity
+            onPress={onShare}
+            style={[styles.actionTile, { marginRight: 10, marginTop: 10 }]}
+            activeOpacity={0.85}
+          >
+            <Feather name="share-2" size={18} color="#111827" />
+            <Text style={styles.actionTileLabel}>Compartir</Text>
+          </TouchableOpacity>
 
-  <TouchableOpacity
-    onPress={onDelete}
-    style={[styles.actionTile, { marginTop: 10 }]}
-    activeOpacity={0.85}
-  >
-    <Feather name="trash-2" size={18} color="#DC2626" />
-    <Text style={[styles.actionTileLabel, { color: "#DC2626" }]}>Eliminar</Text>
-  </TouchableOpacity>
-</View>
+          <TouchableOpacity
+            onPress={onDelete}
+            style={[styles.actionTile, { marginTop: 10 }]}
+            activeOpacity={0.85}
+          >
+            <Feather name="trash-2" size={18} color="#DC2626" />
+            <Text style={[styles.actionTileLabel, { color: "#DC2626" }]}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
 
-{/* Estadísticas */}
-    <View style={styles.line} />
-  <View style={styles.metricsHeader}>
-    <Feather name="bar-chart-2" size={16} color="#111827" />
-    <Text style={styles.metricsTitle}>Estadísticas</Text>
-  </View>
-  <View style={styles.metricsColumn}>
-    <View style={styles.metricItem}>
-      <Feather name="eye" size={16} color="#111827" />
-      <Text style={styles.metricValue}>{toInt(post.views)}</Text>
-      <Text style={styles.metricLabel}>Clics</Text>
-    </View>
-    <View style={styles.metricItem}>
-      <Feather name="heart" size={16} color="#111827" />
-      <Text style={styles.metricValue}>{toInt(post.numBookmarks)}</Text>
-      <Text style={styles.metricLabel}>Favoritos</Text>
-    </View>
-    <View style={styles.metricItem}>
-      <Feather name="share-2" size={16} color="#111827" />
-      <Text style={styles.metricValue}>{toInt(post.shares)}</Text>
-      <Text style={styles.metricLabel}>Compartidos</Text>
-    </View>
-  </View>
+        {/* Estadísticas */}
+        <View style={styles.sectionSeparator} />
 
+        <View style={{ paddingHorizontal: 15 }}>
+          {/* Header estadísticas */}
+          <View style={styles.headerRow}>
+            <View style={styles.headerIconWrap}>
+              <Feather name="bar-chart-2" size={16} color="#111827" />
+            </View>
+            <Text style={styles.metricsTitle}>Estadísticas</Text>
+            <View style={styles.periodChip}>
+              <Text style={styles.periodText}>Todo el tiempo</Text>
+            </View>
+          </View>
 
+          {/* Card métricas */}
+          <View style={styles.card}>
+            {/* Item 1 */}
+            <View>
+              <View style={styles.metricRow}>
+                <View style={[styles.iconBadge, styles.iconBadgeLight]}>
+                  <Feather name="eye" size={16} color="#111827" />
+                </View>
+                <View style={styles.textCol}>
+                  <Text style={styles.metricValueNew}>{abbreviate(toInt(post.views))}</Text>
+                  <Text style={styles.metricLabelNew}>Clics en el anuncio</Text>
+                </View>
+              </View>
+              <View style={styles.divider} />
+            </View>
 
+            {/* Item 2 */}
+            <View>
+              <View style={styles.metricRow}>
+                <View style={[styles.iconBadge, styles.iconBadgeLight]}>
+                  <Feather name="heart" size={16} color="#111827" />
+                </View>
+                <View style={styles.textCol}>
+                  <Text style={styles.metricValueNew}>{abbreviate(toInt(post.numBookmarks))}</Text>
+                  <Text style={styles.metricLabelNew}>Guardados del anuncio</Text>
+                </View>
+              </View>
+              <View style={styles.divider} />
+            </View>
+
+            {/* Item 3 */}
+            <View>
+              <View style={styles.metricRow}>
+                <View style={[styles.iconBadge, styles.iconBadgeLight]}>
+                  <Feather name="share-2" size={16} color="#111827" />
+                </View>
+                <View style={styles.textCol}>
+                  <Text style={styles.metricValueNew}>{abbreviate(toInt(post.numShares))}</Text>
+                  <Text style={styles.metricLabelNew}>Compartidos del anuncio</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
       </ScrollView>
 
       {/* Modal visor */}
       <ImageView
-        images={imagesForModal}                          // <--- OBJETOS { uri }
+        images={imagesForModal}
         imageIndex={Math.min(currentIndex, Math.max(0, total - 1))}
         visible={visible}
         onRequestClose={() => setIsVisible(false)}
@@ -298,33 +362,31 @@ function toInt(x: any): number {
   return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
 }
 
-function formatMoney(n: number, currency: string) {
-  try {
-    return new Intl.NumberFormat("es-PE", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 0,
-    }).format(n || 0);
-  } catch {
-    return `${currency} ${Math.round(n || 0)}`;
-  }
-}
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFFFFF", paddingTop: 50 },
-    line: {
+
+  sectionSeparator: {
+    height: 8,
+    backgroundColor: "#F3F4F6",
+    marginBottom: 12,
+    marginTop: 8,
+  },
+
+  line: {
     height: 1,
     backgroundColor: "#e0e0e0",
     marginVertical: 16,
     marginHorizontal: 20,
   },
+
   header: {
     height: 52,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.06)",
+    borderBottomColor: "#e0e0e0",
+    backgroundColor: "#FFFFFF",
   },
   headerBtn: {
     width: 40,
@@ -336,124 +398,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 16,
-    fontWeight: "800",
+    fontSize: 18,
+    fontFamily: "SemiBold",
     color: "#111827",
   },
 
-  carouselWrap: { position: "relative" },                 // <--- para overlay del indicador
-  /* --- CTA Boost --- */
-boostWrap: {
-  paddingHorizontal: 12,
-  paddingTop: 8,
-},
-boostBtn: {
-  height: 48,
-  borderRadius: 14,
-  backgroundColor: "#adc92b", // indigo
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingHorizontal: 14,
-  // sombra
-  shadowColor: "#000",
-  shadowOpacity: 0.12,
-  shadowRadius: 6,
-  shadowOffset: { width: 0, height: 3 },
-  elevation: 3,
-},
-boostLabel: {
-  color: "#fff",
-  fontSize: 14,
-  fontFamily: "SemiBold",
-},
-
-/* --- Acciones 2x2 --- */
-actionsGrid: {
-  flexDirection: "row",
-  flexWrap: "wrap",
-  paddingHorizontal: 12,
-  paddingTop: 10,
-},
-actionTile: {
-  width: "48%",              // 2 por fila
-  height: 48,
-  borderRadius: 12,
-  backgroundColor: "#F3F4F6",
-  borderWidth: 1,
-  borderColor: "rgba(0,0,0,0.05)",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-},
-actionTileLabel: {
-  marginLeft: 8,
-  fontSize: 13,
-  fontFamily: "SemiBold",
-  color: "#111827",
-},
-
-/* --- Estadísticas --- */
-metricsCard: {
-  margin: 12,
-  backgroundColor: "#FFFFFF",
-  borderRadius: 14,
-  borderWidth: 1,
-  borderColor: "rgba(0,0,0,0.06)",
-  padding: 14,
-},
-metricsHeader: {
-  flexDirection: "row",
-  alignItems: "center",
-  marginBottom: 12,
-},
-metricsTitle: {
-  marginLeft: 8,
-  fontSize: 16,
-  fontWeight: "800",
-  color: "#111827",
-},
-metricsRow: {
-  flexDirection: "row",
-  alignItems: "stretch",
-},
-metricBox: {
-  flex: 1,
-  backgroundColor: "#F9FAFB",
-  borderRadius: 12,
-  borderWidth: 1,
-  borderColor: "rgba(0,0,0,0.05)",
-  paddingVertical: 14,
-  alignItems: "center",
-  justifyContent: "center",
-},
-metricsColumn: {
-  flexDirection: "column",
-  justifyContent: "space-around",
-},
-
-metricItem: {
-  flexDirection: "row",       // icono + texto en línea
-  alignItems: "center",
-  marginBottom: 10,
-},
-
-metricValue: {
-  marginLeft: 8,
-  fontSize: 18,
-  fontWeight: "900",
-  color: "#111827",
-},
-
-metricLabel: {
-  marginLeft: 6,
-  fontSize: 14,
-  color: "#6B7280",
-  fontWeight: "600",
-},
-
-
-
+  carouselWrap: { position: "relative" },
   heroImage: {
     width: W,
     height: 200,
@@ -480,11 +430,9 @@ metricLabel: {
   },
 
   titleWrap: {
-    
     paddingTop: 12,
     paddingBottom: 5,
     alignItems: "center",
-  
   },
   title: {
     fontSize: 20,
@@ -518,29 +466,145 @@ metricLabel: {
     fontFamily: "Medium",
   },
 
-  actionsRow: {
+  /* --- CTA Boost --- */
+  boostWrap: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
+  },
+  boostBtn: {
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: "#adc92b",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
-  actionBtn: {
-    flex: 1,
-    height: 44,
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    marginRight: 10,
-  },
-  actionIcon: { width: 22, alignItems: "center" },
-  actionLabel: {
+  boostLabel: {
+    color: "#fff",
     fontSize: 14,
-    color: "#111827",
-    fontWeight: "700",
+    fontFamily: "SemiBold",
   },
 
+  /* --- Acciones 2x2 --- */
+  actionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: 12,
+    paddingTop: 10,
+  },
+  actionTile: {
+    width: "48%",
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#F3F4F6",
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.05)",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionTileLabel: {
+    marginLeft: 8,
+    fontSize: 13,
+    fontFamily: "SemiBold",
+    color: "#111827",
+  },
+
+  /* --- Header de estadísticas --- */
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  headerIconWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F3F4F6",
+  },
+  metricsTitle: {
+    marginLeft: 8,
+    fontSize: 18,
+    fontFamily: "SemiBold",
+    color: "#111827",
+  },
+  periodChip: {
+    marginLeft: "auto",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.06)",
+  },
+  periodText: {
+    fontSize: 12,
+    color: "#6B7280",
+    fontFamily: "Medium",
+  },
+
+  /* --- Card & filas de métricas --- */
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.06)",
+    paddingVertical: 6,
+    ...Platform.select({
+      ios: { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 } },
+      android: { elevation: 1.5 },
+    }),
+  },
+  metricRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  iconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    borderWidth: 1,
+  },
+  iconBadgeLight: {
+    backgroundColor: "#F9FAFB",
+    borderColor: "rgba(0,0,0,0.05)",
+  },
+  textCol: {
+    flex: 1,
+    minWidth: 0,
+  },
+  metricValueNew: {
+    fontSize: 20,
+    fontFamily: "SemiBold",
+    color: "#111827",
+    lineHeight: 24,
+  },
+  metricLabelNew: {
+    marginTop: 2,
+    fontSize: 13,
+    color: "#6B7280",
+    fontFamily: "Medium",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(0,0,0,0.06)",
+    marginLeft: 54, // para que no toque el badge
+  },
+
+  /* --- Insights (si los usas luego) --- */
   insightsCard: {
     margin: 12,
     backgroundColor: "#FFFFFF",
@@ -551,7 +615,7 @@ metricLabel: {
   },
   insightsTitle: {
     fontSize: 16,
-    fontWeight: "800",
+    fontFamily: "SemiBold",
     color: "#111827",
     marginBottom: 10,
   },

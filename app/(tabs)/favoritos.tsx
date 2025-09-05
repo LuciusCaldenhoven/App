@@ -39,13 +39,7 @@ export default function Bookmarks() {
           contentContainerStyle={styles.listContainer}
           renderItem={({ item: post }) =>
             post && (
-              <PostFav
-                post={{
-                  ...post,
-                  isBookmarked: true,
-                  author: { _id: "", username: "Desconocido", image: "" },
-                }}
-              />
+              <PostFav post={post} />
             )
           }
           

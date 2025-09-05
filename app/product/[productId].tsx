@@ -68,6 +68,7 @@ export default function ProductDetail() {
   const post = useQuery( api.posts.getBookmarkedPostById, productId ? { postId: productId as Id<"posts"> } : "skip" );
   
   const incrementViews = useMutation(api.posts.incrementViews);
+  const incrementShares = useMutation(api.posts.incrementShares);
 
   useEffect(() => {
     if (post?._id) {
@@ -118,6 +119,8 @@ export default function ProductDetail() {
         title: post?.title || "Mira este producto",
         url: `https://Diuna.lat/post/${post?._id}`,
       });
+      if (!post) return;
+      incrementShares({ postId: post._id });
     } catch (err) {
       console.log(err);
     }
@@ -195,6 +198,10 @@ export default function ProductDetail() {
                 </TouchableOpacity>
               </View>
             )}
+            ListEmptyComponent={
+              <View style={[styles.imageContainer]}>
+              </View>
+            }
           />
 
           {allImageIds.length > 0 && (

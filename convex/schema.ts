@@ -41,6 +41,7 @@ export default defineSchema({
         sold: v.boolean(),
         views: v.number(),
         numBookmarks: v.number(),
+        numShares: v.number(),
     })
         .index("by_user", ["userId"])
         .index("by_category", ["category"])

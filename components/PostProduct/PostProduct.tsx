@@ -1,101 +1,187 @@
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Doc, Id } from "../../convex/_generated/dataModel";
-import { styles } from "../PostProduct/PostProduct.styles";
-import { useMutation, useQuery } from "convex/react";
+import { Doc } from "../../convex/_generated/dataModel";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { useState } from "react";
 
-type PostProps = {
-    post: Doc<"posts">;
-};
+type PostProps = { post: Doc<"posts"> };
 
-// ...imports iguales
 export default function PostProduct({ post }: PostProps) {
-  const deletePost = useMutation(api.posts.deletePost);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleDelete = async () => {
-    await deletePost({ postId: post._id });
-    setShowModal(false);
-  };
-
   const imageUrl = useQuery(api.posts.getImageUrl, { storageId: post.storageId });
 
+  const go = () =>
+    router.push({
+      pathname: "/general/My_products/prevista",
+      params: { postId: post._id },
+    });
+
+  const isSold = !!post.sold;
+
   return (
-    <>
-      {/* AHORA NAVEGA A LA NUEVA PÁGINA DE INFO/GESTIÓN */}
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          router.push({
-            pathname: "/general/My_products/prevista",
-            params: { postId: post._id },
-          })
-        }
-      >
-        <View style={styles.rowContainer}>
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.image}
-            contentFit="cover"
-            cachePolicy="memory"
-          />
+    <Pressable
+      onPress={go}
+      android_ripple={{ color: "rgba(0,0,0,0.06)" }}
+      style={({ pressed }) => [s.row, pressed && s.pressed]}
+    >
+      {/* Miniatura */}
+      <View style={s.thumbWrap}>
+        <Image
+          source={{ uri: imageUrl }}
+          style={s.thumb}
+          contentFit="cover"
+          cachePolicy="memory-disk"
+        />
+      </View>
 
-          {/* Info a la izquierda */}
-          <View style={styles.infoContainer}>
-            <Text numberOfLines={1} style={styles.title}>
-              {post.title}
-            </Text>
-            <Text numberOfLines={1} style={styles.category}>
-              {post.category}
+      {/* Contenido */}
+      <View style={s.content}>
+        {/* Precio */}
+        <Text style={[s.price, isSold && s.priceMuted]}>
+          {isFiniteNumber(post.price) ? formatPrice(post.price as any, post.currency || "PEN") : "—"}
+        </Text>
+
+        {/* Título */}
+        <Text numberOfLines={2} style={s.title}>
+          {post.title}
+        </Text>
+
+        {/* Meta: estado + fecha (con iconos) */}
+        <View style={s.metaRow}>
+          <View style={s.metaItem}>
+            <Feather
+              name={isSold ? "x-circle" : "check-circle"}
+              size={14}
+              color={isSold ? "#DC2626" : "#059669"}
+            />
+            <Text style={[s.metaText, isSold ? s.sold : s.available]}>
+              {isSold ? "Vendido" : "Disponible"}
             </Text>
           </View>
 
-          {/* Iconos a la derecha */}
-          <View style={styles.verticalActions}>
-            <TouchableOpacity
-              onPress={() =>
-                router.push({
-                  pathname: "/general/EditProduct/[editProductId]",
-                  params: { editProductId: post._id },
-                })
-              }
-              style={styles.iconButton}
-            >
-              <Feather name="edit-3" size={20} color="#4F8EF7" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowModal(true)} style={styles.iconButton}>
-              <Feather name="trash-2" size={20} color="#FF5A5F" />
-            </TouchableOpacity>
+          <View style={s.dot} />
+
+          <View style={s.metaItem}>
+            <Feather name="calendar" size={14} color="#6B7280" />
+            <Text style={s.metaText}>{formatDate(post._creationTime)}</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
 
-      {/* Modal de confirmación (igual que lo tenías) */}
-      <Modal
-        visible={showModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.container}>
-            <Text style={styles.titulo}>¿Eliminar publicación?</Text>
-            <Text style={styles.message}>Esta acción no se puede deshacer.</Text>
-            <View style={styles.buttonRow}>
-              <TouchableOpacity onPress={() => setShowModal(false)} style={styles.cancelButton}>
-                <Text style={styles.cancelText}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleDelete} style={styles.deleteButton}>
-                <Text style={styles.deleteText}>Eliminar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </>
+      {/* Divisor */}
+      <View style={s.divider} />
+    </Pressable>
   );
 }
+
+/* ---------- utils ---------- */
+
+function isFiniteNumber(x: any) {
+  const n = Number(x);
+  return Number.isFinite(n);
+}
+
+function formatPrice(amount: number | string, currency: string) {
+  const n =
+    typeof amount === "number"
+      ? amount
+      : Number(String(amount).replace(/[^\d.-]/g, "")) || 0;
+
+  const withCommas = Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  const c = currency?.trim().toLowerCase();
+  const isSoles = c === "soles" || c === "sol" || c === "s/." || c === "s/";
+  return isSoles ? `S/ ${withCommas}` : `$ ${withCommas}`;
+}
+
+function formatDate(timestamp: number) {
+  try {
+    const d = new Date(timestamp);
+    return d.toLocaleDateString("es-PE", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return "";
+  }
+}
+
+/* ---------- estilos ---------- */
+
+const THUMB = 92;
+
+const s = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    backgroundColor: "#FFF",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    position: "relative",
+  },
+  pressed: { backgroundColor: "#F9FAFB" },
+
+  thumbWrap: {
+    width: THUMB,
+    height: THUMB,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#F3F4F6",
+    borderWidth: 1,
+    borderColor: "rgba(17,24,39,0.08)",
+    marginRight: 12,
+  },
+  thumb: { width: "100%", height: "100%" },
+
+  content: { flex: 1, minWidth: 0, justifyContent: "center" },
+
+  price: {
+    fontSize: 15,
+    fontFamily: "Bold",
+    color: "#111827",
+    marginBottom: 6,
+    letterSpacing: 0.2,
+  },
+  priceMuted: {
+    color: "#6B7280", // si está vendido, bajamos el énfasis del precio
+    textDecorationLine: "line-through",
+  },
+
+  title: {
+    fontSize: 15,
+    lineHeight: 20,
+    color: "#111827",
+    fontFamily: "Medium",
+    marginBottom: 8,
+  },
+
+  metaRow: { flexDirection: "row", alignItems: "center" },
+  metaItem: { flexDirection: "row", alignItems: "center" },
+  metaText: {
+    marginLeft: 6,
+    fontSize: 12,
+    color: "#6B7280",
+    fontFamily: "Medium",
+  },
+  available: { color: "#059669" }, // verde
+  sold: { color: "#DC2626" }, // rojo
+
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(107,114,128,0.6)",
+    marginHorizontal: 10,
+  },
+
+  divider: {
+    position: "absolute",
+    left: 14,
+    right: 14,
+    bottom: 0,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "rgba(17,24,39,0.08)",
+  },
+});
