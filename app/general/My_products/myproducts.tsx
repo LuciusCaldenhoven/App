@@ -69,8 +69,7 @@ export default function MyProducts() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
-      <StatusBar barStyle="dark-content" />
+    <View style={{ flex: 1, backgroundColor: "#FFF" }}>
 
       {/* Header */}
       <View style={H.header}>
@@ -80,7 +79,7 @@ export default function MyProducts() {
           style={H.side}
           activeOpacity={0.7}
         >
-          <Feather name="chevron-left" size={22} color="#111827" />
+          <Feather name="chevron-left" size={25} color="#111827" />
         </TouchableOpacity>
 
         <Text numberOfLines={1} style={H.title}>Mis productos</Text>
@@ -109,7 +108,7 @@ export default function MyProducts() {
           renderList()
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -320,7 +319,7 @@ function NoProductsSold() {
 
 const H = StyleSheet.create({
   header: {
-    height: 48,
+    paddingTop: 50,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",

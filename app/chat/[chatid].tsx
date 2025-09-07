@@ -258,7 +258,7 @@ const ChatPage = () => {
   const captureImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.1,
+      quality: 0.4,
       allowsEditing: false,
     });
 

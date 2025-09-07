@@ -8,10 +8,14 @@ import {
   FlatList,
   StatusBar,
   Share,
-  Alert,
   SafeAreaView,
   ScrollView,
   Platform,
+  Modal,
+  Pressable,
+  Animated,
+  Easing,
+  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams, router } from "expo-router";
@@ -27,7 +31,6 @@ export default function ManageProductScreen() {
   // HOOK 1
   const params = useLocalSearchParams<{ postId?: string | string[] }>();
   const postId = Array.isArray(params.postId) ? params.postId[0] : params.postId;
-
   const postArgs = useMemo(() => (postId ? { postId } : "skip"), [postId]);
 
   // HOOK 2
@@ -64,6 +67,7 @@ export default function ManageProductScreen() {
   const [marking, setMarking] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visible, setIsVisible] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   if (!post) {
     return (
@@ -90,13 +94,11 @@ export default function ManageProductScreen() {
         ? amount
         : Number(String(amount).replace(/[^\d.-]/g, "")) || 0;
 
-    // miles con comas (1,234)
     const withCommas = Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     const c = currency?.trim().toLowerCase();
     const isSoles = c === "soles" || c === "sol" || c === "s/." || c === "s/";
 
-    // si no es soles, lo tratamos como dólares
     return isSoles ? `S/ ${withCommas}` : `$ ${withCommas}`;
   }
 
@@ -112,24 +114,10 @@ export default function ManageProductScreen() {
     } catch {}
   };
 
-  const onDelete = async () => {
+  // Abre modal custom (no Alert nativo)
+  const onDelete = () => {
     if (deleting) return;
-    Alert.alert("Eliminar publicación", "Esta acción no se puede deshacer.", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Eliminar",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            setDeleting(true);
-            router.back();
-            await deletePost({ postId: post._id });
-          } finally {
-            setDeleting(false);
-          }
-        },
-      },
-    ]);
+    setShowConfirm(true);
   };
 
   const handleScroll = (event: any) => {
@@ -188,8 +176,7 @@ export default function ManageProductScreen() {
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <View style={[styles.heroImage, styles.heroPlaceholder]}>
-              </View>
+              <View style={[styles.heroImage, styles.heroPlaceholder]} />
             }
           />
 
@@ -252,7 +239,8 @@ export default function ManageProductScreen() {
           <TouchableOpacity
             onPress={() => {
               if (post) {
-                toggleSold({ postId: post._id });
+                setMarking(true);
+                toggleSold({ postId: post._id }).finally(() => setMarking(false));
               }
             }}
             style={styles.actionTile}
@@ -260,7 +248,7 @@ export default function ManageProductScreen() {
           >
             <Feather name="check-circle" size={18} color="#111827" />
             <Text style={styles.actionTileLabel}>
-              {post.sold ? "Vendido" : "Marcar vendido"}
+              {post.sold ? (marking ? "Actualizando..." : "Vendido") : (marking ? "Marcando..." : "Marcar vendido")}
             </Text>
           </TouchableOpacity>
 
@@ -279,7 +267,9 @@ export default function ManageProductScreen() {
             activeOpacity={0.85}
           >
             <Feather name="trash-2" size={18} color="#DC2626" />
-            <Text style={[styles.actionTileLabel, { color: "#DC2626" }]}>Eliminar</Text>
+            <Text style={[styles.actionTileLabel, { color: "#DC2626" }]}>
+              {deleting ? "Eliminando..." : "Eliminar"}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -350,6 +340,27 @@ export default function ManageProductScreen() {
         imageIndex={Math.min(currentIndex, Math.max(0, total - 1))}
         visible={visible}
         onRequestClose={() => setIsVisible(false)}
+      />
+
+      {/* Modal de confirmación custom */}
+      <ConfirmDialog
+        visible={showConfirm}
+        title="Eliminar publicación"
+        message="Esta acción no se puede deshacer. ¿Deseas eliminar este anuncio?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        loading={deleting}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={async () => {
+          try {
+            setDeleting(true);
+            setShowConfirm(false);
+            router.back();
+            await deletePost({ postId: post._id });
+          } finally {
+            setDeleting(false);
+          }
+        }}
       />
     </View>
   );
@@ -601,10 +612,9 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "rgba(0,0,0,0.06)",
-    marginLeft: 54, // para que no toque el badge
+    marginLeft: 54,
   },
 
-  /* --- Insights (si los usas luego) --- */
   insightsCard: {
     margin: 12,
     backgroundColor: "#FFFFFF",
@@ -649,5 +659,184 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E7EB",
     borderRadius: 6,
     marginBottom: 10,
+  },
+});
+
+/* ===========================
+   ConfirmDialog (custom UI)
+=========================== */
+function ConfirmDialog({
+  visible,
+  title,
+  message,
+  confirmText = "Aceptar",
+  cancelText = "Cancelar",
+  loading = false,
+  onCancel,
+  onConfirm,
+}: {
+  visible: boolean;
+  title: string;
+  message?: string;
+  confirmText?: string;
+  cancelText?: string;
+  loading?: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const scale = React.useRef(new Animated.Value(0.9)).current;
+  const fade = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.timing(fade, { toValue: 1, duration: 160, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
+        Animated.spring(scale, { toValue: 1, friction: 7, useNativeDriver: true }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(fade, { toValue: 0, duration: 120, useNativeDriver: true }),
+        Animated.timing(scale, { toValue: 0.9, duration: 120, useNativeDriver: true }),
+      ]).start();
+    }
+  }, [visible]);
+
+  return (
+    <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
+      {/* Backdrop */}
+      <Animated.View style={[confirmStyles.backdrop, { opacity: fade }]} />
+      {/* Cerrar tocando fuera */}
+      <View style={confirmStyles.centerWrap} pointerEvents="box-none">
+        <Pressable style={confirmStyles.touchFill} onPress={onCancel} />
+        {/* Card */}
+        <Animated.View style={[confirmStyles.card, { transform: [{ scale }] }]}>
+          <View style={confirmStyles.headerRow}>
+            <View style={confirmStyles.iconWarn}>
+              <Feather name="alert-triangle" size={18} color="#DC2626" />
+            </View>
+            <Text style={confirmStyles.title}>{title}</Text>
+          </View>
+
+          {message ? <Text style={confirmStyles.message}>{message}</Text> : null}
+
+          <View style={confirmStyles.actionsRow}>
+            <TouchableOpacity
+              style={[confirmStyles.btn, confirmStyles.btnGhost]}
+              onPress={onCancel}
+              disabled={loading}
+              activeOpacity={0.85}
+            >
+              <Text style={[confirmStyles.btnGhostText]}>{cancelText}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[confirmStyles.btn, confirmStyles.btnDanger]}
+              onPress={onConfirm}
+              disabled={loading}
+              activeOpacity={0.85}
+            >
+              {loading ? (
+                <ActivityIndicator />
+              ) : (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Feather name="trash-2" size={16} color="#fff" />
+                  <Text style={confirmStyles.btnDangerText}> {confirmText}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+}
+
+const confirmStyles = StyleSheet.create({
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  centerWrap: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 18,
+  },
+  touchFill: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  card: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.06)",
+    ...Platform.select({
+      ios: { shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 14, shadowOffset: { width: 0, height: 8 } },
+      android: { elevation: 4 },
+    }),
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  iconWarn: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: "rgba(220,38,38,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(220,38,38,0.25)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  title: {
+    fontSize: 16,
+    fontFamily: "SemiBold",
+    color: "#111827",
+    flexShrink: 1,
+  },
+  message: {
+    marginTop: 6,
+    fontSize: 14,
+    color: "#4B5563",
+    lineHeight: 20,
+  },
+  actionsRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 14,
+  },
+  btn: {
+    height: 42,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+  },
+  btnGhost: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "rgba(0,0,0,0.08)",
+    marginRight: 10,
+  },
+  btnGhostText: {
+    color: "#111827",
+    fontFamily: "SemiBold",
+    fontSize: 14,
+  },
+  btnDanger: {
+    backgroundColor: "#DC2626",
+    borderColor: "#DC2626",
+    minWidth: 120,
+  },
+  btnDangerText: {
+    color: "#FFFFFF",
+    fontFamily: "SemiBold",
+    fontSize: 14,
   },
 });

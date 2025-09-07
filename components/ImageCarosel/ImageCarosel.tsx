@@ -22,7 +22,7 @@ export default function ImageCarousel({ selectedImages, setSelectedImages }: Pro
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 0.1,
+      quality: 0.4,
       selectionLimit: 10,
     });
 
