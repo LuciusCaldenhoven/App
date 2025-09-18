@@ -61,7 +61,7 @@ export default Sentry.wrap(function RootLayout() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
             <View
-              style={{ flex: 1, backgroundColor: "white" }}
+               style={{ flex: 1, backgroundColor: "white" }}
               onLayout={onLayoutRootView}
             >
               <InitialLayout />
