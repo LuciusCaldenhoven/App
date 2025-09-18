@@ -130,6 +130,8 @@ const ChatPage = () => {
   const generateUploadUrl = useMutation(api.mensajes.generateUploadUrl);
   const sendMessage = useMutation(api.mensajes.sendMessage);
   const messages = useQuery(api.mensajes.getMessages, { chatId: chatid as Id<'chats'> }) || [];
+  const resetBadge = useMutation(api.chats.resetBadge);
+
 
   const chats = useQuery(api.chats.getChats);
   const { userId } = useAuth();
@@ -142,6 +144,21 @@ const ChatPage = () => {
     () => [...messages].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     [messages]
   );
+
+  useEffect(() => {
+    if (chatid) {
+      resetBadge({ chatId: chatid as Id<"chats"> }).catch(() => {});
+    }
+  }, [chatid]);
+
+  const handleGoBack = async () => {
+  try {
+    if (chatid) await resetBadge({ chatId: chatid as Id<"chats"> });
+  } finally {
+    router.back();
+  }
+};
+
 
   // dedup optimistas cuando llega el real
   const combinedMessages = useMemo(() => {
@@ -164,7 +181,7 @@ const ChatPage = () => {
       const msgDate = new Date(msg.createdAt);
       const dayString = msgDate.toLocaleDateString();
 
-      if (lastDate !== dayString) {
+    if (lastDate !== dayString) {
         result.unshift({ type: 'date', id: `date-${dayString}`, date: dayString });
         lastDate = dayString;
       }
@@ -218,6 +235,7 @@ const ChatPage = () => {
         product: optimisticMsg.product,
       });
 
+      // ======= PUSH NOTIFICATION: vibración + deep-link =======
       if (otherUser?.pushToken?.startsWith('ExponentPushToken')) {
         fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
@@ -226,9 +244,16 @@ const ChatPage = () => {
             to: otherUser.pushToken,
             title: currentUser?.fullname || 'Nuevo mensaje',
             body: optimisticMsg.file ? '📷 ' + trimmed : trimmed,
+            channelId: 'default',   // Android: usa canal con vibración
+            sound: 'default',       // iOS: reproduce sonido (y vibra según sistema)
+            data: {
+              chatId: chatid,       // Deep link al chat
+              from: currentUser?._id,
+            },
           }),
         }).catch(() => {});
       }
+      // ==============================================
 
       setTimeout(() => {
         setOptimistic((prev) => prev.filter((m) => m._id !== tempId));
@@ -275,7 +300,7 @@ const ChatPage = () => {
         const uploadUrl = await generateUploadUrl();
         const uploadResponse = await fetch(uploadUrl, {
           method: 'POST',
-          headers: { 'Content-Type': blob.type || 'image/jpeg' },
+          headers: { 'Content-Type': (blob as any).type || 'image/jpeg' },
           body: blob,
         });
 
@@ -299,7 +324,7 @@ const ChatPage = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.icon2}>
           <ChevronLeft size={30} color={'black'} strokeWidth={1.7} />
         </TouchableOpacity>
 

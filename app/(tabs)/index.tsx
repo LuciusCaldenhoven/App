@@ -75,11 +75,12 @@ export default function Index() {
           </View>
         <HorizontalPostSection  title="Zapatillas" nivel3="Zapatillas" />
         <HorizontalPostSection title="Celulares" nivel3="Celulares" />
-        <HorizontalPostSection title="Consolas y accesorios" nivel3="Consolas y accesorios" />
+        <HorizontalPostSection title="Tecnología y electrónica" category="Tecnología y electrónica" />
         <HorizontalPostSection  title="Ropa" nivel2="Ropa" />
         <HorizontalPostSection  title="Vehículos" category="Vehículos" />
         <HorizontalPostSection  title="Motos" category="Motos" />
         <HorizontalPostSection  title="Electrodomésticos" category="Electrodomésticos" />
+        <HorizontalPostSection  title="Accesorios" nivel2="Accesorios" />
         </View>
       </Animated.ScrollView>
 

@@ -6,49 +6,55 @@ import { getAuthenticatedUser } from "./users";
 export const sendMessage = mutation({
   args: {
     content: v.string(),
-    chatId: v.id('chats'),
-    file: v.optional(v.id("_storage")),  
-    product: v.optional(v.id('posts')),  
+    chatId: v.id("chats"),
+    file: v.optional(v.id("_storage")),
+    product: v.optional(v.id("posts")),
   },
   handler: async (ctx, { content, chatId, file, product }) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
-    // Inserta el mensaje en la tabla `messages`
-    const messageId = await ctx.db.insert('messages', {
+    const messageId = await ctx.db.insert("messages", {
       chatId,
       senderId: currentUser._id,
       content,
       file,
-      createdAt: Date.now(),
       product,
+      createdAt: Date.now(),
     });
 
-    /// dentro de tu mutation después de guardar el mensaje:
-    let lastMessage = '';
+    // preview de último mensaje
+    let lastMessage = "";
+    if (content) lastMessage = file ? `📷 ${content}` : content;
+    else if (file) lastMessage = "📷 Foto";
+    else if (product) lastMessage = "🏷️ Producto";
+    else lastMessage = "Mensaje";
 
-    if (content) {
-      // había texto
-      lastMessage = file ? `📷 ${content}` : content;
-    } else if (file) {
-      // sin texto pero con imagen
-      lastMessage = '📷 Foto';
-    } else if (product) {
-      // sin texto ni imagen pero con producto adjunto
-      lastMessage = '🏷️ Producto';
-    } else {
-      // fallback
-      lastMessage = 'Mensaje';
-    }
+    const chat = await ctx.db.get(chatId);
+    if (!chat) throw new Error("Chat no encontrado");
 
-    await ctx.db.patch(chatId, {
+    const sellerId = chat.sellerId;
+    const buyerId  = chat.buyerId;
+    const senderId = currentUser._id;
+
+    let patch: any = {
       lastMessage,
       lastTime: Date.now(),
-    });
+    };
 
+    // 🔔 prende el badge del destinatario y apaga el del emisor
+    if (senderId === sellerId) {
+      patch.badgeSeller = 0;
+      patch.badgeBuyer  = 1;
+    } else {
+      patch.badgeSeller = 1;
+      patch.badgeBuyer  = 0;
+    }
 
+    await ctx.db.patch(chatId, patch);
     return messageId;
   },
 });
+
 
 export const getMessages = query({
   args: { chatId: v.id('chats') },
