@@ -84,7 +84,11 @@ export default function ResetPasswordScreen() {
   const [sendingCode, setSendingCode] = useState(false);
   const [submittingReset, setSubmittingReset] = useState(false);
 
-  const otpRefs = Array.from({ length: 6 }, () => useRef<TextInput>(null));
+  // ✅ FIX: inicializar refs sin violar reglas de hooks + tipado que permite null
+  const otpRefs = useRef<React.RefObject<TextInput | null>[]>(
+    Array.from({ length: 6 }, () => React.createRef<TextInput | null>())
+  );
+
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // -------- Animaciones (UI only) --------
@@ -190,7 +194,7 @@ export default function ResetPasswordScreen() {
     const next = [...otp];
     next[idx] = d;
     setOtp(next);
-    if (d && idx < 5) otpRefs[idx + 1].current?.focus();
+    if (d && idx < 5) otpRefs.current[idx + 1].current?.focus(); // uso actualizado
   };
 
   const handleResetPassword = async () => {
@@ -339,7 +343,7 @@ export default function ResetPasswordScreen() {
                 {otp.map((digit, idx) => (
                   <Animated.View key={idx} style={{ transform: [{ scale: otpScales[idx] }] }}>
                     <TextInput
-                      ref={otpRefs[idx]}
+                      ref={otpRefs.current[idx]} // uso actualizado
                       style={S.otpInput}
                       keyboardType="number-pad"
                       maxLength={1}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,10 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
-  Image,
   Animated,
   Easing,
 } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
 import Toast from "react-native-toast-message";
 import { Mail, User } from "lucide-react-native";
@@ -72,7 +71,6 @@ export default function Register() {
   const { signUp, setActive } = useSignUp();
   const router = useRouter();
   
-
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -82,7 +80,10 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
 
-  const otpRefs = Array.from({ length: 6 }, () => useRef<TextInput>(null));
+  // ✅ FIX: refs inicializados correctamente
+  const otpRefs = useRef<React.RefObject<TextInput | null>[]>(
+  Array.from({ length: 6 }, () => React.createRef<TextInput | null>())
+);
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -144,7 +145,7 @@ export default function Register() {
     Animated.spring(val, { toValue: 1, useNativeDriver: true }).start();
 
   // -----------------------
-  // LÓGICA (como tu código)
+  // LÓGICA
   // -----------------------
   const handleSignUp = async () => {
     try {
@@ -218,7 +219,7 @@ export default function Register() {
       }
     } catch (err: any) {
       const msg = err?.errors?.[0]?.message || "Código incorrecto.";
-      triggerOtpShake(); // anim: shake cuando falla verificación
+      triggerOtpShake(); 
       Toast.show({ type: "error", position: "top", text1: "Error de verificación", text2: msg });
     } finally {
       setVerifying(false);
@@ -226,13 +227,13 @@ export default function Register() {
   };
 
   const handleOtpChange = (val: string, idx: number) => {
-    const d = val.replace(/\D/g, "").slice(-1); // solo 1 carácter numérico
+    const d = val.replace(/\D/g, "").slice(-1);
     const next = [...otp];
     next[idx] = d;
     setOtp(next);
 
     if (d && idx < 5) {
-      otpRefs[idx + 1].current?.focus();
+      otpRefs.current[idx + 1].current?.focus(); // ✅ FIX
     }
   };
 
@@ -253,7 +254,6 @@ export default function Register() {
         <Animated.View style={{ opacity: sectionFade }}>
           {!pendingVerification ? (
             <>
-              
               <Animated.View style={[S.inputWrap, { transform: [{ scale: emailScale }] }]}>
                 <Mail size={24} style={S.leftIcon} strokeWidth={1.65}/>
                 <TextInput
@@ -269,7 +269,6 @@ export default function Register() {
                 />
               </Animated.View>
               
-
               <Animated.View style={[S.inputWrap, { transform: [{ scale: nameScale }] }]}>
                 <User size={24} style={S.leftIcon} strokeWidth={1.65}/>
                 <TextInput
@@ -338,7 +337,7 @@ export default function Register() {
                 {otp.map((digit, idx) => (
                   <Animated.View key={idx} style={{ transform: [{ scale: otpScales[idx] }] }}>
                     <TextInput
-                      ref={otpRefs[idx]}
+                      ref={otpRefs.current[idx]} // ✅ FIX
                       style={S.otpInput}
                       keyboardType="number-pad"
                       maxLength={1}

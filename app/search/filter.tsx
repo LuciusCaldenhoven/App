@@ -123,7 +123,7 @@ export default function Filter({
         priceRange: [prev.priceRange[0], highestPrice],
       }));
     }
-  }, [highestPrice, visible]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [highestPrice, visible]);  
 
   const handleApplyFilters = () => {
     onApplyFilters(filters); // el padre hará MERGE y conservará nivel2/nivel3/nivel4/subcategory
