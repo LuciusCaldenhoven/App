@@ -76,8 +76,7 @@ export default defineSchema({
         sellerId: v.id("users"),
         lastMessage: v.optional(v.string()),
         lastTime: v.optional(v.number()),
-        badgeSeller: v.optional(v.number()),
-        badgeBuyer: v.optional(v.number()),
+        badge: v.optional(v.number()),
     })
         .index("by_buyer", ["buyerId"])
         .index("by_seller", ["sellerId"]),

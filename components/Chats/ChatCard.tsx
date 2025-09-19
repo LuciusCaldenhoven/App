@@ -125,7 +125,11 @@ const createStyles = (isSelf: boolean) =>
       marginHorizontal: 10,
       marginBottom: 3,
       // sombra sutil
-
+      shadowColor: '#000',
+      shadowOpacity: 0.06,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 1,
     },
 
     /** ---------- PRODUCT STYLES (mejorado) ---------- */
