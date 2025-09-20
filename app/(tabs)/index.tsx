@@ -70,9 +70,9 @@ export default function Index() {
         <View style={styles.scrollContent}>
 
           <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
-
-            <SearchBar query={searchInput} />
+              <SearchBar query={searchInput} />
           </View>
+          
         <HorizontalPostSection  title="Zapatillas" nivel3="Zapatillas" />
         <HorizontalPostSection title="Celulares" nivel3="Celulares" />
         <HorizontalPostSection title="Consolas y accesorios" nivel3="Consolas y accesorios" />
