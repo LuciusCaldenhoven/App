@@ -30,7 +30,7 @@ const ChatCard = ({ isSelf = false, message = '', time, file, product }: IChatCa
   const [visible, setIsVisible] = useState(false);
 
   const priceLabel =
-    productData?.post?.price != null ? `$${productData.post.price}.00` : undefined;
+    productData?.post?.price != null ? (productData.post.currency === 'Soles' ? `S/${productData.post.price}.00` : `$ ${productData.post.price}.00`) : undefined;
 
   return (
     <View style={styles.cardWrapper}>
@@ -125,11 +125,6 @@ const createStyles = (isSelf: boolean) =>
       marginHorizontal: 10,
       marginBottom: 3,
       // sombra sutil
-      shadowColor: '#000',
-      shadowOpacity: 0.06,
-      shadowRadius: 6,
-      shadowOffset: { width: 0, height: 2 },
-      elevation: 1,
     },
 
     /** ---------- PRODUCT STYLES (mejorado) ---------- */

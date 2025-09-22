@@ -168,12 +168,12 @@ export const getFeed = query({
     const recent = filtered.filter(p => p._creationTime >= sevenDaysAgo);
 
     // 3) Elegir 6 recientes al azar
-    const recent6 = shuffle(recent).slice(0, 6);
+    const recent6 = shuffle(recent).slice(0, 5);
 
     // 4) Elegir 6 aleatorios del resto
     const idsRecientes = new Set(recent6.map(p => p._id));
     const resto = filtered.filter(p => !idsRecientes.has(p._id));
-    const random6 = shuffle(resto).slice(0, 6);
+    const random6 = shuffle(resto).slice(0, 5);
 
     return { recent: recent6, random: random6 };
   }

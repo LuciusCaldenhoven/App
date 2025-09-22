@@ -11,21 +11,21 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/ToastConfig/ToastConfig";
 import * as SplashScreen from "expo-splash-screen";
-import { Slot, Stack } from "expo-router";
-import * as Sentry from "@sentry/react-native";
+import { router, Stack } from "expo-router";
+import * as Notifications from "expo-notifications";
+import * as Haptics from "expo-haptics";
 
-Sentry.init({
-  dsn: "https://72764997257966ae36443d94dd37d6e4@o4509735474495488.ingest.us.sentry.io/4509735477116928",
-  sendDefaultPii: true,
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [
-    Sentry.mobileReplayIntegration(),
-    Sentry.feedbackIntegration(),
-  ],
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
 });
 
-export default Sentry.wrap(function RootLayout() {
+export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Regular: require("../assets/fonts/Poppins-Regular.ttf"),
     Light: require("../assets/fonts/Poppins-Light.ttf"),
@@ -37,13 +37,72 @@ export default Sentry.wrap(function RootLayout() {
   });
 
   useEffect(() => {
+    // Evitar side-effects en import; llamar aquí es más predecible
     SplashScreen.preventAutoHideAsync().catch(console.warn);
 
     if (Platform.OS === "android") {
-      Navigation.setBackgroundColorAsync("#ffffff");
-      Navigation.setButtonStyleAsync("dark");
+      Navigation.setBackgroundColorAsync("#ffffff").catch(console.warn);
+      Navigation.setButtonStyleAsync("dark").catch(console.warn);
     }
-  }, []);
+
+    const setupChannels = async () => {
+      try {
+        if (Platform.OS === "android") {
+          await Notifications.setNotificationChannelAsync("default", {
+            name: "Mensajes",
+            importance: Notifications.AndroidImportance.HIGH,
+            vibrationPattern: [0, 250, 100, 250],
+            enableVibrate: true,
+            sound: "default",
+            lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+          });
+        }
+      } catch (e) {
+        console.warn("Error creando canal de notificaciones:", e);
+      }
+    };
+
+    const requestPerms = async () => {
+      try {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status !== "granted") {
+          await Notifications.requestPermissionsAsync();
+        }
+      } catch (e) {
+        console.warn("Error pidiendo permisos de notificación:", e);
+      }
+    };
+
+    setupChannels();
+    requestPerms();
+
+    const subReceived = Notifications.addNotificationReceivedListener(async () => {
+      try {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch (e) {
+        console.warn("Haptics fallo:", e);
+      }
+    });
+
+    const subResponse = Notifications.addNotificationResponseReceivedListener((resp) => {
+      try {
+        const data = resp.notification.request.content.data as Record<string, any>;
+        const chatId = data?.chatId;
+        if (typeof chatId === "string" && chatId.length) {
+          // ruta simple y robusta
+          router.push(`/chat/${chatId}`);
+        }
+      } catch (e) {
+        console.warn("Error manejando respuesta de notificación:", e);
+        // Aquí podrías enviar a Sentry si lo integras
+      }
+    });
+
+    return () => {
+      subReceived.remove();
+      subResponse.remove();
+    };
+  }, [router]); // si eslint te pide cambio, puedes usar [] si sabes que router es estable
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -51,25 +110,20 @@ export default Sentry.wrap(function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
-            <View
-              style={{ flex: 1, backgroundColor: "white" }}
-              onLayout={onLayoutRootView}
-            >
+            <View style={{ flex: 1, backgroundColor: "white" }} onLayout={onLayoutRootView}>
               <InitialLayout />
-              <Stack screenOptions={{ headerShown: false, animation: "default", }} >
-                <Stack.Screen name="(auth)/login" options={{ animation: 'fade', }} />
+              <Stack screenOptions={{ headerShown: false, animation: "default" }}>
+                <Stack.Screen name="(auth)/login" options={{ animation: "fade" }} />
                 <Stack.Screen name="(auth)/register" />
                 <Stack.Screen name="(auth)/reset-password" />
-                <Stack.Screen name="(tabs)" options={{ animation: 'fade', }} />
+                <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
                 <Stack.Screen name="product/[productId]" />
                 <Stack.Screen name="InfoProducto/infoProducto" />
                 <Stack.Screen name="editProfile/editProfile" />
@@ -86,6 +140,7 @@ export default Sentry.wrap(function RootLayout() {
                 <Stack.Screen name="soporte/ReportarProblema" />
                 <Stack.Screen name="notificaciones/notificaciones" />
                 <Stack.Screen name="working/working" />
+                 <Stack.Screen name="location/LocationPickerScreen" options={{ animation: "slide_from_bottom" }} />
               </Stack>
               <Toast config={toastConfig} />
               <StatusBar style="dark" />
@@ -95,4 +150,6 @@ export default Sentry.wrap(function RootLayout() {
       </SafeAreaProvider>
     </ClerkAndConvexProvider>
   );
-});
+}
+
+

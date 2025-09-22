@@ -1,22 +1,113 @@
-import { scale } from "@/constants/scale";
-import { COLORS, SIZES } from "@/constants/theme";
-import { Dimensions, Platform, StatusBar, StyleSheet } from "react-native";
+import { Dimensions, Platform, StyleSheet } from "react-native";
+const { width } = Dimensions.get("window");
 
-const { width } = Dimensions.get('window');
 const carouselHeight = Math.round(width * 0.42);
-const ITEM_WIDTH = width / 2 - 16;
 
-const HEADER_HEIGHT = 160;
+
 const styles = StyleSheet.create({
-
-  container: {
+  page: {
     flex: 1,
     backgroundColor: "#F5F5F5",
   },
-  containerCarousel: {
-    paddingTop: 20,
+
+  /* BACK PLATE: fondo blanco que aparece detrás del header+search */
+  backPlate: {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: "white",
+  zIndex: 5,
+  elevation: 5,
+  borderBottomLeftRadius: 35,
+  borderBottomRightRadius: 35,
+},
+
+    containerCarousel: {
+    paddingBottom: 15,
     alignItems: "center",
   },
+  headerContainer: {
+  width: "100%",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingHorizontal: 16,
+  paddingVertical: 6,
+},
+headerTexts: {
+  flex: 1,
+  marginRight: 10, // espacio para el chevron
+},
+headerSmall: {
+  fontSize: 13,
+  color: "#666",
+  fontFamily: "Regular",
+  marginBottom: 2,
+},
+headerLarge: {
+  fontSize: 16,
+  color: "#111",
+  fontFamily: "Medium",
+  includeFontPadding: false, // para mejor alineación en Android
+},
+chevronButton: {
+  width: 36,
+  height: 36,
+  borderRadius: 18,
+  backgroundColor: "rgba(0,0,0,0.06)", // círculo gris claro como en la imagen
+  alignItems: "center",
+  justifyContent: "center",
+},
+
+  /* HEADER (absolute en el componente) */
+  headerRow: {
+    width: "100%",
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "transparent",
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: "Medium",
+    color: "#111",
+  },
+  headerLocationButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: "transparent",
+  },
+  headerLocationText: {
+    marginLeft: 6,
+    marginRight: 4,
+    fontSize: 14,
+    color: "#444",
+    fontFamily: "Regular",
+    maxWidth: width * 0.45,
+  },
+
+
+item: {
+
+    alignItems:'center',
+    width: "100%",
+    height: carouselHeight,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  image: {
+    width: "90%",
+    height: "100%",
+    borderRadius: 12,
+  },
+
   SectionContainer: {
     paddingHorizontal: 20,
 
@@ -33,238 +124,60 @@ const styles = StyleSheet.create({
 
   iconWrapper2: {
     alignItems: 'center',
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#e4e1e1ff",
     padding: 8,
     borderRadius: 999,
     width: 45,
   },
 
-  item: {
-
-    alignItems:'center',
-    width: "100%",
-    height: carouselHeight,
-    borderRadius: 12,
-    overflow: "hidden",
+  /* SEARCH button (se posiciona absolute en Index) */
+  searchWrapper: {
+    // deja vacío: la posición la maneja Index.jsx
   },
-  image: {
-    width: "90%",
-    height: "100%",
-    borderRadius: 12,
-  },
-  searchContainer: {
+  searchButton: {
     flexDirection: "row",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 99,
-    paddingHorizontal: 14,
-    paddingVertical: Platform.OS === 'ios' ? 15 : 10,
     alignItems: "center",
-    marginVertical: 10,
+    gap: 10,
+    backgroundColor: "#fff",
+    borderRadius: 999,
+    paddingVertical: Platform.OS === "ios" ? 14 : 10,
+    paddingHorizontal: 14,
+    // sombra ligera
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 1,
   },
-  input: {
-    flex: 1,
+  searchPlaceholder: {
     fontSize: 16,
-    color: "#4e5443",
+    color: "#7a7a7a",
     fontFamily: "Regular",
   },
 
-  iconWrapper: {
-    backgroundColor: "#fff",
-    padding: 8,
-    borderRadius: 999,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-    elevation: 2, // para Android
-    zIndex: 100, 
-  },
-  stickyHeaderWrapper: {
-  position: 'absolute',
-  top: HEADER_HEIGHT,
-  width: '100%',
-  zIndex: 100,
-  backgroundColor: 'white', // si tu fondo es blanco
-  paddingBottom: 10,
-},
-  topSection: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    paddingVertical: 60,
-    backgroundColor: "#F5F5F5", // gris claro
-    justifyContent: "flex-end",
-    paddingBottom: 20,
-
-    
-  },
-
-
-   
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-  title: {
-   
-    fontSize: 16,
-    color: "#111",
-    fontFamily: 'Medium'
-  },
-  name: {
-    paddingLeft: 5,
-    fontSize: 20,
-    color: "#111",
-    fontFamily: 'Medium'
-  },
-  subName: {
-    paddingLeft: 5,
-    fontSize: 20,
-    color: "#111",
-    fontFamily: 'Medium'
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "#666",
-    fontFamily: 'Regular'
-  },
-  dot: {
-    position: "absolute",
-    top: -2,
-    right: -2,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#007AFF",
-  },
+  /* scroll / contenido */
   scroll: {
     flex: 1,
-
+    zIndex: 1,
   },
-  scrollContent: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 35,
-    borderTopRightRadius: 35,
-    marginTop: -HEADER_HEIGHT / 2,
-    paddingVertical: 10,
-
+  bannerPlaceholder: {
+    width: width,
+    height: Math.round(width * 0.42),
+    paddingHorizontal: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-  scrollText: {
-    fontSize: 16,
-    marginBottom: 12,
-  },
-  HorizontalContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  tab: {
-    backgroundColor: "#F5F7FA",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-    marginRight: 10,
-  },
-  activeTab: {
-    backgroundColor: "#adc92b", // azul oscuro
-  },
-  tabText: {
-    fontSize: 14,
-    color: "#222",
-
-    fontFamily: 'Medium'
-  },
-  activeTabText: {
-    color: "#fff",
-    fontWeight: "500",
-  },
-  slider: {
-    width: 300,
-    height: 40,
-
-  },
-  sliderContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  kmLabel: {
-    fontSize: 14,
-    color: '#444',
-    textAlign: 'center',
-  },
-
-  kmValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111',
-  },
-
-  secondaryButton: {
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  bannerImage: {
+    width: width - 32,
+    height: Math.round(width * 0.42),
     borderRadius: 12,
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 16,
   },
-
-  secondaryButtonText: {
-    color: '#222',
+  bodyText: {
     fontSize: 15,
-    fontWeight: '600',
+    lineHeight: 22,
+    color: "#333",
+    fontFamily: "Regular",
   },
-
-  primaryButton: {
-    backgroundColor: '#adc92b',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    width: '100%',
-    marginBottom: 40,
-    marginTop: 20,
-  },
-
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  containerDown: {
-    width: '95%',
-    paddingVertical: 10,
-    alignSelf: 'center',
-    gap: 16,
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  locationTextContainer: {
-    marginLeft: 10,
-  },
-  kmText: {
-    fontSize: 13,
-    fontFamily: 'Regular',
-    color: '#444',
-    marginTop: 2,
-  },
-  locationText: {
-    fontSize: 14,
-    fontFamily: 'Medium'
-  },
-
-
 });
 
 export default styles;

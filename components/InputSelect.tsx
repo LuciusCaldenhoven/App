@@ -14,20 +14,55 @@ interface InputSelectProps {
 }
 
 const InputSelect = ({ label, data, value, onChangeText, iconComponent, onFocus, duration = 200, }: InputSelectProps) => {
+  // Animated values kept in refs so they persist across re-renders
   const borderWidth = useRef(new Animated.Value(1.25)).current;
   const transY = useRef(new Animated.Value(0)).current;
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
-
+  // Keep selectedItem in sync with prop value (useful if parent controls it)
   useEffect(() => {
-    setSelectedItem(value);
-      if (value?.trim() !== '') {
-          animateTransform(-40);
-          animateBorderWidth(2);
-      }
-  }, [value]);
-      
+    setSelectedItem((prev: { title: string; }) => {
+      // if value matches previous selectedItem.title keep it, otherwise clear or find item
+      if (prev && prev.title === value) return prev;
+      const found = data.find((d) => d.title === value);
+      return found ?? null;
+    });
+
+    // Let a single effect decide floating label
+    const hasSomething = Boolean(value?.trim() || selectedItem);
+    if (hasSomething) {
+      Animated.timing(transY, {
+        toValue: -40,
+        duration,
+        useNativeDriver: true,
+        easing: Easing.ease,
+      }).start();
+      Animated.timing(borderWidth, {
+        toValue: 2,
+        duration,
+        useNativeDriver: false,
+        easing: Easing.ease,
+      }).start();
+    } else {
+      Animated.timing(transY, {
+        toValue: 0,
+        duration,
+        useNativeDriver: true,
+        easing: Easing.ease,
+      }).start();
+      Animated.timing(borderWidth, {
+        toValue: 1.25,
+        duration,
+        useNativeDriver: false,
+        easing: Easing.ease,
+      }).start();
+    }
+    // Note: include selectedItem reference so we re-run when user selects.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, selectedItem]);
+
   const animateTransform = (toValue: number) => {
     Animated.timing(transY, {
       toValue,
@@ -52,8 +87,10 @@ const InputSelect = ({ label, data, value, onChangeText, iconComponent, onFocus,
     onFocus?.();
   };
 
-  const handleBlur = (currentValue: string) => {
-    if (!currentValue) {
+  // handleBlur now only lowers label when there really is NO value / selection
+  const handleBlur = () => {
+    const hasSomething = Boolean(value?.trim() || selectedItem);
+    if (!hasSomething) {
       animateTransform(0);
       animateBorderWidth(1.25);
     }
@@ -99,7 +136,9 @@ const InputSelect = ({ label, data, value, onChangeText, iconComponent, onFocus,
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
-        onDismiss={() => { if (!selectedItem) handleBlur(''); }}
+        onDismiss={() => {
+          // No animation here: useEffect will keep the label consistent based on value / selectedItem
+        }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.6} pressBehavior="close" />
         )}
@@ -109,10 +148,14 @@ const InputSelect = ({ label, data, value, onChangeText, iconComponent, onFocus,
             <Pressable
               key={index}
               onPress={() => {
+                // 1) update local state and parent BEFORE dismissing
                 setSelectedItem(item);
                 onChangeText(item.title);
+
+                // 2) dismiss sheet. The useEffect above will detect selectedItem/value and keep label up.
                 bottomSheetModalRef.current?.dismiss();
-                handleBlur(item.title);
+
+                // DO NOT call handleBlur(item.title) here — that caused the label to drop previously.
               }}
               style={styles.itemContainer}
             >

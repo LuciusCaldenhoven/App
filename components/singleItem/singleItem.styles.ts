@@ -1,7 +1,5 @@
-import { scale } from '@/constants/scale';
 import { COLORS, FontSize } from '@/constants/theme';
-import {StyleSheet} from 'react-native';
-
+import { StyleSheet } from 'react-native';
 
 export const createStyles = (isHighlighted?: boolean) =>
   StyleSheet.create({
@@ -9,71 +7,98 @@ export const createStyles = (isHighlighted?: boolean) =>
       flex: 1,
       backgroundColor: COLORS.background,
     },
-    headerAction: {
+
+    rowWrapper: {
+      backgroundColor: COLORS.white,
+    },
+
+    singleItem: {
+      backgroundColor: COLORS.white,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
       flexDirection: 'row',
       alignItems: 'center',
-      columnGap: scale(10),
+      columnGap: 12,
+      minHeight: 60,
+    },
+    pressed: { opacity: 0.85 },
+
+    separator: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: '#E6E6E6',
+      marginLeft: 72, // avatar (44) + gap (12) + margen
+      marginVertical: 4,
+    },
+
+    avatarWrap: {
+      height: 44,
+      width: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     person: {
-      height: scale(40),
-      width: scale(40),
-      borderRadius: 100,
+      height: 44,
+      width: 44,
+      borderRadius: 22,
+      backgroundColor: '#F2F2F2',
     },
-    title: {
-      fontSize: FontSize.FONT_20Px,
-      fontFamily: "Bold",
-      color: COLORS.black,
-    },
-    input: {
-      marginHorizontal: scale(18),
-    },
-    main: {
-      flex: 1,
-    },
-    singleItem: {
-      backgroundColor: isHighlighted ? COLORS.white : 'tranparent',
-      paddingVertical: scale(10),
-      marginVertical: scale(10),
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      columnGap: scale(10),
-      paddingHorizontal: scale(18),
-    },
+
     messageContainer: {
       flex: 1,
-      rowGap: scale(4),
+      rowGap: 2,
+      minHeight: 44,
+      justifyContent: 'center',
     },
     name: {
       fontSize: FontSize.FONT_15Px,
-      fontFamily: "SemiBold",
+      fontFamily: 'SemiBold',
       color: COLORS.black,
+    },
+    nameUnread: {
+      fontFamily: 'Bold',
     },
     message: {
       fontSize: FontSize.FONT_12Px,
-      fontFamily: "Regular",
+      fontFamily: 'Regular',
       color: COLORS.gray,
     },
+    messageUnread: {
+      color: COLORS.black,
+      fontFamily: 'Medium',
+    },
+
+    timeContainer: {
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      rowGap: 6,
+      minHeight: 44,
+      marginLeft: 6,
+      width: 64,
+    },
     time: {
-      fontSize: FontSize.FONT_12Px,
-      fontFamily: "Regular",
+      fontSize: FontSize.FONT_11Px ?? 11,
+      fontFamily: 'Regular',
       color: COLORS.placeholder,
     },
-    timeContainer: {
-      columnGap: scale(10),
-      alignItems: 'center',
-      rowGap: scale(4),
+    timeUnread: {
+      fontFamily: 'SemiBold',
+      color: COLORS.black,
     },
+
     badge: {
-      backgroundColor: COLORS.badgeBg,
-      height: scale(20),
-      width: scale(20),
-      borderRadius: 100,
+      backgroundColor: "#adc92b",
+      minHeight: 18,
+      minWidth: 18,
+      paddingHorizontal: 6,
+      borderRadius: 9,
       alignItems: 'center',
       justifyContent: 'center',
     },
     badgeText: {
-      fontFamily: "Bold",
-      fontSize: FontSize.FONT_12Px,
+      fontFamily: 'Bold',
+      fontSize: FontSize.FONT_11Px ?? 11,
       color: COLORS.white,
+      includeFontPadding: false,
+      textAlignVertical: 'center',
     },
   });

@@ -130,6 +130,7 @@ const ChatPage = () => {
   const generateUploadUrl = useMutation(api.mensajes.generateUploadUrl);
   const sendMessage = useMutation(api.mensajes.sendMessage);
   const messages = useQuery(api.mensajes.getMessages, { chatId: chatid as Id<'chats'> }) || [];
+  const resetBadge = useMutation(api.chats.resetBadge);
 
   const chats = useQuery(api.chats.getChats);
   const { userId } = useAuth();
@@ -142,6 +143,20 @@ const ChatPage = () => {
     () => [...messages].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
     [messages]
   );
+
+  useEffect(() => {
+    if (chatid) {
+      resetBadge({ chatId: chatid as Id<"chats"> }).catch(() => {});
+    }
+  }, [chatid]);
+
+  const handleGoBack = async () => {
+  try {
+    if (chatid) await resetBadge({ chatId: chatid as Id<"chats"> });
+  } finally {
+    router.back();
+  }
+};
 
   // dedup optimistas cuando llega el real
   const combinedMessages = useMemo(() => {
@@ -218,17 +233,37 @@ const ChatPage = () => {
         product: optimisticMsg.product,
       });
 
-      if (otherUser?.pushToken?.startsWith('ExponentPushToken')) {
-        fetch('https://exp.host/--/api/v2/push/send', {
+
+      
+
+
+     const token = otherUser?.pushToken;
+    if (typeof token === 'string' && token.startsWith('ExponentPushToken')) {
+      try {
+        const res = await fetch('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
           headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            to: otherUser.pushToken,
+            to: token,
             title: currentUser?.fullname || 'Nuevo mensaje',
             body: optimisticMsg.file ? '📷 ' + trimmed : trimmed,
+            channelId: 'default',
+            sound: 'default',
+            data: {
+              chatId: chatid,
+              from: currentUser?._id,
+            },
           }),
-        }).catch(() => {});
+        });
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => 'no body');
+          console.warn('Expo push send failed:', res.status, text);
+        }
+      } catch (err) {
+        console.warn('Error enviando push:', err);
       }
+    }
 
       setTimeout(() => {
         setOptimistic((prev) => prev.filter((m) => m._id !== tempId));
@@ -299,7 +334,7 @@ const ChatPage = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.icon2}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.icon2}>
           <ChevronLeft size={30} color={'black'} strokeWidth={1.7} />
         </TouchableOpacity>
 

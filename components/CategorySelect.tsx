@@ -1,19 +1,23 @@
-// CategorySelect.tsx
+// CategorySelect.fixed.tsx
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, Keyboard, Pressable, StyleSheet, Text, View, Image } from 'react-native';
+import {
+  Animated,
+  Easing,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+} from 'react-native';
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { scale } from '@/constants/scale';
 import DATA from '@/assets/categoria/all';
 import { CATEGORY_ICON_BY_SLUG, slugify } from '@/assets/categoria/iconMap';
 
-// Tipos de árbol
 type Leaf = null | string;
 interface CategoryNodeObj { [key: string]: CategoryNode }
-type CategoryNode =
-  | Leaf
-  | string[]
-  | CategoryNodeObj
-  | (string | CategoryNodeObj)[];
+type CategoryNode = Leaf | string[] | CategoryNodeObj | (string | CategoryNodeObj)[];
 
 interface CategorySelectProps {
   label: string;
@@ -29,7 +33,6 @@ interface CategorySelectProps {
   onChangePath?: (path: string[]) => void;
 }
 
-// Helpers
 type Item = { key: string; hasChildren: boolean; path: string[] };
 
 function getNodeByPath(root: Record<string, CategoryNode>, path: string[]): CategoryNode {
@@ -69,7 +72,6 @@ function getChildren(node: CategoryNode, path: string[]): Item[] {
       items.push({ key: name, hasChildren: !!child, path: [...path, name] });
     });
   }
-  // sin sort → respeta el orden original
   return items;
 }
 
@@ -77,11 +79,6 @@ function isLeaf(node: CategoryNode): boolean {
   return node == null || typeof node === 'string';
 }
 
-function joinPath(path: string[], delimiter: string) {
-  return path.join(delimiter);
-}
-
-// Componente
 const CategorySelect = ({
   label,
   valueCategory,
@@ -90,15 +87,19 @@ const CategorySelect = ({
   onChangeTextSub,
   iconComponent,
   onFocus,
-  duration = 200,
+  duration = 180,
   tree,
   delimiter = ' > ',
   onChangePath,
 }: CategorySelectProps) => {
+  // Animated refs (persisten entre renders)
+  const labelY = useRef(new Animated.Value(0)).current; // 0 = down, -40 = up
   const borderWidth = useRef(new Animated.Value(1.25)).current;
-  const transY = useRef(new Animated.Value(0)).current;
+
+  // BottomSheet ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
+  // selection state
   const [selectedPath, setSelectedPath] = useState<string[] | null>(null);
   const [currentPath, setCurrentPath] = useState<string[]>([]);
 
@@ -116,62 +117,51 @@ const CategorySelect = ({
     return getChildren(currentNode, currentPath);
   }, [ROOT, currentNode, currentPath]);
 
-  // Animaciones
-  const animateTransform = (toValue: number) => {
-    Animated.timing(transY, { toValue, duration, useNativeDriver: true, easing: Easing.ease }).start();
-  };
-  const animateBorderWidth = (toValue: number) => {
-    Animated.timing(borderWidth, { toValue, duration, useNativeDriver: false, easing: Easing.ease }).start();
-  };
-  const handleFocus = () => {
-    animateTransform(-40);
-    animateBorderWidth(2);
-    onFocus?.();
-  };
-  const handleBlur = (currentValue: string) => {
-    if (!currentValue) {
-      animateTransform(0);
-      animateBorderWidth(1.25);
-    }
+  // Deterministic flag: si debe estar flotando
+  const isFloating = Boolean(
+    (selectedPath && selectedPath.length > 0) || Boolean(valueCategory?.trim()) || Boolean(valueSub?.trim())
+  );
+
+  // animate helper
+  const animateTo = (toUp: boolean) => {
+    const toY = toUp ? -40 : 0;
+    const toBorder = toUp ? 2 : 1.25;
+
+    Animated.parallel([
+      Animated.timing(labelY, { toValue: toY, duration, useNativeDriver: true, easing: Easing.out(Easing.cubic) }),
+      Animated.timing(borderWidth, { toValue: toBorder, duration, useNativeDriver: false, easing: Easing.out(Easing.cubic) }),
+    ]).start();
   };
 
+  // Keep animation in sync with isFloating (single source of truth)
   useEffect(() => {
-  const hasSomething = Boolean(valueCategory?.trim() || valueSub?.trim());
-  if (hasSomething) {
-    animateTransform(-40);
-    animateBorderWidth(2);
-  } else {
-    handleBlur('');
-  }
-}, [valueCategory, valueSub]);
+    animateTo(isFloating);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFloating]);
 
-
+  // focus/open modal
   const handlePresentModalPress = useCallback(() => {
     Keyboard.dismiss();
+    // set currentPath to last selected or root
     setCurrentPath(selectedPath ?? []);
     bottomSheetModalRef.current?.present();
-  }, [selectedPath]);
+    onFocus?.();
+  }, [selectedPath, onFocus]);
 
-  const borderColor = borderWidth.interpolate({ inputRange: [0, 2], outputRange: ['black', '#7ea437'] });
-  const labelColor = borderWidth.interpolate({ inputRange: [0, 2], outputRange: ['grey', 'black'] });
-  const fontSize = borderWidth.interpolate({ inputRange: [0, 2], outputRange: [14, 12] });
-  const transX = transY.interpolate({ inputRange: [-40, 0], outputRange: [-10, 0] });
-
-  // Acciones
+  // Selecting a leaf: update parent state and local selectedPath.
   const selectLeaf = (path: string[]) => {
     const category = path[0] ?? '';
     const sub = path[path.length - 1] ?? '';
 
+    // update state/parent BEFORE dismissing sheet
     setSelectedPath(path);
     onChangeTextCategory(category);
     onChangeTextSub(sub);
     onChangePath?.(path);
 
+    // dismiss; isFloating will remain true because selectedPath or props are set
     bottomSheetModalRef.current?.dismiss();
-    // mantiene animación “flotante” si hay algo seleccionado
-    handleBlur(`${category}${delimiter}${sub}`);
   };
-
 
   const onPressItem = (item: Item) => {
     const node = getNodeByPath(ROOT, item.path);
@@ -186,22 +176,45 @@ const CategorySelect = ({
 
   const displayText = useMemo(() => {
     const parts = [valueCategory, valueSub].filter(Boolean);
+    if (parts.length === 0 && selectedPath && selectedPath.length > 0) {
+      return selectedPath.join(delimiter);
+    }
     return parts.join(delimiter);
-  }, [valueCategory, valueSub, delimiter]);
-
+  }, [valueCategory, valueSub, selectedPath, delimiter]);
 
   const headerText = currentPath.length > 0 ? currentPath[currentPath.length - 1] : '';
 
+  // animated interpolations for styling
+  const borderColor = borderWidth.interpolate({
+    inputRange: [0, 2],
+    outputRange: ['black', '#7ea437'],
+  });
+
+  const labelColor = borderWidth.interpolate({
+    inputRange: [0, 2],
+    outputRange: ['grey', 'black'],
+  });
+
+  const fontSize = borderWidth.interpolate({
+    inputRange: [0, 2],
+    outputRange: [14, 12],
+  });
+
+  const transX = labelY.interpolate({
+    inputRange: [-40, 0],
+    outputRange: [-10, 0],
+  });
+
   return (
-    <Animated.View style={[styles.container, { borderWidth, borderColor }]}>
-      <Animated.View style={[styles.labelContainer, { transform: [{ translateY: transY }, { translateX: transX }] }]}>
+    <Animated.View style={[styles.container, { borderWidth: borderWidth as any, borderColor }]}>
+      <Animated.View style={[styles.labelContainer, { transform: [{ translateY: labelY }, { translateX: transX }] }]}>
         <View style={{ flexDirection: 'row', gap: 5 }}>
           {iconComponent}
           <Animated.Text style={{ color: labelColor, fontSize, fontFamily: 'Medium' }}>{label}</Animated.Text>
         </View>
       </Animated.View>
 
-      <Pressable onPress={() => { handleFocus(); handlePresentModalPress(); }} style={styles.input}>
+      <Pressable onPress={handlePresentModalPress} style={styles.input}>
         <Text style={{ flex: 1, fontFamily: 'Medium', fontSize: 14, color: 'black' }} numberOfLines={1}>
           {displayText}
         </Text>
@@ -212,16 +225,13 @@ const CategorySelect = ({
         snapPoints={['85%']}
         enableDynamicSizing={false}
         onDismiss={() => {
-          const hasSomething = Boolean(valueCategory?.trim() || valueSub?.trim());
-          if (!selectedPath?.length && !hasSomething) handleBlur('');
+          // no animation here: useEffect(isFloating) keeps label state consistent
         }}
-
         backdropComponent={(props) => (
           <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.6} pressBehavior="close" />
         )}
       >
         <BottomSheetScrollView style={styles.bottomSheet} contentContainerStyle={{ paddingBottom: 40 }}>
-          {/* Back dentro de la lista */}
           {currentPath.length > 0 && (
             <>
               <Pressable onPress={goBack} style={styles.backRow} hitSlop={10}>
@@ -232,23 +242,18 @@ const CategorySelect = ({
             </>
           )}
 
-          {items.map((item, idx) => {
+          {items.map((item) => {
             const isRoot = currentPath.length === 0;
             const iconSrc = isRoot ? CATEGORY_ICON_BY_SLUG[slugify(item.key)] : undefined;
-
             return (
               <View key={item.path.join('///')}>
                 <Pressable onPress={() => onPressItem(item)} style={styles.itemContainer}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                    {isRoot && iconSrc && (
-                      <Image source={iconSrc} style={styles.icon} resizeMode="contain" />
-                    )}
+                    {isRoot && iconSrc && <Image source={iconSrc} style={styles.icon} resizeMode="contain" />}
                     <Text style={styles.bottomInfo}>{item.key}</Text>
                   </View>
                   <Text style={styles.rowChevron}>{item.hasChildren ? '›' : ''}</Text>
                 </Pressable>
-
-                {/* Separador entre filas */}
                 <View style={styles.separator} />
               </View>
             );
@@ -259,7 +264,6 @@ const CategorySelect = ({
   );
 };
 
-// Estilos
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',

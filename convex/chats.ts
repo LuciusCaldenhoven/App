@@ -53,28 +53,37 @@ export const createChat = mutation({
 // Obtener los chats de un usuario
 export const getChats = query({
   handler: async (ctx) => {
-    const currentUser = await getAuthenticatedUser(ctx);
+    const me = await getAuthenticatedUser(ctx);
 
-    // Busca chats donde el usuario sea comprador o vendedor
-    const chats = await ctx.db
+    // 1) Trae chats donde soy buyer o seller
+    const rows = await ctx.db
       .query("chats")
       .filter((q) =>
         q.or(
-          q.eq(q.field("buyerId"), currentUser._id),
-          q.eq(q.field("sellerId"), currentUser._id)
+          q.eq(q.field("buyerId"), me._id),
+          q.eq(q.field("sellerId"), me._id)
         )
       )
+      // Nota: sin índice por lastTime, esto ordena por _creationTime desc.
+      // Si quieres garantizar orden por lastTime aquí, crea un índice por lastTime y úsalo.
       .order("desc")
       .collect();
 
-    // Agrega información adicional sobre el comprador, vendedor y producto
+    // 2) Enriquecer con buyer/seller + resolver badge para mí
     const chatsWithInfo = await Promise.all(
-      chats.map(async (chat) => {
-        const buyer = await ctx.db.get(chat.buyerId);
-        const seller = await ctx.db.get(chat.sellerId);
+      rows.map(async (chat) => {
+        const [buyer, seller] = await Promise.all([
+          ctx.db.get(chat.buyerId),
+          ctx.db.get(chat.sellerId),
+        ]);
+
+        const isSeller = chat.sellerId === me._id;
+        // ✅ Resuelve el badge ya listo para el front
+        const badge = isSeller ? (chat.badgeSeller ?? 0) : (chat.badgeBuyer ?? 0);
 
         return {
           ...chat,
+          badge, // <- el front solo usa este
           buyer: {
             _id: buyer?._id ?? null,
             fullname: buyer?.fullname ?? "Usuario desconocido",
@@ -86,11 +95,30 @@ export const getChats = query({
             fullname: seller?.fullname ?? "Usuario desconocido",
             image: seller?.image ?? null,
             pushToken: seller?.pushToken ?? null,
-          }
+          },
         };
       })
     );
 
+    
+
     return chatsWithInfo;
+  },
+});
+
+export const resetBadge = mutation({
+  args: { chatId: v.id("chats") },
+  handler: async (ctx, { chatId }) => {
+    const me = await getAuthenticatedUser(ctx);
+    const chat = await ctx.db.get(chatId);
+    if (!chat) return;
+
+    const sellerId = chat.sellerId;
+    const buyerId  = chat.buyerId;
+
+    await ctx.db.patch(chatId, {
+      badgeSeller: me._id === sellerId ? 0 : chat.badgeSeller ?? 0,
+      badgeBuyer:  me._id === buyerId  ? 0 : chat.badgeBuyer  ?? 0,
+    });
   },
 });

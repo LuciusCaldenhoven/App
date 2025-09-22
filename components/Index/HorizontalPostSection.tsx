@@ -44,7 +44,7 @@ const HorizontalPostSection = ({ title, category = "", subcategory = "", nivel2 
       </View>
 
       <FlatList
-        data={isLoading ? Array.from({ length: 4 }) : feedItems}
+        data={isLoading ? Array.from({ length: 2 }) : feedItems}
         horizontal
         renderItem={({ item, index }) => {
           if (isLoading) {
