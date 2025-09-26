@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1003014138729",
+    "project_id": "segundamano-77619",
+    "storage_bucket": "segundamano-77619.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003014138729:android:6082ca1142cc5220d46bf8",
+        "android_client_info": {
+          "package_name": "com.elpibeluuu1.Segunda_mano"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_voPChUNgakhTPRnEZOaiHS6yUbrb-Rw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

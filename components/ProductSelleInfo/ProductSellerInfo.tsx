@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     fontFamily: "Regular",
   },
   buttonFast: {
-    backgroundColor: "#7ea437",
+    backgroundColor: "#adc92b",
     borderRadius: 10,
     paddingHorizontal: 22,
     paddingVertical: 12,

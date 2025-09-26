@@ -12,7 +12,7 @@ const DiscountModal = ({ bottomSheetRef }: DiscountInfoProps) => {
     <BottomSheetModal
       ref={bottomSheetRef}
       index={0}
-      snapPoints={["55%"]}
+      snapPoints={["60%"]}
       backgroundStyle={{ borderRadius: 20 }}
       backdropComponent={(props) => (
         <BottomSheetBackdrop

@@ -1,5 +1,12 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { View, Text, TouchableOpacity, Dimensions, Share, Modal, } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Share,
+  Modal,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -7,13 +14,26 @@ import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
-import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useScrollViewOffset, useSharedValue, } from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  runOnJS,
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useScrollViewOffset,
+  useSharedValue,
+} from "react-native-reanimated";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
 import ImageView from "react-native-image-viewing";
 import LoaderProductDetail from "@/components/loaders/loaderPosts";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView, } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import DiscountModal from "@/components/DiscountInfo/DiscountModal";
+import { Check } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");
 const IMG_HEIGHT = 380;
@@ -26,6 +46,10 @@ export default function ProductDetail() {
   const scrollOffset = useSharedValue(0);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const openBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
+
+  const openBottomSheetPrice = useCallback(() => {
     bottomSheetRef.current?.present();
   }, []);
 
@@ -63,10 +87,11 @@ export default function ProductDetail() {
     };
   }, []);
 
+  const post = useQuery(
+    api.posts.getBookmarkedPostById,
+    productId ? { postId: productId as Id<"posts"> } : "skip"
+  );
 
-
-  const post = useQuery( api.posts.getBookmarkedPostById, productId ? { postId: productId as Id<"posts"> } : "skip" );
-  
   const incrementViews = useMutation(api.posts.incrementViews);
   const incrementShares = useMutation(api.posts.incrementShares);
 
@@ -75,7 +100,6 @@ export default function ProductDetail() {
       incrementViews({ postId: post._id });
     }
   }, [post?._id]);
-
 
   const author = useQuery(
     api.users.getUserProfile,
@@ -92,10 +116,9 @@ export default function ProductDetail() {
 
     await toggleBookmarkCount({
       postId: post._id,
-      add: !post.isBookmarked, 
+      add: !post.isBookmarked,
     });
   };
-
 
   const { userId } = useAuth();
   const currentUser = useQuery(
@@ -110,8 +133,6 @@ export default function ProductDetail() {
   const imagesForModal = imageUrls
     .filter((url): url is string => !!url)
     .map((url) => ({ uri: url }));
-
-
 
   const shareListing = async () => {
     try {
@@ -138,11 +159,15 @@ export default function ProductDetail() {
 
   return (
     <>
-    
       <View style={styles.container}>
-        <Animated.View style={[styles.header, headerAnimatedStyle]} ></Animated.View>
+        <Animated.View
+          style={[styles.header, headerAnimatedStyle]}
+        ></Animated.View>
         <View style={styles.headerButtonsContainer}>
-          <TouchableOpacity style={styles.roundButton} onPress={() => router.back()} >
+          <TouchableOpacity
+            style={styles.roundButton}
+            onPress={() => router.back()}
+          >
             <Ionicons name="chevron-back" size={20} />
           </TouchableOpacity>
           <View style={styles.rightButtons}>
@@ -161,13 +186,13 @@ export default function ProductDetail() {
           </View>
         </View>
         <Animated.ScrollView
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
         >
           <Animated.FlatList
             ref={flatListRef}
-            data={imagesForModal} // <-- Aquí pasas directamente los links ya resueltos
+            data={imagesForModal} 
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
@@ -189,7 +214,10 @@ export default function ProductDetail() {
                   >
                     <Image
                       source={item}
-                      style={[styles.image, { width, height: 380, backgroundColor: "#f0f0f0" }]}
+                      style={[
+                        styles.image,
+                        { width, height: 380, backgroundColor: "#f0f0f0" },
+                      ]}
                       contentFit="cover"
                       transition={200}
                       cachePolicy="memory-disk"
@@ -198,10 +226,7 @@ export default function ProductDetail() {
                 </TouchableOpacity>
               </View>
             )}
-            ListEmptyComponent={
-              <View style={[styles.imageContainer]}>
-              </View>
-            }
+            ListEmptyComponent={<View style={[styles.imageContainer]}></View>}
           />
 
           {allImageIds.length > 0 && (
@@ -216,12 +241,41 @@ export default function ProductDetail() {
             post={post}
             author={author}
             bottomSheetRef={bottomSheetRef}
-            openBottomSheet = {openBottomSheet}
+            openBottomSheet={openBottomSheet}
           />
 
-          
-           <DiscountModal bottomSheetRef={bottomSheetRef} />        
+          <DiscountModal bottomSheetRef={bottomSheetRef} />
         </Animated.ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity activeOpacity={0.85}
+            onPress={() => {
+              openBottomSheetPrice?.();
+            }} style={styles.footerLeft}>
+            <Text style={styles.footerPrice}>
+              {post.currency === "Dolares" ? "$" : "S/"} {post.price}
+            </Text>
+
+            <Text style={styles.footerShipping}>Entrega en 4 - 6 horas</Text>
+
+            <View style={styles.cancelTextContainer}>
+              <Check
+                size={14}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={styles.footerCancel}>Cancelación gratis</Text>
+            </View>
+          </TouchableOpacity>
+
+          
+          <TouchableOpacity
+            activeOpacity={0.85}
+            
+            style={styles.btnn}
+          >
+            <Text style={styles.btnText}>Comprar</Text>
+          </TouchableOpacity>
+        </View>
 
         <ImageView
           images={imagesForModal}
