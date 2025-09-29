@@ -7,14 +7,7 @@ import {
   Platform,
   Image,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  interpolate,
-  Extrapolate,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate, Extrapolate, withTiming, } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { MapPin, ChevronDown, Search } from "lucide-react-native";
 import styles from "@/styles/feed.styles";
