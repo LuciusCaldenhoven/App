@@ -1,12 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  Share,
-  Modal,
-} from "react-native";
+import { View, Text, TouchableOpacity, Dimensions, Share, Modal, } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -14,24 +7,12 @@ import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { styles } from "@/styles/productDetail.styles";
 import { Id } from "@/convex/_generated/dataModel";
 import { Image } from "expo-image";
-import Animated, {
-  interpolate,
-  runOnJS,
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useScrollViewOffset,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { interpolate, runOnJS, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useScrollViewOffset, useSharedValue, } from "react-native-reanimated";
 import { useAuth } from "@clerk/clerk-expo";
 import ProductSellerInfo from "@/components/ProductSelleInfo/ProductSellerInfo";
 import ImageView from "react-native-image-viewing";
 import LoaderProductDetail from "@/components/loaders/loaderPosts";
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetModal, BottomSheetView, } from "@gorhom/bottom-sheet";
 import DiscountModal from "@/components/DiscountInfo/DiscountModal";
 import { Check } from "lucide-react-native";
 
@@ -253,7 +234,7 @@ export default function ProductDetail() {
               openBottomSheetPrice?.();
             }} style={styles.footerLeft}>
             <Text style={styles.footerPrice}>
-              {post.currency === "Dolares" ? "$" : "S/"} {post.price}
+              {post.currency === "Dolares" ? "$" : "S/"}{post.price}.00
             </Text>
 
             <Text style={styles.footerShipping}>Entrega en 4 - 6 horas</Text>
@@ -270,7 +251,10 @@ export default function ProductDetail() {
           
           <TouchableOpacity
             activeOpacity={0.85}
-            
+            onPress={() => {
+              router.push({ pathname: "/pay/summary", params: { id: post._id }, });
+
+            }}
             style={styles.btnn}
           >
             <Text style={styles.btnText}>Comprar</Text>
