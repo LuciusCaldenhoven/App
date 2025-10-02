@@ -1,29 +1,29 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Box, Check, ChevronRight, DoorOpen, FileText, MapPin, Scroll, Star, Trash, Trash2, } from "lucide-react-native";
+import { Box, Check, ChevronRight, Crown, DoorOpen, FileText, Icon, MapPin, Scroll, Star, Trash, Trash2, } from "lucide-react-native";
 import { COLORS, SIZES } from "@/constants/theme";
 import MapView from "react-native-maps";
 import CenterMarker from "@/components/CenterMarker/CenterMarker";
 import { useQuery } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
+import { useCallback, useRef, useState } from "react";
+import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { LinearGradient } from "expo-linear-gradient";
+import SeguridadGarantizada from "@/components/pay/seguridadGarantizada";
+import TrashComponent from "@/components/pay/trash";
 
 export default function CheckoutScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const post = useQuery(
-    api.posts.getBookmarkedPostById,
-    id ? { postId: id as Id<"posts"> } : "skip"
-  );
-  const author = useQuery(
-    api.users.getUserProfile,
-    post?.userId ? { id: post.userId } : "skip"
-  );
-  const imageUrl = useQuery(
-    api.posts.getImageUrl,
-    post?.storageId ? { storageId: post.storageId } : "skip"
-  );
+  const post = useQuery( api.posts.getBookmarkedPostById, id ? { postId: id as Id<"posts"> } : "skip" );
+  const imageUrl = useQuery( api.posts.getImageUrl, post?.storageId ? { storageId: post.storageId } : "skip" );
+
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const openBottomSheet = useCallback(() => { bottomSheetRef.current?.present(); }, []);
+  const [active, setActive] = useState(true);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -35,21 +35,26 @@ export default function CheckoutScreen() {
       </View>
 
       <ScrollView style={styles.body} contentContainerStyle={{ paddingBottom: 100 }}>
-        <View style={{ height: 160, overflow: "hidden" }}>
+        <TouchableOpacity style={{ height: 160, overflow: "hidden" }} onPress={() => router.push("/pay/location")}>
           <MapView
             style={{ flex: 1 }}
             showsUserLocation
             showsMyLocationButton
+            zoomEnabled={false}        
+            scrollEnabled={false}      
+            rotateEnabled={false}     
+            pitchEnabled={false}       
+            loadingEnabled={true} 
           />
           <CenterMarker />
-        </View>
+        </TouchableOpacity>
         <View style={{ paddingHorizontal: 25 }}>
           {/* Row 1 */}
           <TouchableOpacity activeOpacity={0.8} style={styles.cuadro}>
             <View style={styles.component}>
               <MapPin size={22} style={{ marginRight: 20 }} strokeWidth={2.5} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.negrita}>Other</Text>
+                <Text style={styles.negrita}>Direccion</Text>
                 <Text style={styles.normal}>
                   Victor Raúl Haya de la Torre # 101
                 </Text>
@@ -89,9 +94,9 @@ export default function CheckoutScreen() {
                 strokeWidth={2.5}
               />
               <View style={{ flex: 1 }}>
-                <Text style={styles.negrita}>D</Text>
+                <Text style={styles.negrita}>Detalles de entrega</Text>
                 <Text style={styles.normal}>
-                  Victor Raúl Haya de la Torre # 101
+                  Agregue instrucciones para la entrega
                 </Text>
               </View>
             </View>
@@ -141,7 +146,7 @@ export default function CheckoutScreen() {
               </View>
             </View>
             <View style={styles.line} />
-
+              <SeguridadGarantizada  />
             <View style={styles.PrecioContainer}>
 
                 <View style={styles.row}>
@@ -153,11 +158,15 @@ export default function CheckoutScreen() {
                 <View style={styles.row}>
                 <Text style={styles.label}>Servicio</Text>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                    <TouchableOpacity>
-                         <Trash size={22} strokeWidth={2.5} />
+                    <TouchableOpacity onPress={openBottomSheet}>
+                         <TrashComponent enabled={active} setActive={setActive}  />
                     </TouchableOpacity>
-                   
-                    <Text style={styles.value}>S/ 6.75</Text>
+                     {active ? (
+      <Text style={styles.value}>S/ 6.75</Text>
+    ) : (
+      <Text style={styles.value}>S/ 0.00</Text>
+    )}
+                    
                 </View>
                 </View>
 
@@ -374,6 +383,51 @@ const styles = StyleSheet.create({
   totalValue: {
     fontSize: 16,
     fontFamily: "Medium",
+  },
+  containerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingLeft: 5,
+    paddingRight: 12,
+    marginTop: 18,
+    marginBottom: 5,
+
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1, 
+  },
+  crownIcon: {
+    height: 60,
+    width: 60,
+    marginRight: 4,
+  },
+  textBlock: {
+    // Contains both lines of text
+  },
+  saveText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Medium',
+  },
+
+  renewText: {
+    color: '#ccc', 
+    fontSize: 14,
+    fontFamily: 'Regular',
+  },
+  arrowButton: {
+    backgroundColor: '#adc92b', 
+    width: 32,
+    height: 32,
+    borderRadius: 17,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
   },
 
 });
