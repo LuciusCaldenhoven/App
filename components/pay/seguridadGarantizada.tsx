@@ -13,7 +13,7 @@ import {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
-import { ChevronRight, ShieldCheck, Percent, Clock, X } from "lucide-react-native";
+import { ChevronRight, X } from "lucide-react-native";
 
 export default function SeguridadGarantizada() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -74,7 +74,7 @@ export default function SeguridadGarantizada() {
                 <Text style={styles.promoTitle}>Compra con total seguridad</Text>
                 <Text style={styles.promoDesc}>Protección antifraude por un % extra del producto</Text>
                 <View style={styles.promoTag}>
-                  <Text style={styles.promoTagText}>Con un pequeño % del producto</Text>
+                  <Text style={styles.promoTagText}>Asegura tu compra</Text>
                 </View>
               </View>
               <Image source={require("@/assets/images/porcentaje.png")} style={styles.promoIcon} />
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   promoTitle: { fontSize: 16, fontFamily: "SemiBold", marginBottom: 6 },
   promoDesc: { fontSize: 13, color: "#666", marginBottom: 8, fontFamily: "Regular" },
-  promoTag: { backgroundColor: "#e6f2b3", paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, alignSelf: "flex-start" },
+  promoTag: { backgroundColor: "#e6f2b3", paddingHorizontal: 10, paddingVertical: 6, borderRadius: 15, alignSelf: "flex-start" },
   promoTagText: { color: "#556b00", fontSize: 13, fontFamily: "Regular" },
   promoIcon: { height: 52, width: 52, marginLeft: 12 },
 
@@ -199,3 +199,5 @@ const styles = StyleSheet.create({
   smallNote: { marginTop: 12, color: "#999", fontSize: 12, textAlign: "center", marginHorizontal: 6 },
   iconImage: { width: 50, height: 50, resizeMode: "contain" },  
 });
+
+

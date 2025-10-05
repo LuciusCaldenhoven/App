@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Box, Check, ChevronRight, Crown, DoorOpen, FileText, Icon, MapPin, Scroll, Star, Trash, Trash2, } from "lucide-react-native";
+import {ArrowLeft, ChevronRight, Crown, DoorOpen, FileText, MapPin, MoveLeft, } from "lucide-react-native";
 import { COLORS, SIZES } from "@/constants/theme";
 import MapView from "react-native-maps";
 import CenterMarker from "@/components/CenterMarker/CenterMarker";
@@ -9,7 +9,6 @@ import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { useCallback, useRef, useState } from "react";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { LinearGradient } from "expo-linear-gradient";
 import SeguridadGarantizada from "@/components/pay/seguridadGarantizada";
 import TrashComponent from "@/components/pay/trash";
 
@@ -17,34 +16,48 @@ export default function CheckoutScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const post = useQuery( api.posts.getBookmarkedPostById, id ? { postId: id as Id<"posts"> } : "skip" );
-  const imageUrl = useQuery( api.posts.getImageUrl, post?.storageId ? { storageId: post.storageId } : "skip" );
+  const post = useQuery(
+    api.posts.getBookmarkedPostById,
+    id ? { postId: id as Id<"posts"> } : "skip"
+  );
+  const imageUrl = useQuery(
+    api.posts.getImageUrl,
+    post?.storageId ? { storageId: post.storageId } : "skip"
+  );
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const openBottomSheet = useCallback(() => { bottomSheetRef.current?.present(); }, []);
+  const openBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
   const [active, setActive] = useState(true);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
+          <ArrowLeft size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Termine y pague</Text>
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView style={styles.body} contentContainerStyle={{ paddingBottom: 100 }}>
-        <TouchableOpacity style={{ height: 160, overflow: "hidden" }} onPress={() => router.push("/pay/location")}>
+      <ScrollView
+        style={styles.body}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        <TouchableOpacity
+          style={{ height: 160, overflow: "hidden" }}
+          onPress={() => router.push("/pay/location")}
+        >
           <MapView
             style={{ flex: 1 }}
             showsUserLocation
             showsMyLocationButton
-            zoomEnabled={false}        
-            scrollEnabled={false}      
-            rotateEnabled={false}     
-            pitchEnabled={false}       
-            loadingEnabled={true} 
+            zoomEnabled={false}
+            scrollEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+            loadingEnabled={true}
           />
           <CenterMarker />
         </TouchableOpacity>
@@ -66,7 +79,7 @@ export default function CheckoutScreen() {
           <View style={styles.line} />
 
           {/* Row 2 */}
-          <TouchableOpacity activeOpacity={0.8} style={styles.cuadro}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.cuadro} onPress={() => router.push("/pay/detalles")}>
             <View style={styles.component}>
               <FileText
                 size={22}
@@ -118,6 +131,7 @@ export default function CheckoutScreen() {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.TextContainer}
+                onPress={() => router.push("/pay/metodoPago")}
               >
                 <Text style={{ fontSize: 14, fontFamily: "Medium" }}>
                   {" "}
@@ -128,7 +142,12 @@ export default function CheckoutScreen() {
           </View>
           <View style={styles.line} />
           <View style={{ backgroundColor: "#fff", paddingVertical: 16 }}>
-            <View style={{ justifyContent: "space-between", alignItems: "flex-start", }} >
+            <View
+              style={{
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
               <Text style={{ fontSize: 16, fontFamily: "Medium" }}>
                 Resumen
               </Text>
@@ -146,44 +165,42 @@ export default function CheckoutScreen() {
               </View>
             </View>
             <View style={styles.line} />
-              <SeguridadGarantizada  />
+            <SeguridadGarantizada />
             <View style={styles.PrecioContainer}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Producto</Text>
+                <Text style={styles.value}>S/ 135.00</Text>
+              </View>
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Producto</Text>
-                    <Text style={styles.value}>S/ 135.00</Text>
-                </View>
-
-                {/* Servicio */}
-                <View style={styles.row}>
+              {/* Servicio */}
+              <View style={styles.row}>
                 <Text style={styles.label}>Servicio</Text>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                    <TouchableOpacity onPress={openBottomSheet}>
-                         <TrashComponent enabled={active} setActive={setActive}  />
-                    </TouchableOpacity>
-                     {active ? (
-      <Text style={styles.value}>S/ 6.75</Text>
-    ) : (
-      <Text style={styles.value}>S/ 0.00</Text>
-    )}
-                    
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+                >
+                  <TouchableOpacity onPress={openBottomSheet}>
+                    <TrashComponent enabled={active} setActive={setActive} />
+                  </TouchableOpacity>
+                  {active ? (
+                    <Text style={styles.value}>S/ 6.75</Text>
+                  ) : (
+                    <Text style={styles.value}>S/ 0.00</Text>
+                  )}
                 </View>
-                </View>
+              </View>
 
+              {/* Delivery */}
+              <View style={styles.row}>
+                <Text style={styles.label}>Delivery</Text>
+                <Text style={styles.value}>S/ 6.00</Text>
+              </View>
 
-                {/* Delivery */}
-                <View style={styles.row}>
-                    <Text style={styles.label}>Delivery</Text>
-                    <Text style={styles.value}>S/ 6.00</Text>
-                </View>
-
-
-                {/* Total */}
-                <View style={styles.row}>
-                    <Text style={styles.totalLabel}>Total a pagar</Text>
-                    <Text style={styles.totalValue}>S/ 142.75</Text>
-                </View>
-                </View>
+              {/* Total */}
+              <View style={styles.row}>
+                <Text style={styles.totalLabel}>Total a pagar</Text>
+                <Text style={styles.totalValue}>S/ 142.75</Text>
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -223,7 +240,7 @@ const styles = StyleSheet.create({
   backText: { fontSize: 20 },
   headerTitle: { fontSize: 18, fontFamily: "SemiBold" },
 
-  body: { flex: 1, },
+  body: { flex: 1 },
 
   footer: {
     position: "absolute",
@@ -359,7 +376,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     marginTop: 10,
-
   },
   row: {
     flexDirection: "row",
@@ -385,21 +401,20 @@ const styles = StyleSheet.create({
     fontFamily: "Medium",
   },
   containerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderRadius: 20,
     paddingVertical: 10,
     paddingLeft: 5,
     paddingRight: 12,
     marginTop: 18,
     marginBottom: 5,
-
   },
   contentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1, 
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
   },
   crownIcon: {
     height: 60,
@@ -410,24 +425,23 @@ const styles = StyleSheet.create({
     // Contains both lines of text
   },
   saveText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontFamily: 'Medium',
+    fontFamily: "Medium",
   },
 
   renewText: {
-    color: '#ccc', 
+    color: "#ccc",
     fontSize: 14,
-    fontFamily: 'Regular',
+    fontFamily: "Regular",
   },
   arrowButton: {
-    backgroundColor: '#adc92b', 
+    backgroundColor: "#adc92b",
     width: 32,
     height: 32,
     borderRadius: 17,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 12,
   },
-
 });
