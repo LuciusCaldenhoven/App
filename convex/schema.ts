@@ -42,6 +42,8 @@ export default defineSchema({
         views: v.number(),
         numBookmarks: v.number(),
         numShares: v.number(),
+        deliveryEnabled: v.optional(v.boolean()),
+        number: v.optional(v.string()),
     })
         .index("by_user", ["userId"])
         .index("by_category", ["category"])
@@ -100,5 +102,22 @@ export default defineSchema({
         comment: v.string(),
         createdAt: v.number(),
     })
-        .index("by_to_user", ["toUserId"])
+    .index("by_to_user", ["toUserId"]),
+
+    pedidos: defineTable({
+        buyerId: v.id("users"),
+        sellerId: v.id("users"),
+        postId: v.id("posts"),
+        status: v.number(),
+        direccion: v.string(),
+        lat: v.number(),
+        lng: v.number(),
+        detalles: v.optional(v.string()),
+        vivienda: v.optional(v.string()),
+        telefono: v.string(),
+        total: v.number(),
+        servicio: v.number(),
+    })
+
+
 });

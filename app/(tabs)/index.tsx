@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HorizontalPostSection from "@/components/Index/HorizontalPostSection";
 import Carousel from "react-native-reanimated-carousel";
 import { BlurView } from "expo-blur";
+import Button from "@/components/button/component";
 
 
 const { width, height } = Dimensions.get("window");
@@ -238,6 +239,8 @@ export default function Index() {
         <HorizontalPostSection title="Motos" category="Motos" />
         <HorizontalPostSection title="Bicicletas" category="Bicicletas" />
         <HorizontalPostSection title="Accesorios" nivel2="Accesorios" />
+
+        <Button text="Ver más" onPress={() => router.push("/create/page1")} />
       </Animated.ScrollView>
     </View>
   );

@@ -56,7 +56,9 @@ export const createPost = mutation({
     imageUrls: v.array(v.id("_storage")),
     sold: v.boolean(),
     lat: v.float64(),
-    lng: v.float64()
+    lng: v.float64(),
+    deliveryEnabled: v.optional(v.boolean()),
+    number: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const currentUser = await getAuthenticatedUser(ctx);
@@ -85,6 +87,8 @@ export const createPost = mutation({
       views: 0,
       numBookmarks: 0,
       numShares: 0,
+      deliveryEnabled: args.deliveryEnabled,
+      number: args.number,
     });
 
     await ctx.db.patch(currentUser._id, {

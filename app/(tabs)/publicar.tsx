@@ -65,7 +65,7 @@ export default function OfrecerScreen() {
           activeOpacity={selected === null ? 1 : 0.82}
           onPress={() => {
             if (selected !== null) {
-              router.push(`/InfoProducto/infoProducto?tipo=${OPTIONS[selected].title}`);
+              router.push(`/create/page1?tipo=${OPTIONS[selected].title}`);
             }
           }}
         >

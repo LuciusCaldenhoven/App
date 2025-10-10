@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import { scale } from "@/constants/scale";
 import SingleList from "@/components/singleList/component";
 import Button from "@/components/button/component";
-import { LogOut, Mail, Megaphone, MessageCircleQuestion, PackageSearch, Star } from "lucide-react-native";
+import { CreditCard, LogOut, Mail, Megaphone, MessageCircleQuestion, PackageSearch, Star, Store } from "lucide-react-native";
 
 function Profile() {
   const { signOut, userId } = useAuth();
@@ -91,6 +91,16 @@ function Profile() {
           component={<Star size={scale(24)} color={"#adc92b"} />}
           text="Mis Reseñas"
           onPress={() => router.push("/general/reviews")}
+        />
+        <SingleList
+          component={<Store size={scale(24)} color={"#adc92b"} />}
+          text="Historial de compras"
+          onPress={() => router.push("/working/working")}
+        />
+        <SingleList
+          component={<CreditCard size={scale(24)} color={"#adc92b"} />}
+          text="Metodos de pago"
+          onPress={() => router.push("/pay/metodoPago")}
         />
         <SingleList
           component={<Megaphone size={scale(24)} color={"#adc92b"} />}

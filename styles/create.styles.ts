@@ -79,6 +79,39 @@ export const styles = StyleSheet.create({
     fontSize: 16, 
     fontFamily: 'Regular'
   },
+  // añade esto a tu create.styles (o donde declares styles)
+deliveryButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 10,
+  paddingVertical: 10,
+  paddingHorizontal: 14,
+  borderRadius: 12,
+  borderWidth: 1,
+  borderColor: COLORS.primary,
+  backgroundColor: "#fff",
+},
+
+deliveryButtonActive: {
+  backgroundColor: COLORS.primary,
+  borderColor: COLORS.primary,
+},
+deliveryButtonInactive: {
+  backgroundColor: "#fff",
+  borderColor: COLORS.primary,
+},
+deliveryButtonText: {
+  fontFamily: "Medium",
+  fontSize: 14,
+  marginLeft: 8,
+},
+deliveryButtonTextActive: {
+  color: "#fff",
+},
+deliveryButtonTextInactive: {
+  color: COLORS.primary,
+},
+
   content: {
     flex: 1, // Permite que el contenido crezca dinámicamente
   },
@@ -118,6 +151,98 @@ export const styles = StyleSheet.create({
     alignItems: "center",
    
   },
+  // Shipping styles to add into create.styles (merge fields)
+shippingCard: {
+  backgroundColor: "#fff",
+  borderRadius: 12,
+  borderWidth: 1,
+  borderColor: "#EFF3F5",
+  padding: 16,
+  marginHorizontal: 16,
+  marginBottom: 18,
+  shadowColor: "#000",
+  shadowOpacity: 0.03,
+  shadowRadius: 8,
+  elevation: 2,
+},
+shippingTitle: {
+  fontFamily: "SemiBold",
+  fontSize: 18,
+  color: COLORS.black,
+  marginBottom: 12,
+  paddingLeft: 4,
+},
+illustrationWrap: {
+  alignItems: "center",
+  marginBottom: 12,
+  height: 88,
+},
+illustration: { width: 160, height: 88 },
+bullets: { paddingHorizontal: 4, marginBottom: 10 },
+bulletItem: { fontFamily: "Regular", fontSize: 13, color: COLORS.black, marginBottom: 6 },
+faqLinkWrap: { marginTop: 6, marginBottom: 10 },
+faqLink: { fontFamily: "Medium", color: COLORS.primary, textDecorationLine: "underline" },
+
+toggleRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingVertical: 12,
+  borderTopWidth: 1,
+  borderTopColor: "#F3F6F8",
+},
+toggleLabel: { fontFamily: "Medium", fontSize: 15, color: COLORS.black },
+
+toggleButton: {
+  width: 52,
+  height: 32,
+  borderRadius: 999,
+  justifyContent: "center",
+  padding: 4,
+},
+toggleOff: { backgroundColor: "#F3F6F8", borderWidth: 1, borderColor: "#E8EEF0" },
+toggleOn: { backgroundColor: COLORS.primary, borderWidth: 0 },
+
+toggleThumb: {
+  width: 24,
+  height: 24,
+  borderRadius: 999,
+  backgroundColor: "#fff",
+  alignSelf: "flex-start",
+},
+toggleThumbOff: { marginLeft: 4 },
+toggleThumbOn: { marginLeft: 24 },
+
+sectionDivider: { height: 1, backgroundColor: "#F3F6F8", marginVertical: 12 },
+
+sectionLabel: { fontFamily: "SemiBold", fontSize: 15, color: COLORS.black, marginBottom: 6 },
+sectionHelp: { fontFamily: "Regular", fontSize: 13, color: COLORS.grey, marginBottom: 12 },
+
+weightList: { marginBottom: 6 },
+weightRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingVertical: 14,
+  borderTopWidth: 1,
+  borderTopColor: "#F3F6F8",
+},
+weightLabelWrap: { flexDirection: "row", alignItems: "center" },
+weightLabel: { fontFamily: "Regular", fontSize: 14, color: COLORS.black },
+weightCost: { fontFamily: "Medium", fontSize: 13, color: COLORS.grey, marginLeft: 12 },
+
+radioOuter: {
+  width: 22,
+  height: 22,
+  borderRadius: 22,
+  borderWidth: 1.6,
+  borderColor: "#D6DEE4",
+  alignItems: "center",
+  justifyContent: "center",
+},
+radioOuterSelected: { borderColor: COLORS.primary },
+radioInner: { width: 10, height: 10, borderRadius: 10, backgroundColor: COLORS.primary },
+
   captionContainer: {
     flexDirection: "row", 
     alignItems: "flex-start",

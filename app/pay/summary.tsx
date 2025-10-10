@@ -215,7 +215,8 @@ export default function CheckoutScreen() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.85} style={styles.btnn}>
+        <TouchableOpacity activeOpacity={0.85} style={styles.btnn} onPress={() => {
+                      router.replace({ pathname: "/pay/PaymentProcessingOverlay", params: { id: post?._id }, })}}>
           <Text style={styles.btnText}>Continuar</Text>
         </TouchableOpacity>
       </View>

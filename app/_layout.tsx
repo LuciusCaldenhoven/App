@@ -141,6 +141,11 @@ export default function RootLayout() {
                 <Stack.Screen name="notificaciones/notificaciones" />
                 <Stack.Screen name="working/working" />
                  <Stack.Screen name="location/LocationPickerScreen" options={{ animation: "slide_from_bottom" }} />
+                  <Stack.Screen name="pay/detalles" />
+                  <Stack.Screen name="pay/summary" />
+                  <Stack.Screen name="pay/tarjeta" />
+                  <Stack.Screen name="pay/metodoPago" />
+                  <Stack.Screen name="pay/PaymentProcessingOverlay" />
               </Stack>
               <Toast config={toastConfig} />
               <StatusBar style="dark" />
